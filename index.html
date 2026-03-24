@@ -1,0 +1,2219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Village Vet — AI Intelligence Platform</title>
+<script>
+// ── PASSWORD GATE ──
+// Change PRACTICE_PIN to your chosen 6-digit PIN before deploying.
+// Change PRACTICE_PASSWORD to a strong password for extra security.
+const PRACTICE_PIN = '241085';
+const PRACTICE_PASSWORD = 'VillageVet2026!';
+const SESSION_KEY = 'vv_auth_session';
+const SESSION_HOURS = 12; // auto-logout after 12 hours
+
+function checkAuth() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+    if (s && s.expires > Date.now()) return true;
+  } catch(e) {}
+  return false;
+}
+function doLogin(pin, pass) {
+  if (pin === PRACTICE_PIN && pass === PRACTICE_PASSWORD) {
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify({ expires: Date.now() + SESSION_HOURS * 3600000 }));
+    return true;
+  }
+  return false;
+}
+function doLogout() {
+  sessionStorage.removeItem(SESSION_KEY);
+  location.reload();
+}
+
+// Block page render until authenticated
+if (!checkAuth()) {
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('vv-app').style.display = 'none';
+    document.getElementById('vv-login').style.display = 'flex';
+  });
+}
+</script>
+<style>
+#vv-login {
+  display: none;
+  position: fixed; inset: 0; z-index: 99999;
+  background: #0f3d24;
+  align-items: center; justify-content: center;
+  font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+}
+.login-card {
+  background: #fff; border-radius: 16px;
+  padding: 40px 36px; width: min(380px, 94vw);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  text-align: center;
+}
+.login-logo {
+  width: 52px; height: 52px; background: #0f3d24; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 16px;
+}
+.login-card h1 { font-size: 22px; font-weight: 600; color: #0d1a0e; margin-bottom: 4px; }
+.login-card p { font-size: 13px; color: #5c6e5c; margin-bottom: 24px; }
+.login-field { margin-bottom: 14px; text-align: left; }
+.login-field label { display: block; font-size: 11px; font-weight: 700; color: #5c6e5c; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.login-field input {
+  width: 100%; padding: 11px 14px; border: 1.5px solid #d0ddd0;
+  border-radius: 9px; font-size: 14px; font-family: inherit;
+  letter-spacing: 0.1em; transition: border 0.15s;
+}
+.login-field input:focus { outline: none; border-color: #1b5e38; box-shadow: 0 0 0 3px rgba(27,94,56,0.1); }
+.login-btn {
+  width: 100%; padding: 12px; background: #1b5e38; color: #fff;
+  border: none; border-radius: 9px; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: background 0.15s; margin-top: 4px;
+}
+.login-btn:hover { background: #277a4a; }
+.login-error { color: #9b2517; font-size: 12px; margin-top: 10px; min-height: 18px; }
+.login-hint { font-size: 11px; color: #8a9e8a; margin-top: 16px; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Instrument+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --ink: #0d1a0e;
+  --paper: #f2ede4;
+  --surface: #ffffff;
+  --g1: #1b5e38; --g2: #277a4a; --g3: #4aa572; --g4: #c2e0ce; --g5: #eaf4ee;
+  --g1d: #0f3d24;
+  --amber: #c47f12; --amber-pale: #fdf6e3; --amber-mid: #f5c842;
+  --red: #9b2517; --red-pale: #fdf0ee; --red-mid: #e05040;
+  --blue: #1a3f7a; --blue-pale: #e8f0fc; --blue-mid: #4a7fd4;
+  --teal: #0e6a52; --teal-pale: #e0f4ee;
+  --purple: #4a2278; --purple-pale: #f0eafc;
+  --border: rgba(13,26,14,0.09);
+  --border-strong: rgba(13,26,14,0.18);
+  --muted: #5c6e5c;
+  --muted2: #8a9e8a;
+  --shadow-sm: 0 1px 6px rgba(13,26,14,0.07);
+  --shadow: 0 2px 14px rgba(13,26,14,0.10);
+  --shadow-lg: 0 6px 32px rgba(13,26,14,0.14);
+  --r: 10px; --rl: 14px; --rx: 20px;
+  --trans: 0.16s ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Instrument Sans', sans-serif; background: var(--paper); color: var(--ink); min-height: 100vh; font-size: 14px; line-height: 1.6; }
+
+/* ── SIDEBAR LAYOUT ── */
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 240px; flex-shrink: 0;
+  background: var(--g1d);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto;
+}
+.main { flex: 1; overflow-x: hidden; display: flex; flex-direction: column; }
+
+/* ── SIDEBAR ── */
+.sb-brand {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sb-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.sb-icon { width: 34px; height: 34px; background: rgba(255,255,255,0.12); border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.15); }
+.sb-name { font-family: 'Instrument Serif', serif; font-size: 16px; color: #fff; }
+.sb-tag { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.sb-section { padding: 14px 12px 6px; }
+.sb-section-lbl { font-size: 9px; font-weight: 600; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; padding: 0 6px; margin-bottom: 4px; }
+.sb-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: 8px;
+  cursor: pointer; color: rgba(255,255,255,0.65);
+  font-size: 13px; font-weight: 500;
+  transition: var(--trans); margin-bottom: 2px;
+  border: 1px solid transparent;
+}
+.sb-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.sb-item.on { background: rgba(255,255,255,0.13); color: #fff; border-color: rgba(255,255,255,0.1); }
+.sb-item svg { opacity: 0.7; flex-shrink: 0; }
+.sb-item.on svg { opacity: 1; }
+.sb-badge { margin-left: auto; font-size: 10px; background: var(--red-mid); color: #fff; padding: 1px 6px; border-radius: 8px; font-weight: 700; }
+.sb-badge.green { background: var(--g3); }
+
+.sb-api {
+  margin: auto 12px 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--r);
+  padding: 12px;
+}
+.sb-api-lbl { font-size: 10px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+.sb-api input {
+  width: 100%; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px; color: #fff; font-size: 11px; padding: 6px 8px;
+  font-family: 'Instrument Sans', sans-serif;
+}
+.sb-api input::placeholder { color: rgba(255,255,255,0.3); }
+.sb-api-status { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #aaa; flex-shrink: 0; }
+.status-dot.ok { background: #4ade80; }
+.status-dot.err { background: var(--red-mid); }
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 0 24px; height: 54px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.tb-title { font-family: 'Instrument Serif', serif; font-size: 20px; }
+.tb-right { display: flex; align-items: center; gap: 10px; }
+.tb-pill { font-size: 11px; background: var(--g5); color: var(--g1); border: 1px solid var(--g4); padding: 4px 10px; border-radius: 20px; font-weight: 500; }
+.tb-btn { padding: 6px 14px; font-size: 12px; font-weight: 500; border-radius: 7px; cursor: pointer; transition: var(--trans); font-family: 'Instrument Sans', sans-serif; }
+.tb-btn-outline { background: none; border: 1px solid var(--border-strong); color: var(--muted); }
+.tb-btn-outline:hover { background: var(--g5); color: var(--g1); border-color: var(--g3); }
+.tb-btn-primary { background: var(--g1); color: #fff; border: none; }
+.tb-btn-primary:hover { background: var(--g2); }
+
+/* ── PAGES ── */
+.page { display: none; flex: 1; padding: 24px; overflow-y: auto; max-width: 1200px; width: 100%; margin: 0 auto; animation: fadeUp 0.2s ease; }
+.page.on { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── SECTION HEADERS ── */
+.page-head { margin-bottom: 22px; }
+.page-head h1 { font-family: 'Instrument Serif', serif; font-size: 28px; line-height: 1.2; }
+.page-head p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* ── API KEY SETUP ── */
+.api-setup {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl);
+  padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);
+  display: flex; align-items: flex-start; gap: 16px;
+}
+.api-setup-icon { width: 44px; height: 44px; background: var(--g5); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.api-setup h3 { font-family: 'Instrument Serif', serif; font-size: 17px; margin-bottom: 4px; }
+.api-setup p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.api-setup .api-row { display: flex; gap: 8px; align-items: center; }
+.api-setup input { flex: 1; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 13px; font-family: 'Instrument Sans', sans-serif; }
+.api-setup input:focus { outline: none; border-color: var(--g2); }
+
+/* ── METRICS ── */
+.metrics-grid { display: grid; gap: 12px; margin-bottom: 22px; }
+.mg-5 { grid-template-columns: repeat(5, 1fr); }
+.mg-4 { grid-template-columns: repeat(4, 1fr); }
+.mg-3 { grid-template-columns: repeat(3, 1fr); }
+.metric {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px; box-shadow: var(--shadow-sm);
+  transition: var(--trans); cursor: default;
+}
+.metric:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.m-lbl { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.m-src { font-size: 9px; padding: 1px 5px; border-radius: 4px; font-weight: 700; }
+.m-val { font-family: 'Instrument Serif', serif; font-size: 28px; line-height: 1; margin-bottom: 4px; }
+.m-delta { font-size: 11px; font-weight: 500; }
+.up { color: var(--g2); } .dn { color: var(--red); } .neu { color: var(--muted); }
+.m-sub { font-size: 11px; color: var(--muted2); }
+
+/* ── CARDS ── */
+.grid { display: grid; gap: 16px; margin-bottom: 20px; }
+.g2 { grid-template-columns: 1fr 1fr; }
+.g3 { grid-template-columns: 2fr 1fr 1fr; }
+.gw { grid-template-columns: 1.8fr 1fr; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); padding: 18px 20px; box-shadow: var(--shadow-sm); }
+.card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.card-head h3 { font-family: 'Instrument Serif', serif; font-size: 17px; }
+.card-head .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.src-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.chip { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.04em; }
+.chip-g { background: var(--g5); color: var(--g1); }
+.chip-b { background: var(--blue-pale); color: var(--blue); }
+.chip-a { background: var(--amber-pale); color: var(--amber); }
+.chip-r { background: var(--red-pale); color: var(--red); }
+.chip-p { background: var(--purple-pale); color: var(--purple); }
+.cw { position: relative; width: 100%; }
+.h160 { height: 160px; } .h200 { height: 200px; } .h240 { height: 240px; } .h280 { height: 280px; } .h320 { height: 320px; }
+
+/* ── AI CHAT ── */
+.chat-layout { display: grid; grid-template-columns: 1fr 320px; gap: 16px; height: calc(100vh - 160px); }
+.chat-main { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; box-shadow: var(--shadow); }
+.chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.msg { display: flex; gap: 10px; max-width: 85%; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; }
+.msg-bubble {
+  padding: 12px 15px; border-radius: 14px; font-size: 13px; line-height: 1.6;
+  border: 1px solid var(--border);
+}
+.msg.ai .msg-bubble { background: var(--surface); border-radius: 4px 14px 14px 14px; }
+.msg.user .msg-bubble { background: var(--g1); color: #fff; border-color: var(--g1); border-radius: 14px 4px 14px 14px; }
+.msg-avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; }
+.msg.ai .msg-avatar { background: var(--g5); border: 1px solid var(--g4); }
+.msg.user .msg-avatar { background: var(--g1); color: #fff; }
+.chat-input-area { border-top: 1px solid var(--border); padding: 14px 16px; background: var(--paper); }
+.chat-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.chat-input-row textarea {
+  flex: 1; border: 1px solid var(--border-strong); border-radius: 10px; padding: 10px 14px;
+  font-family: 'Instrument Sans', sans-serif; font-size: 13px; resize: none; min-height: 42px; max-height: 120px;
+  background: var(--surface);
+}
+.chat-input-row textarea:focus { outline: none; border-color: var(--g2); }
+.chat-send { width: 40px; height: 40px; background: var(--g1); border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: var(--trans); }
+.chat-send:hover { background: var(--g2); }
+.chat-send:disabled { background: var(--g4); cursor: not-allowed; }
+.chat-quick { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.quick-btn { font-size: 11px; padding: 4px 10px; border: 1px solid var(--border-strong); border-radius: 20px; cursor: pointer; background: var(--surface); transition: var(--trans); color: var(--muted); }
+.quick-btn:hover { background: var(--g5); color: var(--g1); border-color: var(--g3); }
+
+.chat-sidebar { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+.context-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); padding: 14px; box-shadow: var(--shadow-sm); }
+.context-card h4 { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+.ctx-stat { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.ctx-stat:last-child { border-bottom: none; }
+.ctx-val { font-weight: 600; }
+.thinking { display: flex; gap: 4px; align-items: center; padding: 4px 0; }
+.thinking span { width: 6px; height: 6px; border-radius: 50%; background: var(--g3); animation: pulse 1.2s ease-in-out infinite; }
+.thinking span:nth-child(2) { animation-delay: 0.2s; }
+.thinking span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,80%,100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+/* ── CLINICAL ASSISTANT ── */
+.clinical-layout { display: grid; grid-template-columns: 1fr 400px; gap: 16px; height: calc(100vh - 170px); min-height: 600px; }
+.consult-chat { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; box-shadow: var(--shadow); }
+.cc-head { padding: 12px 18px; border-bottom: 1px solid var(--border); background: var(--g5); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.cc-head h3 { font-family: 'Instrument Serif', serif; font-size: 16px; color: var(--g1); }
+.cc-head-right { display: flex; align-items: center; gap: 8px; }
+.cc-patient-strip { padding: 8px 18px; border-bottom: 1px solid var(--border); background: var(--paper); display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; align-items: center; }
+.cc-patient-strip input { border: 1px solid var(--border-strong); border-radius: 6px; padding: 4px 8px; font-size: 12px; font-family: 'Instrument Sans',sans-serif; background: var(--surface); width: 160px; }
+.cc-patient-strip label { color: var(--muted); font-size: 11px; margin-right: 3px; }
+.cc-messages { flex: 1; overflow-y: auto; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.cc-msg { display: flex; gap: 9px; max-width: 90%; }
+.cc-msg.vet { align-self: flex-end; flex-direction: row-reverse; }
+.cc-msg.ai { align-self: flex-start; }
+.cc-bubble { padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.6; border: 1px solid var(--border); }
+.cc-msg.vet .cc-bubble { background: var(--g1); color: #fff; border-color: var(--g1); border-radius: 14px 4px 14px 14px; }
+.cc-msg.ai .cc-bubble { background: var(--surface); border-radius: 4px 14px 14px 14px; }
+.cc-msg.system .cc-bubble { background: var(--blue-pale); border-color: var(--border); color: var(--blue); font-size: 12px; border-radius: 10px; }
+.cc-msg.system { align-self: center; max-width: 95%; }
+.cc-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; margin-top: 2px; }
+.cc-msg.ai .cc-avatar { background: var(--g5); border: 1px solid var(--g4); }
+.cc-msg.vet .cc-avatar { background: var(--g1); color: #fff; font-size: 11px; font-weight: 600; }
+.cc-input-area { border-top: 1px solid var(--border); padding: 12px 14px; background: var(--paper); }
+.cc-toolbar { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
+.cc-tool { display: flex; align-items: center; gap: 5px; font-size: 11px; padding: 5px 10px; border: 1px solid var(--border-strong); border-radius: 20px; cursor: pointer; background: var(--surface); transition: var(--trans); color: var(--muted); white-space: nowrap; }
+.cc-tool:hover { background: var(--g5); color: var(--g1); border-color: var(--g3); }
+.cc-tool.active { background: var(--red); color: #fff; border-color: var(--red); }
+.cc-tool svg { flex-shrink: 0; }
+.cc-input-row { display: flex; gap: 8px; align-items: flex-end; }
+.cc-input-row textarea { flex: 1; border: 1px solid var(--border-strong); border-radius: 10px; padding: 9px 13px; font-family: 'Instrument Sans',sans-serif; font-size: 13px; resize: none; min-height: 40px; max-height: 100px; background: var(--surface); }
+.cc-input-row textarea:focus { outline: none; border-color: var(--g2); }
+.cc-send { width: 38px; height: 38px; background: var(--g1); border: none; border-radius: 9px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: var(--trans); }
+.cc-send:hover { background: var(--g2); }
+.cc-send:disabled { background: var(--g4); cursor: not-allowed; }
+.cc-quick { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 7px; }
+.cc-quick-btn { font-size: 11px; padding: 3px 9px; border: 1px solid var(--border-strong); border-radius: 20px; cursor: pointer; background: var(--surface); color: var(--muted); transition: var(--trans); }
+.cc-quick-btn:hover { background: var(--g5); color: var(--g1); border-color: var(--g3); }
+.cc-rec-timer { font-size: 11px; color: var(--red); font-weight: 600; }
+.consult-panel { display: flex; flex-direction: column; gap: 14px; }
+
+.record-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; box-shadow: var(--shadow); }
+.rc-head { padding: 14px 18px; border-bottom: 1px solid var(--border); background: var(--g5); display: flex; align-items: center; justify-content: space-between; }
+.rc-head h3 { font-family: 'Instrument Serif', serif; font-size: 16px; color: var(--g1); }
+.rc-body { padding: 16px 18px; }
+
+/* TRANSCRIPTION */
+.rec-btn {
+  display: flex; align-items: center; gap: 10px; padding: 12px 18px;
+  border-radius: var(--r); cursor: pointer; font-family: 'Instrument Sans', sans-serif;
+  font-size: 13px; font-weight: 600; border: none; transition: var(--trans); width: 100%;
+}
+.rec-btn.idle { background: var(--g1); color: #fff; }
+.rec-btn.recording { background: var(--red); color: #fff; }
+.rec-btn.idle:hover { background: var(--g2); }
+.rec-indicator { width: 10px; height: 10px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.rec-btn.recording .rec-indicator { animation: blink 1s ease-in-out infinite; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.transcript-box {
+  min-height: 100px; max-height: 180px; overflow-y: auto;
+  background: var(--paper); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 12px 14px; font-size: 13px; line-height: 1.7; margin-top: 10px;
+  color: var(--ink);
+}
+.transcript-box.empty { color: var(--muted2); font-style: italic; }
+.timer { font-size: 12px; color: var(--red); font-weight: 600; margin-top: 6px; }
+
+/* PATIENT FORM */
+.pt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pt-full { grid-column: 1/-1; }
+label.fl { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 4px; }
+input[type=text], input[type=number], textarea, select {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: 8px;
+  font-family: 'Instrument Sans', sans-serif; font-size: 13px;
+  background: var(--surface); color: var(--ink);
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--g2); box-shadow: 0 0 0 3px rgba(39,122,74,0.08); }
+textarea { resize: vertical; }
+.tag-input { display: flex; flex-wrap: wrap; gap: 5px; padding: 6px 8px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); min-height: 38px; align-items: center; }
+.tag { font-size: 11px; background: var(--g5); color: var(--g1); padding: 2px 8px; border-radius: 10px; display: flex; align-items: center; gap: 4px; }
+.tag-x { cursor: pointer; opacity: 0.6; }
+.tag-x:hover { opacity: 1; }
+.tag-inp { border: none; outline: none; font-size: 12px; font-family: 'Instrument Sans', sans-serif; flex: 1; min-width: 80px; background: transparent; }
+
+/* RESULTS UPLOAD */
+.result-slots { display: flex; flex-direction: column; gap: 8px; }
+.result-slot { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--r); background: var(--paper); transition: var(--trans); }
+.result-slot:hover { background: var(--g5); }
+.result-slot.has-data { border-color: var(--g3); background: var(--g5); }
+.rs-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.rs-info { flex: 1; min-width: 0; }
+.rs-name { font-size: 12px; font-weight: 600; }
+.rs-status { font-size: 11px; color: var(--muted); }
+.rs-btn { font-size: 11px; padding: 5px 10px; border: 1px solid var(--border-strong); border-radius: 6px; cursor: pointer; background: var(--surface); transition: var(--trans); white-space: nowrap; font-family: 'Instrument Sans', sans-serif; }
+.rs-btn:hover { background: var(--g1); color: #fff; border-color: var(--g1); }
+
+/* DIAGNOSIS PANEL */
+.dx-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); box-shadow: var(--shadow); overflow: hidden; }
+.dx-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.dx-head h3 { font-family: 'Instrument Serif', serif; font-size: 17px; }
+.dx-body { padding: 16px 18px; }
+.dx-generate {
+  width: 100%; padding: 13px; background: var(--g1); color: #fff; border: none;
+  border-radius: var(--r); font-family: 'Instrument Sans', sans-serif; font-size: 14px;
+  font-weight: 600; cursor: pointer; transition: var(--trans); margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.dx-generate:hover { background: var(--g2); }
+.dx-generate:disabled { background: var(--g4); cursor: not-allowed; }
+
+.dx-section { margin-bottom: 16px; }
+.dx-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.dx-item { padding: 10px 12px; border-radius: var(--r); border: 1px solid var(--border); margin-bottom: 6px; background: var(--paper); transition: var(--trans); }
+.dx-item:hover { background: var(--g5); }
+.dx-item-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.dx-item-name { font-size: 13px; font-weight: 600; }
+.dx-conf { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 8px; }
+.conf-high { background: var(--g5); color: var(--g1); }
+.conf-mid { background: var(--amber-pale); color: var(--amber); }
+.conf-low { background: var(--blue-pale); color: var(--blue); }
+.dx-item-sub { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.tx-item { padding: 8px 12px; border-radius: var(--r); border: 1px solid var(--border); margin-bottom: 5px; background: var(--paper); font-size: 12px; line-height: 1.5; }
+.tx-item strong { display: block; font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+.disc-box { background: var(--amber-pale); border: 1px solid #e0c060; border-radius: var(--r); padding: 10px 12px; font-size: 11px; color: #5c3d00; line-height: 1.5; }
+.note-generating { display:flex; align-items:center; gap:8px; padding:10px 14px; font-size:12px; color:var(--muted); background:var(--paper); border:1px solid var(--border); border-radius:var(--r); }
+
+/* PRICING PAGE */
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.price-table { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; box-shadow: var(--shadow-sm); }
+.price-table-head { padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--g5); display: flex; justify-content: space-between; align-items: center; }
+.price-table-head h3 { font-family: 'Instrument Serif', serif; font-size: 15px; color: var(--g1); }
+.pt-row { display: flex; align-items: center; padding: 9px 16px; border-bottom: 1px solid var(--border); font-size: 13px; gap: 10px; }
+.pt-row:last-child { border-bottom: none; }
+.pt-row:hover { background: var(--g5); }
+.pt-service { flex: 1; font-weight: 500; }
+.pt-price { min-width: 65px; text-align: right; font-weight: 600; }
+.pt-bench { min-width: 65px; text-align: right; font-size: 11px; color: var(--muted); }
+.pt-flag { min-width: 24px; text-align: center; font-size: 14px; }
+.pt-flag.warn { color: var(--amber); }
+.pt-flag.ok { color: var(--g2); }
+.pt-flag.low { color: var(--red); }
+
+/* MERLIN API */
+.api-config { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow-sm); }
+.api-config h3 { font-family: 'Instrument Serif', serif; font-size: 17px; margin-bottom: 4px; }
+.api-config p { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.api-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.api-field label { font-size: 11px; font-weight: 600; color: var(--muted); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+.api-field input { padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 13px; font-family: 'Instrument Sans', sans-serif; width: 100%; }
+.api-status-bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--r); background: var(--paper); border: 1px solid var(--border); font-size: 12px; }
+.endpoint-list { margin-top: 16px; }
+.endpoint-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.endpoint-row:last-child { border-bottom: none; }
+.ep-status { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 8px; }
+.ep-ready { background: var(--g5); color: var(--g1); }
+.ep-pending { background: var(--amber-pale); color: var(--amber); }
+
+/* ALERTS */
+.alert-banner { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border-radius: var(--r); margin-bottom: 10px; font-size: 13px; border: 1px solid; }
+.alert-banner.red { background: var(--red-pale); border-color: #f5b8b0; color: var(--red); }
+.alert-banner.amber { background: var(--amber-pale); border-color: #e8c86a; color: #7a4a00; }
+.alert-banner.blue { background: var(--blue-pale); border-color: #a8c4f0; color: var(--blue); }
+.alert-dot2 { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; background: currentColor; }
+
+/* TABLES */
+.tbl-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; box-shadow: var(--shadow-sm); margin-bottom: 20px; }
+.tbl-hd { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.tbl-hd h3 { font-family: 'Instrument Serif', serif; font-size: 15px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 8px 14px; font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--border); background: var(--g5); text-align: left; }
+td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--g5); }
+.badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+.b-paid { background: var(--g5); color: var(--g1); }
+.b-owed { background: var(--amber-pale); color: var(--amber); }
+.b-type { background: var(--blue-pale); color: var(--blue); }
+.b-warn { background: var(--red-pale); color: var(--red); }
+
+/* BUTTONS */
+.btn { padding: 8px 16px; border-radius: 8px; font-family: 'Instrument Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: var(--trans); border: 1px solid var(--border-strong); background: var(--surface); color: var(--ink); }
+.btn:hover { background: var(--g5); color: var(--g1); border-color: var(--g3); }
+.btn-primary { background: var(--g1); color: #fff; border-color: var(--g1); }
+.btn-primary:hover { background: var(--g2); border-color: var(--g2); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-danger { color: var(--red); border-color: var(--red); }
+.btn-danger:hover { background: var(--red-pale); }
+
+/* NOTICE */
+.notice { background: var(--blue-pale); border: 1px solid #b8cef0; border-radius: var(--r); padding: 11px 14px; font-size: 13px; color: var(--blue); display: flex; gap: 9px; align-items: flex-start; margin-bottom: 16px; line-height: 1.5; }
+.notice svg { flex-shrink: 0; margin-top: 1px; }
+.notice.warn { background: var(--amber-pale); border-color: #e0c060; color: #5c3d00; }
+.notice.clinical { background: #fdf4e3; border-color: #e8c87a; color: #5c3d00; }
+
+/* BARS */
+.bar-list { display: flex; flex-direction: column; gap: 8px; }
+.bar-row { display: flex; align-items: center; gap: 10px; font-size: 12px; }
+.bar-lbl { width: 140px; flex-shrink: 0; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar-track { flex: 1; height: 9px; background: var(--g5); border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 5px; transition: width 0.7s cubic-bezier(0.34,1.56,0.64,1); }
+.bar-val { width: 60px; text-align: right; font-weight: 600; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; right: 24px; z-index: 9999; padding: 12px 18px; border-radius: var(--r); font-size: 13px; font-weight: 500; box-shadow: var(--shadow-lg); transform: translateY(60px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); display: flex; align-items: center; gap: 8px; max-width: 340px; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.ok { background: var(--g1); color: #fff; }
+.toast.err { background: var(--red); color: #fff; }
+.toast.warn { background: var(--amber); color: #fff; }
+
+/* EMPTY STATE */
+.empty { text-align: center; padding: 60px 20px; }
+.empty-icon { font-size: 44px; margin-bottom: 10px; }
+.empty h3 { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 6px; }
+.empty p { font-size: 13px; color: var(--muted); max-width: 340px; margin: 0 auto 16px; }
+
+/* MARKDOWN STYLING in chat */
+.msg-bubble p { margin-bottom: 8px; }
+.msg-bubble p:last-child { margin-bottom: 0; }
+.msg-bubble ul, .msg-bubble ol { padding-left: 18px; margin-bottom: 8px; }
+.msg-bubble li { margin-bottom: 3px; }
+.msg-bubble strong { font-weight: 600; }
+.msg-bubble h4 { font-size: 13px; font-weight: 600; margin: 8px 0 4px; }
+.msg-bubble code { font-family: monospace; font-size: 12px; background: rgba(0,0,0,0.06); padding: 1px 4px; border-radius: 3px; }
+.msg-bubble table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 8px 0; }
+.msg-bubble th, .msg-bubble td { padding: 5px 8px; border: 1px solid var(--border); text-align: left; }
+.msg-bubble th { background: var(--g5); font-weight: 600; }
+
+@media (max-width: 1100px) { .chat-layout { grid-template-columns: 1fr; height: auto; } .clinical-layout { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .sidebar { display: none; } .g2,.g3,.gw { grid-template-columns: 1fr; } .metrics-grid.mg-5 { grid-template-columns: repeat(3,1fr); } .api-fields { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- ── SIDEBAR ── -->
+<div class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <div class="sb-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 2c2.8 0 5 2.2 5 5 0 3-2 5.8-5 9-3-3.2-5-6-5-9 0-2.8 2.2-5 5-5z"/><path d="M9 13.5L7.5 19h9L15 13.5"/></svg>
+      </div>
+      <div class="sb-name">Village Vet</div>
+    </div>
+    <div class="sb-tag">AI Intelligence Platform</div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-lbl">Business</div>
+    <div class="sb-item on" onclick="nav('dashboard')" id="si-dashboard">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </div>
+    <div class="sb-item" onclick="nav('ai-reports')" id="si-ai-reports">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      AI Reports
+    </div>
+    <div class="sb-item" onclick="nav('pricing')" id="si-pricing">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Pricing Analysis
+      <span class="sb-badge" id="sb-price-count" style="display:none">0</span>
+    </div>
+    <div class="sb-item" onclick="nav('merlin-api')" id="si-merlin-api">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      Merlin API
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-lbl">Clinical</div>
+    <div class="sb-item" onclick="nav('clinical')" id="si-clinical">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Clinical Assistant
+    </div>
+    <div class="sb-item" onclick="nav('case-history')" id="si-case-history">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Case History
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-lbl">Data</div>
+    <div class="sb-item" onclick="nav('import')" id="si-import">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Import CSV
+      <span class="sb-badge green" id="sb-import-count" style="display:none">0</span>
+    </div>
+    <div class="sb-item" onclick="nav('alerts')" id="si-alerts">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Alerts
+      <span class="sb-badge" id="sb-alert-count" style="display:none">0</span>
+    </div>
+  </div>
+
+  <div class="sb-api">
+    <div class="sb-api-lbl">Claude API Key</div>
+    <input type="password" id="sb-apikey" placeholder="sk-ant-..." oninput="setApiKey(this.value)">
+    <div class="sb-api-status">
+      <div class="status-dot" id="api-dot"></div>
+      <span id="api-status-txt">Not set</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN AREA ── -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-title" id="tb-title">Dashboard</div>
+    <div class="tb-right">
+      <div class="tb-pill" id="tb-pill">No data</div>
+      <button class="tb-btn tb-btn-outline" onclick="nav('import')">Import CSV</button>
+      <button class="tb-btn tb-btn-primary" onclick="nav('clinical')">New consultation</button>
+      <button class="tb-btn tb-btn-outline" onclick="doLogout()" title="Sign out" style="padding:6px 10px">&#x2192; Sign out</button>
+    </div>
+  </div>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="page on" id="page-dashboard">
+    <div id="db-empty" class="empty">
+      <div class="empty-icon">📊</div>
+      <h3>Welcome to Village Vet AI</h3>
+      <p>Import CSV exports from Merlin and your other platforms, then ask the AI anything about your practice.</p>
+      <button class="btn btn-primary" onclick="nav('import')">Import your first CSV</button>
+      &nbsp;
+      <button class="btn" onclick="loadDemo()">Load demo data</button>
+    </div>
+    <div id="db-data" style="display:none">
+      <div class="metrics-grid mg-5" id="db-metrics"></div>
+      <div id="db-alerts"></div>
+      <div class="grid gw">
+        <div class="card"><div class="card-head"><div><h3>Revenue trend</h3><div class="sub" id="rev-sub"></div></div><div class="src-chips"><span class="chip chip-g">Merlin</span><span class="chip chip-a">GoCardless</span></div></div><div class="cw h240"><canvas id="c-rev"></canvas></div></div>
+        <div class="card"><div class="card-head"><div><h3>Service mix</h3></div></div><div class="cw h240"><canvas id="c-mix"></canvas></div></div>
+      </div>
+      <div class="grid g3">
+        <div class="card"><div class="card-head"><div><h3>Records per period</h3></div></div><div class="cw h160"><canvas id="c-rpp"></canvas></div></div>
+        <div class="card"><div class="card-head"><div><h3>Avg invoice</h3></div></div><div class="cw h160"><canvas id="c-avg"></canvas></div></div>
+        <div class="card"><div class="card-head"><div><h3>Outstanding</h3></div></div><div class="cw h160"><canvas id="c-owed"></canvas></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AI REPORTS ═══ -->
+  <div class="page" id="page-ai-reports">
+    <div class="page-head">
+      <h1>AI Practice Intelligence</h1>
+      <p>Ask anything about your practice data — revenue, trends, performance, improvements.</p>
+    </div>
+    <div id="ai-no-key" class="notice" style="display:none">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Enter your Claude API key in the sidebar to enable AI-powered reports and insights.
+    </div>
+    <div class="chat-layout">
+      <div class="chat-main">
+        <div class="chat-messages" id="chat-messages">
+          <div class="msg ai">
+            <div class="msg-avatar">🐾</div>
+            <div class="msg-bubble">
+              <p>Hello — I'm your Village Vet AI analyst. I have access to all your imported practice data and I can answer questions, generate reports, spot trends, and flag issues.</p>
+              <p>Try asking me something, or use the quick prompts below.</p>
+            </div>
+          </div>
+        </div>
+        <div class="chat-input-area">
+          <div class="chat-input-row">
+            <textarea id="chat-input" placeholder="Ask about your practice data..." rows="1" onkeydown="chatKey(event)" oninput="autoResize(this)"></textarea>
+            <button class="chat-send" id="chat-send" onclick="sendChat()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div class="chat-quick">
+            <button class="quick-btn" onclick="quickChat('What is my total revenue this period and how does it compare to last period?')">Revenue comparison</button>
+            <button class="quick-btn" onclick="quickChat('Which services are generating the most revenue? Show me the top 5.')">Top services</button>
+            <button class="quick-btn" onclick="quickChat('Are there any concerning trends in my financial data I should know about?')">Flag concerns</button>
+            <button class="quick-btn" onclick="quickChat('What are your top 3 suggestions to grow revenue at my practice?')">Growth ideas</button>
+            <button class="quick-btn" onclick="quickChat('Which clients have outstanding balances? Give me a summary.')">Outstanding balances</button>
+            <button class="quick-btn" onclick="quickChat('How is my Google Ads spend performing? Is it worth it?')">Ads performance</button>
+            <button class="quick-btn" onclick="quickChat('Give me a full practice performance report for this month.')">Full report</button>
+          </div>
+        </div>
+      </div>
+      <div class="chat-sidebar">
+        <div class="context-card">
+          <h4>Data in context</h4>
+          <div id="ctx-stats"></div>
+        </div>
+        <div class="context-card">
+          <h4>Recent reports</h4>
+          <div id="recent-reports" style="font-size:12px;color:var(--muted)">No reports generated yet.</div>
+        </div>
+        <div class="context-card">
+          <h4>Business KPIs</h4>
+          <div id="kpi-panel" style="font-size:12px;color:var(--muted)">Import data to see KPIs.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PRICING ANALYSIS ═══ -->
+  <div class="page" id="page-pricing">
+    <div class="page-head">
+      <h1>Pricing Analysis</h1>
+      <p>Compare your service prices against BVA/RCVS benchmarks. Flagged items may indicate pricing opportunities.</p>
+    </div>
+    <div class="notice warn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Benchmarks are based on published BVA fee guidance and UK market ranges. Always consider your location, costs, and client base when making pricing decisions.
+    </div>
+    <div id="pricing-ai-insight" class="card" style="margin-bottom:20px;display:none">
+      <div class="card-head"><h3>AI Pricing Insights</h3><button class="btn btn-sm btn-primary" onclick="getPricingInsights()">Refresh analysis</button></div>
+      <div id="pricing-ai-text" style="font-size:13px;line-height:1.7;color:var(--muted)"></div>
+    </div>
+    <div class="grid g2">
+      <div class="price-table">
+        <div class="price-table-head">
+          <h3>Consultations &amp; Preventive</h3>
+          <button class="btn btn-sm" onclick="getPricingInsights()">AI review</button>
+        </div>
+        <div id="pt-consult"></div>
+      </div>
+      <div class="price-table">
+        <div class="price-table-head"><h3>Surgery &amp; Procedures</h3></div>
+        <div id="pt-surgery"></div>
+      </div>
+    </div>
+    <div class="grid g2">
+      <div class="price-table">
+        <div class="price-table-head"><h3>Diagnostics &amp; Lab</h3></div>
+        <div id="pt-diag"></div>
+      </div>
+      <div class="price-table">
+        <div class="price-table-head"><h3>Dental &amp; Specialist</h3></div>
+        <div id="pt-dental"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Pricing opportunities summary</h3></div>
+      <div id="pricing-summary"></div>
+    </div>
+  </div>
+
+  <!-- ═══ MERLIN API ═══ -->
+  <div class="page" id="page-merlin-api">
+    <div class="page-head">
+      <h1>Merlin API Integration</h1>
+      <p>Connect directly to MWI's Veterinary Integration Platform for automatic daily data sync — no CSV exports needed.</p>
+    </div>
+    <div class="api-config">
+      <h3>API credentials</h3>
+      <p>Obtain your API credentials from your MWI account manager or from the developer portal at <strong>mwiah.dev</strong>. Once connected, the system pulls appointments, invoices, patient records, and financials automatically every 24 hours.</p>
+      <div class="api-fields">
+        <div class="api-field"><label>Base URL</label><input id="merlin-base" value="https://api.mwiah.dev/v1" placeholder="https://api.mwiah.dev/v1"></div>
+        <div class="api-field"><label>API Token</label><input id="merlin-token" type="password" placeholder="Your MWI API token"></div>
+        <div class="api-field"><label>Practice ID</label><input id="merlin-practice" placeholder="Your Merlin practice ID"></div>
+        <div class="api-field"><label>Sync frequency</label>
+          <select id="merlin-freq"><option value="daily">Daily (recommended)</option><option value="hourly">Hourly</option><option value="manual">Manual only</option></select>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button class="btn btn-primary" onclick="testMerlinAPI()">Test connection</button>
+        <button class="btn" onclick="saveMerlinConfig()">Save settings</button>
+        <button class="btn" onclick="syncNow()">Sync now</button>
+      </div>
+      <div class="api-status-bar" id="merlin-status-bar">
+        <div class="status-dot" id="merlin-dot"></div>
+        <span id="merlin-status-txt">Not connected — enter credentials above</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><h3>Available API endpoints</h3><div class="sub">Once connected, these data types will sync automatically</div></div>
+      <div class="endpoint-list">
+        <div class="endpoint-row"><span>Appointments (booking, history, status)</span><span class="ep-status ep-pending">Pending credentials</span></div>
+        <div class="endpoint-row"><span>Invoices &amp; financial records</span><span class="ep-status ep-pending">Pending credentials</span></div>
+        <div class="endpoint-row"><span>Patient records &amp; medical history</span><span class="ep-status ep-pending">Pending credentials</span></div>
+        <div class="endpoint-row"><span>Client records</span><span class="ep-status ep-pending">Pending credentials</span></div>
+        <div class="endpoint-row"><span>Stock &amp; inventory levels</span><span class="ep-status ep-pending">Pending credentials</span></div>
+        <div class="endpoint-row"><span>IDEXX lab results (via VetConnect)</span><span class="ep-status ep-ready">Ready (CSV fallback active)</span></div>
+        <div class="endpoint-row"><span>PetsApp appointments (native sync)</span><span class="ep-status ep-ready">Ready (via Merlin)</span></div>
+        <div class="endpoint-row"><span>Reports &amp; analytics exports</span><span class="ep-status ep-pending">Pending credentials</span></div>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:var(--g5);border-radius:var(--r);font-size:13px;color:var(--g1)">
+        <strong>How to get your MWI API credentials:</strong><br>
+        1. Contact your MWI account manager and ask to enable VIP (Veterinary Integration Platform) access<br>
+        2. Register at <strong>mwiah.dev</strong> and create a developer application<br>
+        3. Generate an API token with read access to your practice data<br>
+        4. Paste the token above — the system will handle all authentication automatically
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CLINICAL ASSISTANT ═══ -->
+  <div class="page" id="page-clinical">
+    <div class="notice clinical" style="margin-bottom:14px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div><strong>Clinical decision support only.</strong> All AI suggestions must be reviewed and validated by a qualified veterinary surgeon. This tool does not replace clinical examination, professional judgement, or established veterinary protocols.</div>
+    </div>
+    <div class="clinical-layout">
+
+      <!-- LEFT: CONSULTATION CHAT -->
+      <div class="consult-chat">
+        <div class="cc-head">
+          <h3>Consultation</h3>
+          <div class="cc-head-right">
+            <span class="cc-rec-timer" id="cc-timer" style="display:none">&#9679; 00:00</span>
+            <button class="btn btn-sm" onclick="newConsult()">New consultation</button>
+          </div>
+        </div>
+
+        <!-- Patient strip -->
+        <div class="cc-patient-strip">
+          <div><label>Client</label><input type="text" id="cc-client" placeholder="e.g. Sarah Mitchell" oninput="updatePatientHeader()"></div>
+          <div><label>Pet</label><input type="text" id="cc-pet" placeholder="e.g. Buddy (Lab, 4yr M)" oninput="updatePatientHeader()"></div>
+          <div><label>Weight</label><input type="text" id="cc-weight" placeholder="kg" style="width:60px"></div>
+          <div><label>Temp</label><input type="text" id="cc-temp" placeholder="°C" style="width:60px"></div>
+        </div>
+
+        <!-- Messages -->
+        <div class="cc-messages" id="cc-messages">
+          <div class="cc-msg system">
+            <div class="cc-bubble">
+              Start by describing the patient&#39;s presenting signs, or use the microphone to record the consultation. Add lab results, x-ray findings, or cytology using the toolbar below. Type freely &mdash; the AI will ask follow-up questions and build a clinical picture as you go.
+            </div>
+          </div>
+        </div>
+
+        <!-- Input area -->
+        <div class="cc-input-area">
+          <div class="cc-toolbar">
+            <button class="cc-tool" id="cc-rec-btn" onclick="toggleCCRecording()">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/><path d="M19 12a7 7 0 0 1-14 0"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+              Record
+            </button>
+            <button class="cc-tool" onclick="addResultToChat('IDEXX blood results')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+              IDEXX bloods
+            </button>
+            <button class="cc-tool" onclick="addResultToChat('Signal Pet x-ray findings')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              X-ray
+            </button>
+            <button class="cc-tool" onclick="addResultToChat('Zoetis cytology report')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+              Cytology
+            </button>
+            <button class="cc-tool" onclick="addResultToChat('HT Vista tumour diagnosis')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              HT Vista
+            </button>
+            <button class="cc-tool" onclick="addResultToChat('additional clinical findings')">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add findings
+            </button>
+            <button class="cc-tool" onclick="requestDiagnosis()" style="border-color:var(--g3);color:var(--g1)">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+              Generate diagnosis
+            </button>
+          </div>
+          <div class="cc-input-row">
+            <textarea id="cc-input" placeholder="Describe symptoms, ask a question, paste results..." rows="1" onkeydown="ccKey(event)" oninput="ccResize(this)"></textarea>
+            <button class="cc-send" id="cc-send-btn" onclick="sendCC()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div class="cc-quick" id="cc-quick-btns">
+            <button class="cc-quick-btn" onclick="ccQuick('Patient is vomiting and lethargic for 3 days')">Vomiting + lethargy</button>
+            <button class="cc-quick-btn" onclick="ccQuick('Presenting with lameness on right foreleg')">Lameness</button>
+            <button class="cc-quick-btn" onclick="ccQuick('Skin lesion noticed by owner, been there 2 weeks')">Skin lesion</button>
+            <button class="cc-quick-btn" onclick="ccQuick('Increased thirst and urination for 1 month')">PU/PD</button>
+            <button class="cc-quick-btn" onclick="ccQuick('Coughing and exercise intolerance')">Cough + fatigue</button>
+            <button class="cc-quick-btn" onclick="ccQuick('Sudden collapse, now recovered but owner concerned')">Collapse episode</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: DIAGNOSIS PANEL -->
+      <div class="dx-panel" style="overflow-y:auto;display:flex;flex-direction:column">
+        <div class="dx-head">
+          <h3>Clinical summary</h3>
+          <div class="chip chip-a">Decision support</div>
+        </div>
+        <div class="dx-body" style="flex:1;overflow-y:auto">
+          <div id="cc-no-key" class="notice" style="display:none;font-size:12px;margin-bottom:12px">
+            Add your Claude API key in the sidebar to enable AI diagnosis support.
+          </div>
+
+          <div id="cc-summary-placeholder" style="text-align:center;padding:24px 10px;color:var(--muted);font-size:13px">
+            <div style="font-size:30px;margin-bottom:8px">🩺</div>
+            <p style="margin-bottom:6px;font-size:13px">The clinical summary will build up here as you describe the case in the chat.</p>
+            <p style="font-size:12px;color:var(--muted2)">Click "Generate diagnosis" or type "diagnose" at any point for a full differential.</p>
+          </div>
+
+          <!-- Live summary tiles - updated as conversation progresses -->
+          <div id="cc-live-summary" style="display:none">
+            <div style="margin-bottom:14px">
+              <div class="dx-section-title">Patient overview</div>
+              <div id="cc-sum-patient" class="dx-item" style="font-size:12px;line-height:1.6"></div>
+            </div>
+            <div style="margin-bottom:14px">
+              <div class="dx-section-title">Presenting signs</div>
+              <div id="cc-sum-signs"></div>
+            </div>
+            <div id="cc-sum-results-section" style="margin-bottom:14px;display:none">
+              <div class="dx-section-title">Diagnostic results</div>
+              <div id="cc-sum-results"></div>
+            </div>
+          </div>
+
+          <!-- Full diagnosis output -->
+          <div id="cc-dx-output" style="display:none">
+            <div class="dx-section">
+              <div class="dx-section-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                Differential diagnoses
+              </div>
+              <div id="cc-differentials"></div>
+            </div>
+            <div class="dx-section">
+              <div class="dx-section-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+                Recommended tests
+              </div>
+              <div id="cc-tests"></div>
+            </div>
+            <div class="dx-section">
+              <div class="dx-section-title">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Treatment options
+              </div>
+              <div id="cc-treatments"></div>
+            </div>
+            <div class="disc-box" style="margin-bottom:12px">
+              <strong>&#9877; Clinical decision support only</strong> &mdash; Review and validate all suggestions with clinical judgement.
+            </div>
+
+            <!-- CLINICAL NOTE FOR MERLIN -->
+            <div class="dx-section" id="cc-note-section" style="display:none">
+              <div class="dx-section-title" style="justify-content:space-between">
+                <span style="display:flex;align-items:center;gap:6px">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                  Clinical note for Merlin
+                </span>
+                <button class="btn btn-sm" onclick="copyClinicalNote()" id="cc-note-copy-btn" style="font-size:10px;padding:3px 8px">Copy</button>
+              </div>
+              <div id="cc-clinical-note" style="background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;font-size:12px;line-height:1.8;font-family:monospace;white-space:pre-wrap;max-height:280px;overflow-y:auto;cursor:text" onclick="selectNoteText()"></div>
+              <div style="font-size:10px;color:var(--muted2);margin-top:5px">Click Copy then paste directly into the Merlin patient record history field.</div>
+            </div>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+              <button class="btn btn-sm btn-primary" onclick="saveCCCase()">Save case</button>
+              <button class="btn btn-sm btn-primary" onclick="generateClinicalNote()" id="cc-note-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Generate clinical note
+              </button>
+              <button class="btn btn-sm" onclick="printCCReport()">Print report</button>
+              <button class="btn btn-sm" onclick="requestDiagnosis()">Refresh diagnosis</button>
+            </div>
+          </div>
+
+          <div id="cc-dx-loading" style="display:none;text-align:center;padding:24px;color:var(--muted)">
+            <div class="thinking" style="justify-content:center;margin-bottom:8px"><span></span><span></span><span></span></div>
+            <div style="font-size:13px">Analysing case...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+    <!-- ═══ CASE HISTORY ═══ -->
+  <div class="page" id="page-case-history">
+    <div class="page-head"><h1>Case history</h1><p>All saved consultation records and AI diagnosis reports.</p></div>
+    <div id="case-empty" class="empty"><div class="empty-icon">📋</div><h3>No cases saved</h3><p>Complete a consultation and click "Save to case history" to build your record.</p></div>
+    <div id="case-list" style="display:none"></div>
+  </div>
+
+  <!-- ═══ IMPORT ═══ -->
+  <div class="page" id="page-import">
+    <div class="page-head"><h1>Import data</h1><p>Upload CSV exports from any of your platforms. Data is stored locally and builds trends over time.</p></div>
+    <div class="notice">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Export from each platform and upload below. The AI will analyse trends automatically as you add more imports over time.
+    </div>
+    <div id="src-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px"></div>
+    <div style="display:flex;gap:10px;margin-bottom:20px">
+      <button class="btn btn-primary" onclick="loadDemo()">Load demo data for all sources</button>
+      <button class="btn btn-danger" onclick="clearAll()">Clear all data</button>
+    </div>
+    <div class="tbl-wrap"><div class="tbl-hd"><h3>Import history</h3></div><div id="import-hist"></div></div>
+  </div>
+
+  <!-- ═══ ALERTS ═══ -->
+  <div class="page" id="page-alerts">
+    <div class="page-head"><h1>Alerts</h1><p>Active alerts based on your data and configured thresholds.</p></div>
+    <div id="alert-list"></div>
+    <div class="card">
+      <div class="card-head"><h3>Alert thresholds</h3></div>
+      <div id="alert-settings" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px"></div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btn-primary" onclick="saveAlerts()">Save</button>
+        <button class="btn" onclick="resetAlerts()">Reset to defaults</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /layout -->
+</div><!-- /vv-app -->
+
+<!-- HIDDEN FILE INPUTS -->
+<input type="file" id="fi-merlin"     accept=".csv" onchange="fileIn(this,'merlin')" style="display:none">
+<input type="file" id="fi-idexx"      accept=".csv" onchange="fileIn(this,'idexx')" style="display:none">
+<input type="file" id="fi-gocardless" accept=".csv" onchange="fileIn(this,'gocardless')" style="display:none">
+<input type="file" id="fi-petsapp"    accept=".csv" onchange="fileIn(this,'petsapp')" style="display:none">
+<input type="file" id="fi-google"     accept=".csv" onchange="fileIn(this,'google')" style="display:none">
+<input type="file" id="fi-signal"     accept=".csv" onchange="fileIn(this,'signal')" style="display:none">
+<input type="file" id="fi-zoetis"     accept=".csv" onchange="fileIn(this,'zoetis')" style="display:none">
+<input type="file" id="fi-htv"        accept=".csv" onchange="fileIn(this,'htv')" style="display:none">
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════ STATE ═══════════════
+const STORE = 'vv_ai_v1';
+const CASE_STORE = 'vv_cases_v1';
+const CFG_STORE = 'vv_cfg_v1';
+
+let STATE = { imports: [], apiKey: '', merlinCfg: {}, alertThresholds: {} };
+let cases = [];
+let charts = {};
+let mediaRecorder = null, recInterval = null, recSeconds = 0;
+let recognizer = null;
+let symptomTags = [];
+let filteredRec = [];
+let chatHistory = [];
+
+const SOURCES = [
+  { id:'merlin',     name:'Merlin PMS',       icon:'🏥', col:'#1b5e38', pale:'#eaf4ee' },
+  { id:'idexx',      name:'IDEXX VetConnect', icon:'🧪', col:'#1a3f7a', pale:'#e8f0fc' },
+  { id:'gocardless', name:'GoCardless',       icon:'💳', col:'#c47f12', pale:'#fdf6e3' },
+  { id:'petsapp',    name:'PetsApp',          icon:'📱', col:'#4a2278', pale:'#f0eafc' },
+  { id:'google',     name:'Google Ads',       icon:'📢', col:'#9b2517', pale:'#fdf0ee' },
+  { id:'signal',     name:'Signal Pet',       icon:'🩻', col:'#0e6a52', pale:'#e0f4ee' },
+  { id:'zoetis',     name:'Zoetis',           icon:'🔬', col:'#c47f12', pale:'#fdf6e3' },
+  { id:'htv',        name:'HT Vista',         icon:'🎯', col:'#9b2517', pale:'#fdf0ee' },
+];
+
+const BENCHMARKS = {
+  'Standard consultation': { your: 55, bench: 52, cat: 'Consultations & Preventive' },
+  'Vaccination (dog)':     { your: 68, bench: 65, cat: 'Consultations & Preventive' },
+  'Vaccination (cat)':     { your: 62, bench: 60, cat: 'Consultations & Preventive' },
+  'Annual health check':   { your: 72, bench: 78, cat: 'Consultations & Preventive' },
+  'Microchipping':         { your: 28, bench: 32, cat: 'Consultations & Preventive' },
+  'Flea/worm treatment':   { your: 34, bench: 28, cat: 'Consultations & Preventive' },
+  'Neutering (cat)':       { your: 185, bench: 195, cat: 'Surgery & Procedures' },
+  'Neutering (dog small)': { your: 245, bench: 265, cat: 'Surgery & Procedures' },
+  'Keyhole spay':          { your: 680, bench: 720, cat: 'Surgery & Procedures' },
+  'Cruciate repair':       { your: 1850, bench: 2100, cat: 'Surgery & Procedures' },
+  'Patellar luxation':     { your: 1200, bench: 1350, cat: 'Surgery & Procedures' },
+  'Hospitalisation (per day)': { your: 180, bench: 165, cat: 'Surgery & Procedures' },
+  'X-ray (1 view)':        { your: 148, bench: 135, cat: 'Diagnostics & Lab' },
+  'Full blood count':      { your: 68,  bench: 72,  cat: 'Diagnostics & Lab' },
+  'Biochemistry panel':    { your: 95,  bench: 98,  cat: 'Diagnostics & Lab' },
+  'Ultrasound':            { your: 220, bench: 240, cat: 'Diagnostics & Lab' },
+  'Urinalysis':            { your: 42,  bench: 38,  cat: 'Diagnostics & Lab' },
+  'Dental scale & polish': { your: 185, bench: 210, cat: 'Dental & Specialist' },
+  'Dental extraction (simple)': { your: 95, bench: 110, cat: 'Dental & Specialist' },
+  'Oncology consultation': { your: 390, bench: 420, cat: 'Dental & Specialist' },
+  'Laser therapy':         { your: 95,  bench: 88,  cat: 'Dental & Specialist' },
+};
+
+const DEFAULT_THRESHOLDS = {
+  outstanding_pct: { label: 'Outstanding > X% of revenue', val: 15, col: 'red' },
+  rev_drop: { label: 'Revenue drops > X% period-on-period', val: 15, col: 'red' },
+  avg_drop: { label: 'Avg invoice drops > X%', val: 20, col: 'amber' },
+  dd_fail: { label: 'DD failure rate > X%', val: 5, col: 'red' },
+  cpc_rise: { label: 'Google Ads CPC rises > X%', val: 25, col: 'amber' },
+};
+
+// ═══ BOOT ═══
+(function showLoginIfNeeded() {
+  if (!checkAuth()) {
+    window.addEventListener('DOMContentLoaded', function() {
+      const app = document.getElementById('vv-app');
+      const login = document.getElementById('vv-login');
+      if (app) app.style.display = 'none';
+      if (login) login.style.display = 'flex';
+    });
+  }
+})();
+
+(function boot() {
+  try { STATE = { ...STATE, ...JSON.parse(localStorage.getItem(STORE) || '{}') }; } catch(e){}
+  try { cases = JSON.parse(localStorage.getItem(CASE_STORE) || '[]'); } catch(e){}
+  if (!STATE.alertThresholds || !Object.keys(STATE.alertThresholds).length) {
+    STATE.alertThresholds = {};
+    Object.keys(DEFAULT_THRESHOLDS).forEach(k => STATE.alertThresholds[k] = DEFAULT_THRESHOLDS[k].val);
+  }
+  if (STATE.apiKey) {
+    document.getElementById('sb-apikey').value = STATE.apiKey;
+    updateApiStatus(true);
+  }
+  renderAll();
+  // Show app (login already handled above)
+  if (checkAuth()) {
+    const app = document.getElementById('vv-app');
+    if (app) app.style.display = 'flex';
+  }
+})();
+
+function save() {
+  localStorage.setItem(STORE, JSON.stringify(STATE));
+  localStorage.setItem(CASE_STORE, JSON.stringify(cases));
+  renderAll();
+}
+
+function renderAll() {
+  updateTopbar();
+  renderSourceGrid();
+  renderImportHistory();
+  renderPricing();
+  renderAlertSettings();
+  checkAlerts();
+}
+
+// ═══ NAVIGATION ═══
+const PAGE_TITLES = { dashboard:'Dashboard', 'ai-reports':'AI Practice Intelligence', pricing:'Pricing Analysis', 'merlin-api':'Merlin API Integration', clinical:'Clinical Assistant', 'case-history':'Case History', import:'Import Data', alerts:'Alerts & Settings' };
+
+function nav(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('on'));
+  document.getElementById('page-' + p).classList.add('on');
+  const si = document.getElementById('si-' + p);
+  if (si) si.classList.add('on');
+  document.getElementById('tb-title').textContent = PAGE_TITLES[p] || p;
+  if (p === 'dashboard') renderDashboard();
+  if (p === 'ai-reports') renderChatContext();
+  if (p === 'pricing') renderPricing();
+  if (p === 'import') renderSourceGrid();
+  if (p === 'alerts') renderAlertPage();
+  if (p === 'case-history') renderCaseHistory();
+}
+
+// ═══ API KEY ═══
+function setApiKey(v) {
+  STATE.apiKey = v.trim();
+  save();
+  updateApiStatus(!!v.trim());
+  document.getElementById('ai-no-key').style.display = STATE.apiKey ? 'none' : 'flex';
+  document.getElementById('dx-no-key').style.display = STATE.apiKey ? 'none' : 'flex';
+}
+function updateApiStatus(ok) {
+  const dot = document.getElementById('api-dot');
+  const txt = document.getElementById('api-status-txt');
+  dot.className = 'status-dot ' + (ok ? 'ok' : '');
+  txt.textContent = ok ? 'API key saved' : 'Not set';
+}
+
+// ═══ TOPBAR ═══
+function updateTopbar() {
+  const total = allRows().length;
+  const pill = document.getElementById('tb-pill');
+  pill.textContent = total ? `${total.toLocaleString()} records · ${STATE.imports.length} imports` : 'No data';
+  const ib = document.getElementById('sb-import-count');
+  if (STATE.imports.length) { ib.style.display='inline'; ib.textContent=STATE.imports.length; } else ib.style.display='none';
+  const alerts = computeAlerts();
+  const ab = document.getElementById('sb-alert-count');
+  document.getElementById('alertCount') && (document.getElementById('alertCount').textContent = alerts.length);
+  if (alerts.length) { ab.style.display='inline'; ab.textContent=alerts.length; } else ab.style.display='none';
+}
+
+// ═══ DATA HELPERS ═══
+function allRows(src) {
+  let imp = STATE.imports;
+  if (src) imp = imp.filter(i => i.source === src);
+  return imp.flatMap(i => i.rows);
+}
+function srcRows(...srcs) { return STATE.imports.filter(i => srcs.includes(i.source)).flatMap(i => i.rows); }
+const TC = '#5c6e5c', GC = 'rgba(0,0,0,0.05)';
+const PAL = ['#1b5e38','#277a4a','#4aa572','#b0d9bc','#1a3f7a','#c47f12','#9b2517','#4a2278','#0e6a52'];
+function mkChart(id, cfg) { if (charts[id]) charts[id].destroy(); const canvas = document.getElementById(id); if (!canvas) return; charts[id] = new Chart(canvas, cfg); }
+function bOpts(extra={}) { return { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false }, ...(extra.plugins||{}) }, scales:{ x:{ ticks:{ color:TC,font:{size:11} }, grid:{display:false} }, y:{ ticks:{ color:TC,font:{size:11} }, grid:{ color:GC } }, ...(extra.scales||{}) } }; }
+
+// ═══ DASHBOARD ═══
+function renderDashboard() {
+  const rows = allRows();
+  document.getElementById('db-empty').style.display = rows.length ? 'none' : 'block';
+  document.getElementById('db-data').style.display = rows.length ? 'block' : 'none';
+  if (!rows.length) return;
+
+  const finRows = srcRows('merlin','gocardless');
+  const totalRev = finRows.reduce((s,r) => s+(r.amount||0), 0);
+  const owed = finRows.filter(r => /outstanding|unpaid/i.test(r.status||'')).reduce((s,r) => s+(r.amount||0), 0);
+  const avg = finRows.length ? totalRev/finRows.length : 0;
+  const adSpend = srcRows('google').reduce((s,r) => s+(r.spend||0), 0);
+
+  let revDelta='', recDelta='';
+  if (STATE.imports.length >= 2) {
+    const grouped = {};
+    STATE.imports.forEach(imp => {
+      if (!grouped[imp.label]) grouped[imp.label] = { rev:0, n:0 };
+      imp.rows.forEach(r => { grouped[imp.label].rev += (r.amount||0); grouped[imp.label].n++; });
+    });
+    const keys = Object.keys(grouped);
+    if (keys.length >= 2) {
+      const lk=keys[keys.length-1], pk=keys[keys.length-2];
+      const lv=grouped[lk].rev, pv=grouped[pk].rev;
+      if (pv>0) { const d=((lv-pv)/pv*100).toFixed(1); revDelta=`<span class="${d>=0?'up':'dn'}">${d>=0?'▲':'▼'} ${Math.abs(d)}% vs prev</span>`; }
+      const ln=grouped[lk].n, pn=grouped[pk].n;
+      if (pn>0) { const d=ln-pn; recDelta=`<span class="${d>=0?'up':'dn'}">${d>=0?'▲':'▼'} ${Math.abs(d)} records</span>`; }
+    }
+  }
+
+  document.getElementById('db-metrics').innerHTML = `
+    <div class="metric"><div class="m-lbl">Total revenue <span class="m-src chip-g">Merlin</span></div><div class="m-val">£${Math.round(totalRev).toLocaleString()}</div><div class="m-delta">${revDelta||'<span class="neu">'+STATE.imports.length+' imports</span>'}</div></div>
+    <div class="metric"><div class="m-lbl">Total records</div><div class="m-val">${rows.length.toLocaleString()}</div><div class="m-delta">${recDelta||'<span class="neu">All sources</span>'}</div></div>
+    <div class="metric"><div class="m-lbl">Avg invoice</div><div class="m-val">£${Math.round(avg)}</div><div class="m-sub">Per clinical record</div></div>
+    <div class="metric"><div class="m-lbl">Outstanding <span class="m-src chip-a">GC</span></div><div class="m-val" style="color:${owed>0?'var(--amber)':'inherit'}">£${Math.round(owed).toLocaleString()}</div><div class="m-sub">Unpaid invoices</div></div>
+    <div class="metric"><div class="m-lbl">Ad spend <span class="m-src chip-r">Google</span></div><div class="m-val">£${Math.round(adSpend).toLocaleString()}</div><div class="m-sub">${srcRows('google').length} ad records</div></div>
+  `;
+
+  const alerts = computeAlerts();
+  const aEl = document.getElementById('db-alerts');
+  aEl.innerHTML = alerts.length ? `<div style="margin-bottom:16px">${alerts.slice(0,3).map(a=>`<div class="alert-banner ${a.level}"><div class="alert-dot2"></div><div><strong>${a.src}:</strong> ${a.msg}</div></div>`).join('')}${alerts.length>3?`<div style="font-size:12px;color:var(--muted);margin-top:4px">+ ${alerts.length-3} more — <a href="#" onclick="nav('alerts');return false" style="color:var(--g1)">view all alerts</a></div>`:''}</div>` : '';
+
+  const byImp = {};
+  STATE.imports.forEach(imp => { if (!byImp[imp.label]) byImp[imp.label]={rev:0,n:0}; imp.rows.forEach(r=>{byImp[imp.label].rev+=(r.amount||0);byImp[imp.label].n++;}); });
+  const il = Object.keys(byImp);
+  document.getElementById('rev-sub').textContent = il.slice(-5).join(' · ');
+
+  mkChart('c-rev', { type:'bar', data:{ labels:il, datasets:[{data:il.map(k=>Math.round(byImp[k].rev)), backgroundColor:PAL[0], borderRadius:5, borderSkipped:false}]}, options:bOpts({scales:{y:{ticks:{callback:v=>'£'+Math.round(v/1000)+'k',color:TC,font:{size:11}},grid:{color:GC}}}})} );
+
+  const types = {};
+  rows.forEach(r => types[r.type||'Other'] = (types[r.type||'Other']||0)+1);
+  mkChart('c-mix', { type:'doughnut', data:{ labels:Object.keys(types), datasets:[{data:Object.values(types), backgroundColor:PAL, borderWidth:2, borderColor:'#fff'}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10},color:TC,boxWidth:8,padding:5}}}} });
+
+  mkChart('c-rpp', { type:'line', data:{labels:il,datasets:[{data:il.map(k=>byImp[k].n),borderColor:PAL[0],backgroundColor:'rgba(27,94,56,0.07)',fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:PAL[0]}]}, options:bOpts() });
+  mkChart('c-avg', { type:'line', data:{labels:il,datasets:[{data:il.map(k=>byImp[k].n?Math.round(byImp[k].rev/byImp[k].n):0),borderColor:PAL[4],backgroundColor:'rgba(26,63,122,0.07)',fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:PAL[4]}]}, options:bOpts({scales:{y:{ticks:{callback:v=>'£'+v,color:TC,font:{size:11}},grid:{color:GC}}}}) });
+  const owedByImp = {};
+  STATE.imports.filter(i=>['merlin','gocardless'].includes(i.source)).forEach(imp => { owedByImp[imp.label] = (owedByImp[imp.label]||0) + imp.rows.filter(r=>/outstanding|unpaid/i.test(r.status||'')).reduce((s,r)=>s+(r.amount||0),0); });
+  const ol=Object.keys(owedByImp);
+  mkChart('c-owed', { type:'bar', data:{labels:ol,datasets:[{data:ol.map(k=>Math.round(owedByImp[k])),backgroundColor:PAL[5],borderRadius:5}]}, options:bOpts({scales:{y:{ticks:{callback:v=>'£'+v,color:TC,font:{size:11}},grid:{color:GC}}}}) });
+}
+
+// ═══ AI CHAT ═══
+function buildDataSummary() {
+  const rows = allRows();
+  if (!rows.length) return 'No practice data has been imported yet.';
+  const finRows = srcRows('merlin','gocardless');
+  const totalRev = finRows.reduce((s,r)=>s+(r.amount||0),0);
+  const owed = finRows.filter(r=>/outstanding|unpaid/i.test(r.status||'')).reduce((s,r)=>s+(r.amount||0),0);
+  const avg = finRows.length ? (totalRev/finRows.length).toFixed(2) : 0;
+  const types = {}; rows.forEach(r=>types[r.type||'Other']=(types[r.type||'Other']||0)+1);
+  const vets = {}; rows.forEach(r=>{ if(r.vet&&r.vet!=='—') vets[r.vet]=(vets[r.vet]||0)+(r.amount||0); });
+  const svcs = {}; rows.forEach(r=>{ if(r.service) svcs[r.service]=(svcs[r.service]||0)+(r.amount||0); });
+  const topSvcs = Object.entries(svcs).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([s,v])=>`${s}: £${Math.round(v)}`).join(', ');
+  const topVets = Object.entries(vets).sort((a,b)=>b[1]-a[1]).map(([v,r])=>`${v}: £${Math.round(r)}`).join(', ');
+  const adSpend = srcRows('google').reduce((s,r)=>s+(r.spend||0),0);
+  const adClicks = srcRows('google').reduce((s,r)=>s+(r.clicks||0),0);
+  const byImp = {}; STATE.imports.forEach(imp=>{if(!byImp[imp.label])byImp[imp.label]={rev:0,n:0};imp.rows.forEach(r=>{byImp[imp.label].rev+=(r.amount||0);byImp[imp.label].n++;});});
+  const periodSummary = Object.entries(byImp).map(([l,v])=>`${l}: £${Math.round(v.rev)} revenue, ${v.n} records`).join(' | ');
+  const clients = [...new Set(rows.map(r=>r.client).filter(c=>c&&c!=='Unknown'))];
+  const outstandingClients = finRows.filter(r=>/outstanding|unpaid/i.test(r.status||'')).map(r=>r.client).filter(Boolean);
+
+  return `Village Veterinary Surgery — Practice data summary:
+Practice: Village Veterinary Surgery, Hatfield Garden Village AL10 9JS. Independent practice, Dr Kobi and Dr Anat.
+Total records imported: ${rows.length} across ${STATE.imports.length} import periods.
+Total revenue (Merlin + GoCardless): £${Math.round(totalRev).toLocaleString()}
+Outstanding/unpaid: £${Math.round(owed).toLocaleString()} (${totalRev>0?((owed/totalRev)*100).toFixed(1):0}% of revenue)
+Average invoice value: £${avg}
+Active clients: ${clients.length}
+Clients with outstanding balances: ${[...new Set(outstandingClients)].join(', ') || 'None'}
+Revenue by period: ${periodSummary}
+Service type breakdown: ${Object.entries(types).map(([t,n])=>`${t}(${n})`).join(', ')}
+Top services by revenue: ${topSvcs}
+Revenue by vet: ${topVets}
+Google Ads: £${Math.round(adSpend)} spend, ${adClicks} clicks across ${STATE.imports.filter(i=>i.source==='google').length} import periods
+Diagnostic records: IDEXX(${allRows('idexx').length}), Signal Pet(${allRows('signal').length}), Zoetis(${allRows('zoetis').length}), HT Vista(${allRows('htv').length})`;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  if (!STATE.apiKey) { toast('Add your Claude API key in the sidebar first', 'err'); return; }
+
+  input.value = '';
+  autoResize(input);
+  addMessage('user', msg);
+  document.getElementById('chat-send').disabled = true;
+
+  const thinkingId = addThinking();
+  chatHistory.push({ role:'user', content: msg });
+
+  const systemPrompt = `You are a veterinary practice intelligence analyst for Village Veterinary Surgery in Hatfield, UK. You have access to the practice's data and provide clear, actionable insights.
+
+Here is the current practice data:
+${buildDataSummary()}
+
+Your role:
+- Answer questions about practice performance, revenue, trends, clients, and services
+- Flag issues proactively (pricing, outstanding debts, underperforming services)
+- Suggest specific, practical improvements relevant to an independent UK veterinary practice
+- When discussing money, always use £ (GBP)
+- Keep responses clear and structured — use bullet points and headers where helpful
+- Be honest about data limitations (e.g. if data is limited or a period has few records)
+- Reference specific numbers from the data whenever relevant
+- Think like a business advisor who understands veterinary practice management
+
+Do not make up data that isn't in the summary. If asked about something not in the data, say so clearly.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-api-key': STATE.apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1500,
+        system: systemPrompt,
+        messages: chatHistory.slice(-10)
+      })
+    });
+    const data = await resp.json();
+    removeThinking(thinkingId);
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      chatHistory.push({ role:'assistant', content: reply });
+      addMessage('ai', reply);
+      updateRecentReports(msg);
+    } else {
+      addMessage('ai', `Error: ${data.error?.message || 'Unknown error. Check your API key.'}`);
+    }
+  } catch(e) {
+    removeThinking(thinkingId);
+    addMessage('ai', 'Connection error. Please check your API key and internet connection.');
+  }
+  document.getElementById('chat-send').disabled = false;
+}
+
+function addMessage(role, text) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const avatar = role === 'ai' ? '🐾' : '👤';
+  div.innerHTML = `<div class="msg-avatar">${avatar}</div><div class="msg-bubble">${formatMd(text)}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+let thinkingCount = 0;
+function addThinking() {
+  const id = 'thinking-' + (++thinkingCount);
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'msg ai'; div.id = id;
+  div.innerHTML = `<div class="msg-avatar">🐾</div><div class="msg-bubble"><div class="thinking"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return id;
+}
+function removeThinking(id) { const el = document.getElementById(id); if(el) el.remove(); }
+
+function formatMd(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^#{1,3} (.+)$/gm,'<h4>$1</h4>')
+    .replace(/^[•\-\*] (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s,'<ul>$1</ul>')
+    .replace(/\n\n/g,'</p><p>')
+    .replace(/^(.+)$/gm,'$1')
+    .replace(/^(?!<[hlu]|<\/[hlu])/gm,'')
+    .trim()
+    .replace(/^/, '<p>').replace(/$/, '</p>');
+}
+
+function quickChat(msg) { document.getElementById('chat-input').value = msg; sendChat(); }
+function chatKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
+function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+
+function renderChatContext() {
+  const rows = allRows();
+  const stats = document.getElementById('ctx-stats');
+  if (!rows.length) { stats.innerHTML = '<div style="font-size:12px;color:var(--muted)">No data loaded.</div>'; return; }
+  const finRows = srcRows('merlin','gocardless');
+  const rev = finRows.reduce((s,r)=>s+(r.amount||0),0);
+  const owed = finRows.filter(r=>/outstanding|unpaid/i.test(r.status||'')).reduce((s,r)=>s+(r.amount||0),0);
+  stats.innerHTML = [
+    ['Total records', rows.length.toLocaleString()],
+    ['Revenue', '£'+Math.round(rev).toLocaleString()],
+    ['Outstanding', '£'+Math.round(owed).toLocaleString()],
+    ['Import periods', STATE.imports.length],
+    ['Diagnostic records', (allRows('idexx').length+allRows('signal').length+allRows('zoetis').length+allRows('htv').length)],
+    ['Ad records', allRows('google').length],
+  ].map(([l,v])=>`<div class="ctx-stat"><span>${l}</span><span class="ctx-val">${v}</span></div>`).join('');
+  document.getElementById('ai-no-key').style.display = STATE.apiKey ? 'none' : 'flex';
+  updateKPIs(finRows, rev, owed);
+}
+
+function updateKPIs(finRows, rev, owed) {
+  const kpi = document.getElementById('kpi-panel');
+  if (!finRows.length) return;
+  const avg = (rev/finRows.length).toFixed(2);
+  const owedPct = rev>0 ? ((owed/rev)*100).toFixed(1) : 0;
+  kpi.innerHTML = [
+    ['Avg invoice', '£'+avg, owedPct>15?'warn':''],
+    ['Outstanding %', owedPct+'%', owedPct>15?'warn':''],
+    ['Paid rate', (100-owedPct)+'%', ''],
+  ].map(([l,v,cls])=>`<div class="ctx-stat"><span>${l}</span><span class="ctx-val" style="${cls==='warn'?'color:var(--amber)':''}">${v}</span></div>`).join('');
+}
+
+let recentReports = [];
+function updateRecentReports(q) {
+  recentReports.unshift(q.slice(0,40)+(q.length>40?'...':''));
+  if (recentReports.length>5) recentReports.pop();
+  document.getElementById('recent-reports').innerHTML = recentReports.map(r=>`<div style="padding:4px 0;border-bottom:1px solid var(--border);font-size:11px;cursor:pointer" onclick="quickChat('${r.replace(/'/,"\'")}')">${r}</div>`).join('');
+}
+
+// ═══ PRICING ═══
+function renderPricing() {
+  const cats = { 'Consultations & Preventive':'pt-consult', 'Surgery & Procedures':'pt-surgery', 'Diagnostics & Lab':'pt-diag', 'Dental & Specialist':'pt-dental' };
+  let flagCount = 0;
+  Object.entries(cats).forEach(([cat, elId]) => {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const items = Object.entries(BENCHMARKS).filter(([,v])=>v.cat===cat);
+    el.innerHTML = `<div style="display:flex;align-items:center;padding:7px 14px;background:var(--paper);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em"><span style="flex:1">Service</span><span style="min-width:65px;text-align:right">Your price</span><span style="min-width:65px;text-align:right">Benchmark</span><span style="min-width:28px;text-align:center"></span></div>` +
+    items.map(([name, {your, bench}]) => {
+      const diff = ((your-bench)/bench*100);
+      const flag = diff < -10 ? 'low' : diff > 15 ? 'ok' : '';
+      const icon = diff < -10 ? '▼' : diff > 15 ? '✓' : '≈';
+      const title = diff < -10 ? `${Math.abs(diff.toFixed(0))}% below benchmark — consider reviewing` : diff > 15 ? 'Above benchmark' : 'Within range';
+      if (diff < -10) flagCount++;
+      return `<div class="pt-row" title="${title}"><span class="pt-service">${name}</span><span class="pt-price">£${your}</span><span class="pt-bench">£${bench}</span><span class="pt-flag ${flag}">${icon}</span></div>`;
+    }).join('');
+  });
+  const spb = document.getElementById('sb-price-count');
+  if (flagCount) { spb.style.display='inline'; spb.textContent=flagCount; } else spb.style.display='none';
+  const summary = document.getElementById('pricing-summary');
+  const underpriced = Object.entries(BENCHMARKS).filter(([,v])=>((v.your-v.bench)/v.bench*100)<-10);
+  if (underpriced.length) {
+    summary.innerHTML = `<div class="notice warn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><div><strong>${underpriced.length} services appear underpriced</strong> vs BVA benchmarks:<br>${underpriced.map(([n,v])=>`${n} (yours £${v.your}, benchmark £${v.bench})`).join(' · ')}<br>Adjusting these could add significant annual revenue. Use AI Reports to model the impact.</div></div>`;
+  } else {
+    summary.innerHTML = `<div style="padding:12px;color:var(--muted);font-size:13px">All services are within or above benchmark ranges.</div>`;
+  }
+}
+
+async function getPricingInsights() {
+  if (!STATE.apiKey) { toast('Add your Claude API key first','err'); return; }
+  document.getElementById('pricing-ai-insight').style.display = 'block';
+  document.getElementById('pricing-ai-text').textContent = 'Analysing pricing...';
+  const under = Object.entries(BENCHMARKS).filter(([,v])=>((v.your-v.bench)/v.bench*100)<-10).map(([n,v])=>`${n}: yours £${v.your} vs £${v.bench} benchmark`).join('\n');
+  const over = Object.entries(BENCHMARKS).filter(([,v])=>((v.your-v.bench)/v.bench*100)>15).map(([n,v])=>`${n}: yours £${v.your} vs £${v.bench} benchmark`).join('\n');
+  const prompt = `As a veterinary practice pricing consultant, analyse the following pricing data for Village Veterinary Surgery (independent practice, Hatfield, Hertfordshire, UK) and provide specific, actionable recommendations.\n\nPractice data:\n${buildDataSummary()}\n\nPricing flags:\nPotentially underpriced (>10% below BVA benchmark):\n${under||'None'}\n\nAbove benchmark (>15% above):\n${over||'None'}\n\nPlease provide:\n1. Top 3 priority pricing adjustments with estimated revenue impact\n2. Any risks to consider when adjusting prices\n3. A suggested phased approach to price changes\n4. Commentary on whether the overall pricing strategy looks appropriate for an independent practice in this location\n\nBe specific with numbers. Use £ for currency.`;
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'x-api-key':STATE.apiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1200, messages:[{ role:'user', content:prompt }] })
+    });
+    const data = await resp.json();
+    if (data.content?.[0]) {
+      document.getElementById('pricing-ai-text').innerHTML = formatMd(data.content[0].text);
+    }
+  } catch(e) { document.getElementById('pricing-ai-text').textContent = 'Error connecting to AI. Check your API key.'; }
+}
+
+// ═══ CLINICAL ASSISTANT — INTERACTIVE CHAT ═══
+let ccHistory = [];
+let ccRecognizer = null;
+let ccRecording = false;
+let ccRecInterval = null;
+let ccRecSeconds = 0;
+
+const CC_SYSTEM = `You are an experienced veterinary clinical AI assistant supporting a qualified veterinary surgeon during a patient consultation at Village Veterinary Surgery, Hatfield, UK (an independent small animal practice run by Dr Kobi and Dr Anat).
+
+Your role:
+1. Gather clinical information conversationally. Ask ONE focused follow-up question at a time to build a complete clinical picture.
+2. Acknowledge and record symptoms, history, vital signs, and test results as they are mentioned.
+3. When asked to diagnose, OR when enough information exists, respond with structured JSON in this exact format:
+{"differentials":[{"diagnosis":"Name","confidence":"High|Medium|Low","reasoning":"1-2 sentences"}],"additional_tests":[{"test":"Name","reason":"Why indicated"}],"treatment_options":[{"option":"Name","detail":"Brief description"}]}
+4. Flag any urgent/emergency concerns immediately.
+5. Keep responses concise — vets are busy.
+6. IMPORTANT: This is clinical decision support only. Always note that suggestions require clinical validation.`;
+
+function newConsult() {
+  if (ccHistory.length > 0 && !confirm('Start a new consultation? This will clear the current case.')) return;
+  ccHistory = [];
+  document.getElementById('cc-messages').innerHTML = '<div class="cc-msg system"><div class="cc-bubble">Start by describing the patient\'s presenting signs, or use the microphone to record the consultation. Add lab results, x-ray findings, or cytology using the toolbar. Type freely &mdash; the AI will ask follow-up questions and build a clinical picture.</div></div>';
+  ['cc-client','cc-pet','cc-weight','cc-temp'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('cc-summary-placeholder').style.display = 'block';
+  document.getElementById('cc-live-summary').style.display = 'none';
+  document.getElementById('cc-dx-output').style.display = 'none';
+  document.getElementById('cc-dx-loading').style.display = 'none';
+}
+
+function ccKey(e) { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendCC(); } }
+function ccResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+function ccQuick(msg) { document.getElementById('cc-input').value = msg; sendCC(); }
+function updatePatientHeader() {}
+
+function addResultToChat(type) {
+  var inp = document.getElementById('cc-input');
+  var placeholders = {
+    'IDEXX blood results': 'e.g. WBC 18.4 (H), ALT 180 (H), ALP 95, BUN 28, CREA 1.4...',
+    'Signal Pet x-ray findings': 'e.g. Increased soft tissue opacity cranioventral lung fields, mild cardiomegaly...',
+    'Zoetis cytology report': 'e.g. Fine needle aspirate — round cells with moderate anisocytosis...',
+    'HT Vista tumour diagnosis': 'e.g. Mast cell tumour grade II, Ki67 index 8%...',
+    'additional clinical findings': 'e.g. Urine SG 1.018, 2+ protein. ECG — sinus rhythm, occasional APCs...'
+  };
+  inp.value = '[' + type + '] ';
+  inp.placeholder = placeholders[type] || 'Enter results...';
+  inp.focus();
+  inp.selectionStart = inp.selectionEnd = inp.value.length;
+  ccResize(inp);
+}
+
+function requestDiagnosis() {
+  document.getElementById('cc-input').value = 'Please generate a full differential diagnosis based on everything discussed so far. Respond in the structured JSON format.';
+  sendCC();
+}
+
+async function sendCC() {
+  var inp = document.getElementById('cc-input');
+  var msg = inp.value.trim();
+  if (!msg) return;
+  if (!STATE.apiKey) {
+    document.getElementById('cc-no-key').style.display = 'flex';
+    toast('Add your Claude API key in the sidebar to use the clinical assistant', 'err');
+    return;
+  }
+
+  inp.value = '';
+  inp.placeholder = 'Describe symptoms, ask a question, paste results...';
+  inp.style.height = 'auto';
+  document.getElementById('cc-send-btn').disabled = true;
+
+  addCCMsg('vet', msg);
+
+  var client = document.getElementById('cc-client').value;
+  var pet = document.getElementById('cc-pet').value;
+  var weight = document.getElementById('cc-weight').value;
+  var temp = document.getElementById('cc-temp').value;
+  var patientCtx = [client?'Owner: '+client:'', pet?'Patient: '+pet:'', weight?'Weight: '+weight+'kg':'', temp?'Temperature: '+temp+'C':''].filter(Boolean).join(' | ');
+
+  if (ccHistory.length === 0 && patientCtx) {
+    ccHistory.push({ role: 'user', content: 'New consultation. ' + patientCtx + '\n\n' + msg });
+  } else {
+    ccHistory.push({ role: 'user', content: msg });
+  }
+
+  var thinkId = addCCThinking();
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': STATE.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1200,
+        system: CC_SYSTEM,
+        messages: ccHistory.slice(-20)
+      })
+    });
+
+    var data = await resp.json();
+    removeCCThinking(thinkId);
+
+    if (data.content && data.content[0]) {
+      var reply = data.content[0].text;
+      ccHistory.push({ role: 'assistant', content: reply });
+
+      if (reply.trim().startsWith('{') || reply.includes('"differentials"')) {
+        addCCMsg('ai', 'Here is the structured diagnosis based on our discussion:');
+        tryRenderStructuredDx(reply);
+      } else {
+        addCCMsg('ai', reply);
+      }
+      updateLiveSummary();
+    } else {
+      addCCMsg('ai', 'Error: ' + (data.error ? data.error.message : 'Check your API key.'));
+    }
+  } catch(e) {
+    removeCCThinking(thinkId);
+    addCCMsg('ai', 'Connection error. Check your API key and internet connection.');
+  }
+  document.getElementById('cc-send-btn').disabled = false;
+}
+
+function addCCMsg(role, text) {
+  var msgs = document.getElementById('cc-messages');
+  var div = document.createElement('div');
+  div.className = 'cc-msg ' + role;
+  var avatar = role === 'ai' ? '<div class="cc-avatar">&#128062;</div>' : '<div class="cc-avatar">VET</div>';
+  div.innerHTML = avatar + '<div class="cc-bubble">' + ccFormatMd(text) + '</div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+var ccThinkCount = 0;
+function addCCThinking() {
+  var id = 'cc-think-' + (++ccThinkCount);
+  var msgs = document.getElementById('cc-messages');
+  var div = document.createElement('div');
+  div.className = 'cc-msg ai'; div.id = id;
+  div.innerHTML = '<div class="cc-avatar">&#128062;</div><div class="cc-bubble"><div class="thinking"><span></span><span></span><span></span></div></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return id;
+}
+function removeCCThinking(id) { var el=document.getElementById(id); if(el) el.remove(); }
+
+function ccFormatMd(text) {
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^#{1,3} (.+)$/gm,'<strong>$1</strong>')
+    .replace(/^[*\-] (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)+/g, function(m){ return '<ul style="padding-left:16px;margin:4px 0">'+m+'</ul>'; })
+    .replace(/\n\n+/g,'<br><br>').replace(/\n/g,'<br>');
+}
+
+function tryRenderStructuredDx(text) {
+  try {
+    var clean = text.replace(/```json\n?|\n?```/g,'').trim();
+    var start = clean.indexOf('{');
+    var end = clean.lastIndexOf('}');
+    if (start === -1 || end === -1) return;
+    var json = JSON.parse(clean.slice(start, end+1));
+    if (json.differentials) renderCCDiagnosis(json);
+  } catch(e) { console.log('Could not parse structured dx', e); }
+}
+
+function escHtml(str) {
+  if (typeof str !== 'string') return String(str||'');
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderCCDiagnosis(json) {
+  var confClass = function(c){ return c==='High'?'conf-high':c==='Medium'?'conf-mid':'conf-low'; };
+  var diffs = (json.differentials||[]).map(function(d){
+    return '<div class="dx-item"><div class="dx-item-head"><span class="dx-item-name">'+escHtml(d.diagnosis||d.name||'')+'</span><span class="dx-conf '+confClass(d.confidence||'Low')+'">'+escHtml(d.confidence||'')+'</span></div><div class="dx-item-sub">'+escHtml(d.reasoning||d.rationale||'')+'</div></div>';
+  }).join('');
+  var tests = (json.additional_tests||json.tests||[]).map(function(t){
+    return '<div class="tx-item"><strong>'+escHtml(t.test||t.name||String(t))+'</strong>'+escHtml(t.reason||t.rationale||'')+'</div>';
+  }).join('');
+  var txs = (json.treatment_options||json.treatments||[]).map(function(t){
+    return '<div class="tx-item"><strong>'+escHtml(t.option||t.name||String(t))+'</strong>'+escHtml(t.detail||t.description||'')+'</div>';
+  }).join('');
+  document.getElementById('cc-differentials').innerHTML = diffs;
+  document.getElementById('cc-tests').innerHTML = tests;
+  document.getElementById('cc-treatments').innerHTML = txs;
+  document.getElementById('cc-summary-placeholder').style.display = 'none';
+  document.getElementById('cc-live-summary').style.display = 'none';
+  document.getElementById('cc-dx-loading').style.display = 'none';
+  document.getElementById('cc-dx-output').style.display = 'block';
+}
+
+function updateLiveSummary() {
+  var client = document.getElementById('cc-client').value;
+  var pet = document.getElementById('cc-pet').value;
+  var weight = document.getElementById('cc-weight').value;
+  var temp = document.getElementById('cc-temp').value;
+  if (!client && !pet && ccHistory.length < 2) return;
+  if (document.getElementById('cc-dx-output').style.display === 'block') return;
+
+  document.getElementById('cc-summary-placeholder').style.display = 'none';
+  document.getElementById('cc-live-summary').style.display = 'block';
+
+  var parts = [
+    pet ? '<strong>'+escHtml(pet)+'</strong>' : '',
+    client ? 'Owner: '+escHtml(client) : '',
+    weight ? 'Weight: '+escHtml(weight)+'kg' : '',
+    temp ? 'Temp: '+escHtml(temp)+'&deg;C' : '',
+  ].filter(Boolean);
+  if (parts.length) document.getElementById('cc-sum-patient').innerHTML = parts.join(' &middot; ');
+
+  var allText = ccHistory.map(function(m){ return m.content; }).join(' ').toLowerCase();
+  var keywords = ['vomit','diarrhoea','diarrhea','lethargy','lame','limp','seizure','collapse','cough','dyspnoea','anorexia','polyuria','polydipsia','weight loss','pruritus','mass','swelling','discharge','bleeding','pale','jaundice','pain','ataxia','inappetence','pyrexia','tachycardia','bradycardia'];
+  var found = keywords.filter(function(k){ return allText.indexOf(k) !== -1; });
+  var signsEl = document.getElementById('cc-sum-signs');
+  signsEl.innerHTML = found.length
+    ? found.map(function(s){ return '<span class="badge b-type" style="margin:2px">'+s+'</span>'; }).join('')
+    : '<div style="font-size:12px;color:var(--muted2)">Mention symptoms in chat to see them tracked here.</div>';
+}
+
+function toggleCCRecording() {
+  if (ccRecording) stopCCRecording(); else startCCRecording();
+}
+
+function startCCRecording() {
+  var btn = document.getElementById('cc-rec-btn');
+  if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    ccRecognizer = new SR();
+    ccRecognizer.continuous = true;
+    ccRecognizer.interimResults = true;
+    ccRecognizer.lang = 'en-GB';
+    var finalText = '';
+    ccRecognizer.onresult = function(e) {
+      var interim = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) finalText += e.results[i][0].transcript + ' ';
+        else interim += e.results[i][0].transcript;
+      }
+      var inp = document.getElementById('cc-input');
+      inp.value = finalText + interim;
+      ccResize(inp);
+    };
+    ccRecognizer.onerror = function(){ stopCCRecording(); toast('Microphone error — allow microphone access in browser', 'err'); };
+    ccRecognizer.start();
+    toast('Recording started — speak now', 'ok');
+  } else {
+    toast('Speech recognition requires Chrome browser', 'warn');
+    return;
+  }
+  ccRecording = true;
+  btn.classList.add('active');
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="6" width="12" height="12"/></svg> Stop';
+  document.getElementById('cc-timer').style.display = 'inline';
+  ccRecSeconds = 0;
+  ccRecInterval = setInterval(function(){
+    ccRecSeconds++;
+    var m = String(Math.floor(ccRecSeconds/60)).padStart(2,'0');
+    var s = String(ccRecSeconds%60).padStart(2,'0');
+    document.getElementById('cc-timer').textContent = '\u25CF ' + m + ':' + s;
+  }, 1000);
+}
+
+function stopCCRecording() {
+  if (ccRecognizer) { try { ccRecognizer.stop(); } catch(e){} ccRecognizer = null; }
+  ccRecording = false;
+  clearInterval(ccRecInterval);
+  var btn = document.getElementById('cc-rec-btn');
+  btn.classList.remove('active');
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="6"/><path d="M19 12a7 7 0 0 1-14 0"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> Record';
+  document.getElementById('cc-timer').style.display = 'none';
+  if (document.getElementById('cc-input').value.trim()) toast('Recording stopped — press Send to submit', 'ok');
+}
+
+// ═══ CLINICAL NOTE GENERATOR ═══
+async function generateClinicalNote() {
+  if (!STATE.apiKey) { toast('Add your Claude API key to generate clinical notes', 'err'); return; }
+  if (!ccHistory.length) { toast('No consultation data to summarise yet', 'err'); return; }
+
+  var btn = document.getElementById('cc-note-btn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+
+  var client = document.getElementById('cc-client').value || 'Unknown';
+  var pet = document.getElementById('cc-pet').value || 'Unknown';
+  var weight = document.getElementById('cc-weight').value;
+  var temp = document.getElementById('cc-temp').value;
+  var today = new Date().toLocaleDateString('en-GB');
+  var vet = 'Dr Kobi / Dr Anat';
+
+  var dxText = document.getElementById('cc-differentials').innerText || 'Not yet generated';
+  var testsText = document.getElementById('cc-tests').innerText || 'None recommended';
+  var txText = document.getElementById('cc-treatments').innerText || 'Not yet generated';
+
+  var convSummary = ccHistory.slice(-16).map(function(m){
+    return (m.role === 'user' ? 'Vet: ' : 'AI: ') + m.content;
+  }).join('
+');
+
+  var prompt = 'You are generating a structured veterinary clinical consultation note for a UK practice management system (Merlin PMS).
+
+Generate a clear, concise, professional clinical note in SOAP format suitable for pasting directly into a patient history record. Use standard veterinary clinical language. Do not include speculation — only document what was presented, found, and decided.
+
+Consultation details:
+Date: ' + today + '
+Clinician: ' + vet + '
+Owner: ' + client + '
+Patient: ' + pet + (weight ? '
+Weight: ' + weight + 'kg' : '') + (temp ? '
+Temperature: ' + temp + 'C' : '') + '
+
+Consultation transcript summary:
+' + convSummary + '
+
+AI differential diagnoses generated:
+' + dxText + '
+
+Recommended tests:
+' + testsText + '
+
+Treatment options discussed:
+' + txText + '
+
+Format the note as follows — use plain text only, no markdown, no bullet symbols except dashes:
+
+DATE: [date]
+CLINICIAN: [name]
+PATIENT: [pet name and species/breed/age/sex]
+OWNER: [client name]
+
+S (SUBJECTIVE):
+[Presenting complaint and owner history in 2-4 sentences]
+
+O (OBJECTIVE):
+[Physical examination findings, vital signs, weight, temperature]
+
+A (ASSESSMENT):
+[Working diagnosis / differential diagnoses in order of likelihood]
+
+P (PLAN):
+[Tests ordered, treatments prescribed, medications, follow-up instructions, owner advice]
+
+AI DECISION SUPPORT NOTE:
+[Brief note that AI-assisted differential was used as decision support, reviewed and validated by attending vet]
+
+Keep the entire note under 400 words. Use professional UK veterinary clinical language.';
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': STATE.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 900,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    var data = await resp.json();
+
+    if (data.content && data.content[0]) {
+      var note = data.content[0].text.trim();
+      document.getElementById('cc-clinical-note').textContent = note;
+      document.getElementById('cc-note-section').style.display = 'block';
+
+      // Scroll note into view
+      document.getElementById('cc-note-section').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      toast('Clinical note generated — click Copy to add to Merlin', 'ok');
+    } else {
+      toast('Could not generate note — check API key', 'err');
+    }
+  } catch(e) {
+    toast('Error generating note — check your connection', 'err');
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Generate clinical note';
+}
+
+function copyClinicalNote() {
+  var note = document.getElementById('cc-clinical-note').textContent;
+  if (!note) { toast('No note to copy yet', 'err'); return; }
+  navigator.clipboard.writeText(note).then(function() {
+    var btn = document.getElementById('cc-note-copy-btn');
+    btn.textContent = 'Copied!';
+    btn.style.background = 'var(--g1)';
+    btn.style.color = '#fff';
+    btn.style.borderColor = 'var(--g1)';
+    setTimeout(function() {
+      btn.textContent = 'Copy';
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2500);
+    toast('Note copied to clipboard — paste into Merlin', 'ok');
+  }).catch(function() {
+    // Fallback for older browsers
+    selectNoteText();
+    document.execCommand('copy');
+    toast('Note selected — press Ctrl+C to copy', 'ok');
+  });
+}
+
+function selectNoteText() {
+  var el = document.getElementById('cc-clinical-note');
+  var range = document.createRange();
+  range.selectNodeContents(el);
+  var sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+function saveCCCase() {
+  var c = {
+    id: Date.now(),
+    date: new Date().toISOString().slice(0,10),
+    client: document.getElementById('cc-client').value || 'Unknown',
+    pet: document.getElementById('cc-pet').value || 'Unknown',
+    weight: document.getElementById('cc-weight').value,
+    temp: document.getElementById('cc-temp').value,
+    conversation: ccHistory,
+    dx: document.getElementById('cc-differentials').innerHTML,
+    tests: document.getElementById('cc-tests').innerHTML,
+    treatments: document.getElementById('cc-treatments').innerHTML,
+    clinicalNote: document.getElementById('cc-clinical-note').textContent || '',
+  };
+  cases.unshift(c);
+  if (cases.length > 100) cases.pop();
+  save();
+  toast('Case saved to history', 'ok');
+}
+
+function printCCReport() {
+  var pet = document.getElementById('cc-pet').value || 'Unknown';
+  var client = document.getElementById('cc-client').value || 'Unknown';
+  var dx = document.getElementById('cc-differentials').innerHTML;
+  var tests = document.getElementById('cc-tests').innerHTML;
+  var tx = document.getElementById('cc-treatments').innerHTML;
+  var convHtml = ccHistory.map(function(m){
+    return '<div style="margin-bottom:8px"><strong>'+(m.role==='user'?'Vet':'AI')+':</strong><br>'+m.content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')+'</div>';
+  }).join('');
+  var win = window.open('','_blank');
+  win.document.write('<html><head><title>Clinical Report - '+pet+'</title><style>body{font-family:sans-serif;max-width:820px;margin:40px auto;font-size:13px}h1{font-size:20px}h2{font-size:15px;margin-top:20px;border-bottom:1px solid #ddd;padding-bottom:4px;color:#1b5e38}.disc{background:#fdf6e3;border:1px solid #e0c060;padding:10px;border-radius:6px;margin-top:16px;font-size:11px}.conv{background:#f5f5f0;padding:12px;border-radius:6px;font-size:12px}</style></head><body>');
+  win.document.write('<h1>Clinical Decision Support Report</h1>');
+  win.document.write('<p><strong>Patient:</strong> '+pet+' &nbsp; <strong>Owner:</strong> '+client+' &nbsp; <strong>Date:</strong> '+new Date().toLocaleDateString('en-GB')+'</p>');
+  win.document.write('<h2>Differential diagnoses</h2>'+(dx||'<p>Not generated</p>'));
+  win.document.write('<h2>Recommended additional tests</h2>'+(tests||'<p>Not generated</p>'));
+  win.document.write('<h2>Treatment options</h2>'+(tx||'<p>Not generated</p>'));
+  win.document.write('<h2>Consultation notes</h2><div class="conv">'+convHtml+'</div>');
+  win.document.write('<div class="disc"><strong>CLINICAL DECISION SUPPORT ONLY</strong> - This report is AI-generated and must be reviewed and validated by the attending veterinary surgeon before any clinical action.</div>');
+  win.document.write('</body></html>');
+  win.print();
+}
+
+function saveCaseToHistory() { saveCCCase(); }
+function clearConsult() { newConsult(); }
+
+function renderCaseHistory() {
+  document.getElementById('case-empty').style.display = cases.length?'none':'block';
+  document.getElementById('case-list').style.display = cases.length?'block':'none';
+  if (!cases.length) return;
+  document.getElementById('case-list').innerHTML = cases.map(function(c){
+    return '<div class="card" style="margin-bottom:14px"><div class="card-head"><div><h3>'+escHtml(c.pet)+' &mdash; '+escHtml(c.client)+'</h3><div class="sub">'+c.date+(c.weight?' &middot; '+c.weight+'kg':'')+(c.temp?' &middot; '+c.temp+'\u00b0C':'')+(c.conversation?' &middot; '+c.conversation.length+' messages':'')+'</div></div><div style="display:flex;gap:6px"><button class="btn btn-sm btn-primary" onclick="showCaseNote('+c.id+')">View note</button><button class="btn btn-sm btn-danger" onclick="deleteCase('+c.id+')">Delete</button></div></div>'+(c.dx?'<div style="font-size:12px;color:var(--muted);margin-top:6px"><strong>Differentials:</strong> '+c.dx.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,200)+'...</div>':'')+(c.clinicalNote?'<details style="margin-top:8px"><summary style="font-size:12px;font-weight:600;cursor:pointer;color:var(--g1)">Clinical note for Merlin</summary><pre style="font-size:11px;line-height:1.7;white-space:pre-wrap;background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:10px;margin-top:6px;overflow-y:auto;max-height:200px">'+escHtml(c.clinicalNote)+'</pre><button class="btn btn-sm btn-primary" style="margin-top:6px" onclick="copyNoteFromHistory(\''+c.id+'\')">'+'Copy to clipboard</button></details>':'')+'</div>';
+  }).join('');
+}
+function deleteCase(id) { cases=cases.filter(function(c){ return c.id!==id; }); save(); renderCaseHistory(); }
+
+function showCaseNote(id) {
+  var c = cases.find(function(x){ return x.id===id; });
+  if (!c) return;
+  nav('clinical');
+  // Restore conversation context
+  ccHistory = c.conversation || [];
+  document.getElementById('cc-client').value = c.client || '';
+  document.getElementById('cc-pet').value = c.pet || '';
+  document.getElementById('cc-weight').value = c.weight || '';
+  document.getElementById('cc-temp').value = c.temp || '';
+  document.getElementById('cc-differentials').innerHTML = c.dx || '';
+  document.getElementById('cc-tests').innerHTML = c.tests || '';
+  document.getElementById('cc-treatments').innerHTML = c.treatments || '';
+  if (c.clinicalNote) {
+    document.getElementById('cc-clinical-note').textContent = c.clinicalNote;
+    document.getElementById('cc-note-section').style.display = 'block';
+  }
+  if (c.dx) {
+    document.getElementById('cc-summary-placeholder').style.display = 'none';
+    document.getElementById('cc-dx-output').style.display = 'block';
+  }
+  // Rebuild chat messages
+  var msgs = document.getElementById('cc-messages');
+  msgs.innerHTML = '<div class="cc-msg system"><div class="cc-bubble">Restored case: ' + escHtml(c.pet) + ' &mdash; ' + escHtml(c.client) + ' (' + c.date + '). Continue adding information or regenerate the clinical note.</div></div>';
+  ccHistory.forEach(function(m) {
+    addCCMsg(m.role === 'user' ? 'vet' : 'ai', m.content);
+  });
+  toast('Case restored — you can continue or regenerate the note', 'ok');
+}
+
+function copyNoteFromHistory(id) {
+  var c = cases.find(function(x){ return x.id===String(id)||x.id===Number(id); });
+  if (!c || !c.clinicalNote) { toast('No clinical note saved for this case', 'err'); return; }
+  navigator.clipboard.writeText(c.clinicalNote).then(function() {
+    toast('Clinical note copied — paste into Merlin', 'ok');
+  }).catch(function() {
+    toast('Could not copy — open the case and use the Copy button', 'warn');
+  });
+}
+
+
+
+// ═══ IMPORT / CSV ═══
+function renderSourceGrid() {
+  const grid = document.getElementById('src-grid');
+  if (!grid) return;
+  grid.innerHTML = SOURCES.map(s=>{
+    const myImps = STATE.imports.filter(i=>i.source===s.id);
+    const n = myImps.reduce((t,i)=>t+i.rows.length,0);
+    return `<div style="background:var(--surface);border:${n?'1.5px solid var(--g3)':'1px solid var(--border)'};border-radius:var(--rl);padding:14px;box-shadow:var(--shadow-sm)">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="width:32px;height:32px;background:${s.pale};border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px">${s.icon}</div>
+        <div><div style="font-size:12px;font-weight:600">${s.name}</div><div style="font-size:10px;color:var(--muted)">${n?n+' records':'No data'}</div></div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="width:100%;background:${s.col};border-color:${s.col}" onclick="document.getElementById('fi-${s.id}').click()">Upload CSV</button>
+    </div>`;
+  }).join('');
+}
+
+function fileIn(inp, src) {
+  const f = inp.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const lines = e.target.result.split('\n').map(l=>l.trim()).filter(l=>l);
+    if (lines.length<2) { toast('CSV appears empty','err'); return; }
+    const headers = parseLine(lines[0]);
+    const rows = lines.slice(1).map(l=>parseLine(l)).filter(r=>r.some(c=>c));
+    const fieldMap = autoMapAll(headers, src);
+    const parsed = rows.map(row=>{
+      const rec={_src:src,_imp:f.name.replace('.csv',''),_month:new Date().toISOString().slice(0,7)};
+      headers.forEach((h,i)=>{
+        if(fieldMap[h]){
+          let v=(row[i]||'').trim();
+          if(['amount','spend','cpc'].includes(fieldMap[h])) v=parseFloat(v.replace(/[£$€,\s]/g,''))||0;
+          if(['impressions','clicks','conversions'].includes(fieldMap[h])) v=parseInt(v.replace(/[,\s]/g,''))||0;
+          rec[fieldMap[h]]=v;
+        }
+      });
+      if(!rec.client) rec.client='Unknown';
+      if(!rec.status) rec.status='Unknown';
+      if(!rec.type) rec.type=guessType(rec.service||'');
+      if(!rec.species) rec.species=guessSpecies(rec.pet||'');
+      return rec;
+    }).filter(r=>r.amount||r.service||r.test||r.campaign||r.finding);
+    STATE.imports.push({id:Date.now(),source:src,label:f.name.replace('.csv',''),month:new Date().toISOString().slice(0,7),imported:new Date().toISOString(),rows:parsed});
+    STATE.imports.sort((a,b)=>a.month.localeCompare(b.month));
+    save();
+    toast(`Imported ${parsed.length} records from ${SOURCES.find(s2=>s2.id===src)?.name||src}`, 'ok');
+    renderImportHistory();
+  };
+  reader.readAsText(f);
+  inp.value='';
+}
+
+function parseLine(line) {
+  const res=[]; let cur=''; let q=false;
+  for(let ch of line) { if(ch==='"'){q=!q;}else if(ch===','&&!q){res.push(cur.trim());cur='';}else cur+=ch; }
+  res.push(cur.trim()); return res;
+}
+function autoMapAll(headers, src) {
+  const m={};
+  headers.forEach(h=>{
+    const c=h.toLowerCase().replace(/[^a-z0-9]/g,'');
+    if(/client|owner/.test(c)) m[h]='client';
+    else if(/pet|animal|patient/.test(c)) m[h]='pet';
+    else if(/species|breed/.test(c)) m[h]='species';
+    else if(/service|procedure|treatment|item/.test(c)) m[h]='service';
+    else if(/vet|clinician|staff|doctor/.test(c)) m[h]='vet';
+    else if(/date|appt/.test(c)) m[h]='date';
+    else if(/amount|total|fee|charge|price|cost/.test(c)) m[h]='amount';
+    else if(src==='google'&&/spend/.test(c)) m[h]='spend';
+    else if(/status|paid/.test(c)) m[h]='status';
+    else if(/categ|type/.test(c)) m[h]='type';
+    else if(/test|assay/.test(c)) m[h]='test';
+    else if(/result|value/.test(c)) m[h]='result';
+    else if(/find|diagnos/.test(c)) m[h]='finding';
+    else if(/outcome/.test(c)) m[h]='outcome';
+    else if(/campaign/.test(c)) m[h]='campaign';
+    else if(/impress/.test(c)) m[h]='impressions';
+    else if(/click/.test(c)) m[h]='clicks';
+    else if(src==='google'&&/spend|cost/.test(c)) m[h]='spend';
+    else if(/cpc/.test(c)) m[h]='cpc';
+    else if(/ctr/.test(c)) m[h]='ctr';
+  });
+  return m;
+}
+function guessType(s) {
+  const t=s.toLowerCase();
+  if(/vacc|boost|prevent|flea|worm/.test(t)) return 'Preventive';
+  if(/neut|spay|castrat|cruc|patel|keyhole|surg|op/.test(t)) return 'Surgery';
+  if(/consult|check|exam/.test(t)) return 'Consultation';
+  if(/dental|teeth|scale/.test(t)) return 'Dentistry';
+  if(/xray|x-ray|radio|scan|ultra|diagnos|mri/.test(t)) return 'Diagnostics';
+  if(/laser|physio|therapy/.test(t)) return 'Therapy';
+  if(/hospit|admit|board/.test(t)) return 'Hospitalisation';
+  if(/cancer|oncol|tumour/.test(t)) return 'Oncology';
+  return 'Other';
+}
+function guessSpecies(p) {
+  const s=p.toLowerCase();
+  if(/cat|kitten|feline/.test(s)) return 'Cat';
+  if(/dog|puppy|canine/.test(s)) return 'Dog';
+  if(/rabbit/.test(s)) return 'Rabbit';
+  return 'Other';
+}
+
+function renderImportHistory() {
+  const el = document.getElementById('import-hist');
+  if (!el) return;
+  if (!STATE.imports.length) { el.innerHTML='<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px">No imports yet.</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Source</th><th>Label</th><th>Period</th><th>Records</th><th>Value</th><th>Imported</th><th></th></tr></thead><tbody>` +
+  [...STATE.imports].reverse().map(imp=>{
+    const s=SOURCES.find(x=>x.id===imp.source)||{name:imp.source,col:'#888',pale:'#eee'};
+    const rev=imp.rows.reduce((t,r)=>t+(r.amount||r.spend||0),0);
+    return `<tr><td><span class="badge b-type" style="background:${s.pale};color:${s.col}">${s.name}</span></td><td>${imp.label}</td><td>${imp.month}</td><td>${imp.rows.length}</td><td>${rev?'£'+Math.round(rev).toLocaleString():'—'}</td><td style="color:var(--muted);font-size:11px">${imp.imported.slice(0,10)}</td><td><button class="btn btn-sm btn-danger" onclick="delImport(${imp.id})">Delete</button></td></tr>`;
+  }).join('') + '</tbody></table>';
+}
+
+function delImport(id) { if(!confirm('Delete this import?')) return; STATE.imports=STATE.imports.filter(i=>i.id!==id); save(); toast('Deleted','ok'); }
+function clearAll() { if(!confirm('Delete all data?')) return; STATE.imports=[]; save(); toast('Cleared','ok'); }
+
+// ═══ ALERTS ═══
+function computeAlerts() {
+  const alerts=[];
+  const t=STATE.alertThresholds;
+  const finRows=srcRows('merlin','gocardless');
+  if(finRows.length){
+    const rev=finRows.reduce((s,r)=>s+(r.amount||0),0);
+    const owed=finRows.filter(r=>/outstanding|unpaid/i.test(r.status||'')).reduce((s,r)=>s+(r.amount||0),0);
+    const owedPct=rev>0?(owed/rev*100):0;
+    if(owedPct>(t.outstanding_pct||15)) alerts.push({level:'red',src:'Finance',msg:`Outstanding balance is ${owedPct.toFixed(1)}% of revenue (threshold: ${t.outstanding_pct}%)`});
+    const gcImps=STATE.imports.filter(i=>i.source==='gocardless');
+    if(gcImps.length){
+      const fails=srcRows('gocardless').filter(r=>/fail/i.test(r.status||'')).length;
+      const total=srcRows('gocardless').length;
+      if(total>0&&(fails/total*100)>(t.dd_fail||5)) alerts.push({level:'red',src:'GoCardless',msg:`Direct debit failure rate is ${(fails/total*100).toFixed(1)}% (threshold: ${t.dd_fail}%)`});
+    }
+    if(STATE.imports.length>=2){
+      const grouped={};
+      STATE.imports.filter(i=>['merlin','gocardless'].includes(i.source)).forEach(imp=>{if(!grouped[imp.label])grouped[imp.label]=0;grouped[imp.label]+=imp.rows.reduce((s,r)=>s+(r.amount||0),0);});
+      const vals=Object.values(grouped);
+      if(vals.length>=2){
+        const last=vals[vals.length-1],prev=vals[vals.length-2];
+        if(prev>0){
+          const drop=(prev-last)/prev*100;
+          if(drop>(t.rev_drop||15)) alerts.push({level:'red',src:'Revenue',msg:`Revenue dropped ${drop.toFixed(1)}% period-on-period (threshold: ${t.rev_drop}%)`});
+        }
+      }
+    }
+  }
+  const gAds=STATE.imports.filter(i=>i.source==='google');
+  if(gAds.length>=2){
+    const getCPC=imp=>{const r=imp.rows.filter(r=>r.cpc>0);return r.length?r.reduce((s,x)=>s+x.cpc,0)/r.length:0;};
+    const last=getCPC(gAds[gAds.length-1]),prev=getCPC(gAds[gAds.length-2]);
+    if(prev>0){const rise=(last-prev)/prev*100;if(rise>(t.cpc_rise||25)) alerts.push({level:'amber',src:'Google Ads',msg:`CPC rose ${rise.toFixed(1)}% (threshold: ${t.cpc_rise}%)`});}
+  }
+  return alerts;
+}
+
+function checkAlerts() {
+  const a=computeAlerts();
+  const ab=document.getElementById('sb-alert-count');
+  if(a.length){ab.style.display='inline';ab.textContent=a.length;}else ab.style.display='none';
+}
+
+function renderAlertPage() {
+  const alerts=computeAlerts();
+  const al=document.getElementById('alert-list');
+  if(!alerts.length){al.innerHTML='<div class="card" style="margin-bottom:16px;text-align:center;padding:24px;color:var(--muted)">No active alerts — all thresholds within range.</div>';return;}
+  al.innerHTML=alerts.map(a=>`<div class="alert-banner ${a.level}" style="margin-bottom:8px"><div class="alert-dot2"></div><div><strong>${a.src}:</strong> ${a.msg}</div></div>`).join('');
+}
+
+function renderAlertSettings() {
+  const el=document.getElementById('alert-settings');
+  if(!el) return;
+  el.innerHTML=Object.entries(DEFAULT_THRESHOLDS).map(([k,cfg])=>`
+    <div style="background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:12px">
+      <label class="fl">${cfg.label}</label>
+      <input type="number" id="as-${k}" value="${STATE.alertThresholds[k]||cfg.val}" min="0" max="9999" style="width:80px">
+    </div>`).join('');
+}
+function saveAlerts(){Object.keys(DEFAULT_THRESHOLDS).forEach(k=>{const el=document.getElementById('as-'+k);if(el)STATE.alertThresholds[k]=parseFloat(el.value)||0;});save();checkAlerts();toast('Thresholds saved','ok');}
+function resetAlerts(){Object.keys(DEFAULT_THRESHOLDS).forEach(k=>STATE.alertThresholds[k]=DEFAULT_THRESHOLDS[k].val);renderAlertSettings();saveAlerts();}
+
+// ═══ MERLIN API ═══
+async function testMerlinAPI() {
+  const base=document.getElementById('merlin-base').value;
+  const token=document.getElementById('merlin-token').value;
+  if(!token){toast('Enter your API token first','err');return;}
+  document.getElementById('merlin-status-txt').textContent='Testing connection...';
+  document.getElementById('merlin-dot').className='status-dot';
+  try {
+    const resp=await fetch(`${base}/ping`,{headers:{'Authorization':'Bearer '+token}});
+    if(resp.ok){
+      document.getElementById('merlin-dot').className='status-dot ok';
+      document.getElementById('merlin-status-txt').textContent='Connected — API responding';
+      toast('Merlin API connected successfully','ok');
+    } else {
+      document.getElementById('merlin-dot').className='status-dot err';
+      document.getElementById('merlin-status-txt').textContent=`API returned ${resp.status} — check your credentials`;
+      toast('API connection failed — check credentials','err');
+    }
+  } catch(e) {
+    document.getElementById('merlin-dot').className='status-dot err';
+    document.getElementById('merlin-status-txt').textContent='Connection failed — check URL and token';
+    toast('Cannot reach Merlin API — verify your credentials with MWI','err');
+  }
+}
+function saveMerlinConfig(){STATE.merlinCfg={base:document.getElementById('merlin-base').value,token:document.getElementById('merlin-token').value,practice:document.getElementById('merlin-practice').value,freq:document.getElementById('merlin-freq').value};save();toast('Merlin config saved','ok');}
+function syncNow(){toast('Sync requires live API credentials — configure above','warn');}
+
+// ═══ DEMO DATA ═══
+function loadDemo() {
+  const demoRows = [
+    {_src:'merlin',_imp:'Oct 25 — Merlin',_month:'2025-10',client:'Sarah Mitchell',pet:'Buddy',species:'Dog',service:'Vaccination booster',vet:'Dr Kobi',date:'2025-10-12',amount:68,status:'Paid',type:'Preventive'},
+    {_src:'merlin',_imp:'Oct 25 — Merlin',_month:'2025-10',client:'James Patel',pet:'Mochi',species:'Cat',service:'Neutering',vet:'Dr Anat',date:'2025-10-14',amount:245,status:'Paid',type:'Surgery'},
+    {_src:'merlin',_imp:'Oct 25 — Merlin',_month:'2025-10',client:'Carol Simmons',pet:'Rex',species:'Dog',service:'Cruciate repair',vet:'Dr Kobi',date:'2025-10-18',amount:1850,status:'Paid',type:'Surgery'},
+    {_src:'merlin',_imp:'Nov 25 — Merlin',_month:'2025-11',client:'Tom Hughes',pet:'Daisy',species:'Dog',service:'Annual health check',vet:'Dr Anat',date:'2025-11-04',amount:72,status:'Paid',type:'Consultation'},
+    {_src:'merlin',_imp:'Nov 25 — Merlin',_month:'2025-11',client:'Emily Newton',pet:'Luna',species:'Cat',service:'Dental scale & polish',vet:'Dr Kobi',date:'2025-11-12',amount:185,status:'Paid',type:'Dentistry'},
+    {_src:'merlin',_imp:'Nov 25 — Merlin',_month:'2025-11',client:'Anna Brierley',pet:'Poppy',species:'Rabbit',service:'Consultation',vet:'Dr Anat',date:'2025-11-20',amount:55,status:'Outstanding',type:'Consultation'},
+    {_src:'merlin',_imp:'Dec 25 — Merlin',_month:'2025-12',client:'David Walsh',pet:'Charlie',species:'Dog',service:'X-ray diagnostics',vet:'Dr Kobi',date:'2025-12-08',amount:320,status:'Paid',type:'Diagnostics'},
+    {_src:'merlin',_imp:'Dec 25 — Merlin',_month:'2025-12',client:'Liz Garner',pet:'Suki',species:'Cat',service:'Vaccination',vet:'Dr Anat',date:'2025-12-14',amount:62,status:'Paid',type:'Preventive'},
+    {_src:'merlin',_imp:'Jan 26 — Merlin',_month:'2026-01',client:'Mark Fowler',pet:'Tilly',species:'Dog',service:'Keyhole spay',vet:'Dr Kobi',date:'2026-01-09',amount:680,status:'Paid',type:'Surgery'},
+    {_src:'merlin',_imp:'Jan 26 — Merlin',_month:'2026-01',client:'Priya Sharma',pet:'Cleo',species:'Cat',service:'Laser therapy',vet:'Dr Anat',date:'2026-01-18',amount:95,status:'Outstanding',type:'Therapy'},
+    {_src:'merlin',_imp:'Feb 26 — Merlin',_month:'2026-02',client:'Ben Lawson',pet:'Bear',species:'Dog',service:'Patellar luxation repair',vet:'Dr Kobi',date:'2026-02-05',amount:1200,status:'Paid',type:'Surgery'},
+    {_src:'merlin',_imp:'Feb 26 — Merlin',_month:'2026-02',client:'Phil Yates',pet:'Bruno',species:'Dog',service:'Oncology consult',vet:'Dr Kobi',date:'2026-02-20',amount:390,status:'Paid',type:'Oncology'},
+    {_src:'merlin',_imp:'Mar 26 — Merlin',_month:'2026-03',client:'Kim Shah',pet:'Fizz',species:'Cat',service:'Vaccination',vet:'Dr Anat',date:'2026-03-10',amount:62,status:'Paid',type:'Preventive'},
+    {_src:'merlin',_imp:'Mar 26 — Merlin',_month:'2026-03',client:'Gary Blunt',pet:'Zara',species:'Dog',service:'Hospitalisation (2 nights)',vet:'Dr Kobi',date:'2026-03-15',amount:540,status:'Outstanding',type:'Hospitalisation'},
+    {_src:'gocardless',_imp:'Q4 25 — GoCardless',_month:'2025-10',client:'Sarah Mitchell',amount:22,status:'Paid',date:'2025-10-01'},
+    {_src:'gocardless',_imp:'Q4 25 — GoCardless',_month:'2025-11',client:'Tom Hughes',amount:22,status:'Failed',date:'2025-11-01'},
+    {_src:'gocardless',_imp:'Q1 26 — GoCardless',_month:'2026-01',client:'Anna Brierley',amount:22,status:'Outstanding',date:'2026-01-01'},
+    {_src:'google',_imp:'Q4 25 — Google Ads',_month:'2025-10',campaign:'New clients Hatfield',period:'Oct 25',impressions:4200,clicks:88,spend:142,cpc:1.61,ctr:2.1},
+    {_src:'google',_imp:'Q1 26 — Google Ads',_month:'2026-01',campaign:'New clients Hatfield',period:'Jan 26',impressions:5800,clicks:124,spend:198,cpc:1.60,ctr:2.1},
+    {_src:'google',_imp:'Q1 26 — Google Ads',_month:'2026-03',campaign:'Cat health plans',period:'Mar 26',impressions:2900,clicks:48,spend:96,cpc:2.00,ctr:1.7},
+    {_src:'idexx',_imp:'Jan 26 — IDEXX',_month:'2026-01',client:'Ben Lawson',pet:'Bear',test:'Biochemistry panel',result:'ALT 180 IU/L',date:'2026-01-20',outcome:'Elevated liver enzymes',amount:95},
+    {_src:'signal',_imp:'Feb 26 — Signal Pet',_month:'2026-02',client:'Ben Lawson',pet:'Bear',date:'2026-02-08',finding:'Suspected cardiomegaly',confidence:'78%',recommendation:'Echo advised'},
+  ];
+  const grouped={};
+  demoRows.forEach(r=>{if(!grouped[r._imp])grouped[r._imp]={id:Date.now()+Math.random(),source:r._src,label:r._imp,month:r._month,imported:new Date().toISOString(),rows:[]};grouped[r._imp].rows.push(r);});
+  STATE.imports=[...Object.values(grouped)].sort((a,b)=>a.month.localeCompare(b.month));
+  save();
+  renderDashboard();
+  toast(`Demo data loaded — ${allRows().length} records across ${STATE.imports.length} imports`,'ok');
+}
+
+// ═══ TOAST ═══
+let _tt;
+function toast(msg, type='ok') {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast ${type} show`;
+  clearTimeout(_tt); _tt=setTimeout(()=>t.classList.remove('show'),3500);
+}
+</script>
+</body>
+</html>
