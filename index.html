@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Village Vet — AI Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root{
+  --g1:#1b5e38;--g2:#277a4a;--g3:#4aa572;--g4:#c2e0ce;--g5:#eaf4ee;--g1d:#0f3d24;
+  --ink:#0c1a0e;--paper:#f4f1ea;--surface:#fff;
+  --amber:#c47f12;--ap:#fdf6e3;--red:#9b2517;--rp:#fdf0ee;--blue:#1a3f7a;--bp:#e8f0fc;
+  --muted:#5c6e5c;--muted2:#8a9e8a;
+  --border:rgba(12,26,14,0.10);--borderS:rgba(12,26,14,0.20);
+  --sh:0 1px 8px rgba(12,26,14,0.08);--shM:0 4px 20px rgba(12,26,14,0.13);
+  --r:10px;--rl:14px;--tr:0.16s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh;}
+#login-screen{display:none;position:fixed;inset:0;background:var(--g1d);z-index:9999;align-items:center;justify-content:center;}
+.lc{background:var(--surface);border-radius:16px;padding:40px 36px;width:min(380px,94vw);box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;}
+.lc-icon{width:52px;height:52px;background:var(--g1);border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;border:2px solid rgba(255,255,255,0.15);}
+.lc h1{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:4px;}
+.lc p{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.lf{margin-bottom:14px;text-align:left;}
+.lf label{display:block;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;}
+.lf input{width:100%;padding:10px 13px;border:1.5px solid #d0ddd0;border-radius:9px;font-size:14px;font-family:'DM Sans',sans-serif;transition:border var(--tr);}
+.lf input:focus{outline:none;border-color:var(--g1);box-shadow:0 0 0 3px rgba(27,94,56,0.12);}
+.lb{width:100%;padding:11px;background:var(--g1);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background var(--tr);margin-top:4px;}
+.lb:hover{background:var(--g2);}
+.le{color:var(--red);font-size:12px;margin-top:8px;min-height:18px;}
+.lh{font-size:11px;color:var(--muted2);margin-top:14px;}
+#app{display:none;min-height:100vh;flex-direction:column;}
+.topbar{background:var(--g1d);color:#fff;height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;box-shadow:0 2px 12px rgba(0,0,0,0.2);position:sticky;top:0;z-index:100;}
+.tb-brand{display:flex;align-items:center;gap:10px;}
+.tb-icon{width:32px;height:32px;background:rgba(255,255,255,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.15);}
+.tb-name{font-family:'Playfair Display',serif;font-size:17px;}
+.tb-tag{font-size:10px;opacity:0.5;letter-spacing:0.08em;text-transform:uppercase;margin-top:-2px;}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.tb-pill{font-size:11px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);padding:4px 10px;border-radius:20px;}
+.tb-btn{font-size:11px;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.85);transition:var(--tr);}
+.tb-btn:hover{background:rgba(255,255,255,0.18);color:#fff;}
+.nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 20px;overflow-x:auto;gap:0;}
+.nt{font-size:13px;font-weight:500;padding:13px 15px;cursor:pointer;color:var(--muted);border-bottom:2.5px solid transparent;white-space:nowrap;transition:var(--tr);display:flex;align-items:center;gap:6px;}
+.nt:hover{color:var(--ink);}
+.nt.on{color:var(--g1);border-bottom-color:var(--g1);}
+.nb{font-size:10px;background:var(--rp);color:var(--red);padding:1px 6px;border-radius:8px;font-weight:700;}
+.page{display:none;padding:24px;max-width:1240px;margin:0 auto;width:100%;}
+.page.on{display:block;}
+.ph{margin-bottom:20px;}
+.ph h1{font-family:'Playfair Display',serif;font-size:26px;}
+.ph p{font-size:13px;color:var(--muted);margin-top:3px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:18px 20px;box-shadow:var(--sh);}
+.ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.ch h3{font-family:'Playfair Display',serif;font-size:16px;}
+.ch .sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.grid{display:grid;gap:16px;margin-bottom:18px;}
+.g2{grid-template-columns:1fr 1fr;}.g3{grid-template-columns:2fr 1fr 1fr;}.gw{grid-template-columns:1.8fr 1fr;}
+.cw{position:relative;width:100%;}.h160{height:160px;}.h200{height:200px;}.h240{height:240px;}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;box-shadow:var(--sh);}
+.ml{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:5px;}
+.mv{font-family:'Playfair Display',serif;font-size:26px;line-height:1.1;}
+.md{font-size:11px;margin-top:3px;font-weight:500;}
+.up{color:var(--g2);}.dn{color:var(--red);}.neu{color:var(--muted);}
+.btn{padding:8px 16px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:var(--tr);border:1px solid var(--borderS);background:var(--surface);color:var(--ink);}
+.btn:hover{background:var(--g5);color:var(--g1);border-color:var(--g3);}
+.btnP{background:var(--g1);color:#fff;border-color:var(--g1);}.btnP:hover{background:var(--g2);}
+.btnS{font-size:12px;padding:5px 12px;}.btnD{color:var(--red);border-color:var(--red);}.btnD:hover{background:var(--rp);}
+.notice{background:var(--bp);border:1px solid #b8cef0;border-radius:var(--r);padding:11px 14px;font-size:13px;color:var(--blue);display:flex;gap:9px;align-items:flex-start;margin-bottom:16px;line-height:1.5;}
+.notice.warn{background:var(--ap);border-color:#e0c060;color:#5c3d00;}.notice.clin{background:#fdf4e3;border-color:#e8c87a;color:#5c3d00;}
+.alert-bar{display:flex;align-items:flex-start;gap:10px;padding:11px 15px;border-radius:var(--r);margin-bottom:8px;font-size:13px;border:1px solid;}
+.alert-bar.red{background:var(--rp);border-color:#f5b8b0;color:var(--red);}
+.alert-bar.amber{background:var(--ap);border-color:#e8c86a;color:#7a4a00;}
+.adot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0;margin-top:4px;}
+.chat-layout{display:grid;grid-template-columns:1fr 280px;gap:16px;height:calc(100vh - 180px);min-height:500px;}
+.chat-main{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh);}
+.chat-msgs{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;}
+.cmsg{display:flex;gap:9px;max-width:88%;}
+.cmsg.user{align-self:flex-end;flex-direction:row-reverse;}
+.cbubble{padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.6;border:1px solid var(--border);}
+.cmsg.ai .cbubble{background:var(--surface);border-radius:4px 14px 14px 14px;}
+.cmsg.user .cbubble{background:var(--g1);color:#fff;border-color:var(--g1);border-radius:14px 4px 14px 14px;}
+.cavatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;margin-top:2px;}
+.cmsg.ai .cavatar{background:var(--g5);border:1px solid var(--g4);}
+.cmsg.user .cavatar{background:var(--g1);color:#fff;font-size:10px;font-weight:700;}
+.chat-input-area{border-top:1px solid var(--border);padding:12px 14px;background:var(--paper);}
+.ci-row{display:flex;gap:8px;align-items:flex-end;}
+.ci-row textarea{flex:1;border:1px solid var(--borderS);border-radius:10px;padding:9px 13px;font-family:'DM Sans',sans-serif;font-size:13px;resize:none;min-height:40px;max-height:100px;background:var(--surface);}
+.ci-row textarea:focus{outline:none;border-color:var(--g2);}
+.send-btn{width:38px;height:38px;background:var(--g1);border:none;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--tr);}
+.send-btn:hover{background:var(--g2);}.send-btn:disabled{background:var(--g4);cursor:not-allowed;}
+.qbtns{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px;}
+.qb{font-size:11px;padding:3px 9px;border:1px solid var(--borderS);border-radius:20px;cursor:pointer;background:var(--surface);color:var(--muted);transition:var(--tr);}
+.qb:hover{background:var(--g5);color:var(--g1);}
+.chat-side{display:flex;flex-direction:column;gap:12px;overflow-y:auto;}
+.ctx-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px;box-shadow:var(--sh);}
+.ctx-card h4{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:9px;}
+.ctx-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.ctx-row:last-child{border-bottom:none;}
+.ctx-v{font-weight:600;}
+.thinking{display:flex;gap:4px;align-items:center;}
+.thinking span{width:6px;height:6px;border-radius:50%;background:var(--g3);animation:tp 1.2s ease-in-out infinite;}
+.thinking span:nth-child(2){animation-delay:0.2s;}.thinking span:nth-child(3){animation-delay:0.4s;}
+@keyframes tp{0%,80%,100%{opacity:.3;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
+.clin-layout{display:grid;grid-template-columns:1fr 380px;gap:16px;height:calc(100vh - 175px);min-height:580px;}
+.cc-panel{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh);}
+.cc-head{padding:11px 16px;border-bottom:1px solid var(--border);background:var(--g5);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;}
+.cc-head h3{font-family:'Playfair Display',serif;font-size:15px;color:var(--g1);}
+.cc-strip{display:flex;gap:12px;padding:8px 16px;border-bottom:1px solid var(--border);background:var(--paper);flex-wrap:wrap;align-items:center;font-size:12px;}
+.cc-strip label{color:var(--muted);font-size:11px;margin-right:3px;}
+.cc-strip input{border:1px solid var(--borderS);border-radius:6px;padding:4px 8px;font-size:12px;font-family:'DM Sans',sans-serif;background:var(--surface);}
+.cc-msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;}
+.cm{display:flex;gap:8px;max-width:92%;}
+.cm.vet{align-self:flex-end;flex-direction:row-reverse;}
+.cm.sys{align-self:center;max-width:96%;}
+.cb{padding:9px 13px;border-radius:14px;font-size:13px;line-height:1.6;border:1px solid var(--border);}
+.cm.ai .cb{background:var(--surface);border-radius:4px 14px 14px 14px;}
+.cm.vet .cb{background:var(--g1);color:#fff;border-color:var(--g1);border-radius:14px 4px 14px 14px;}
+.cm.sys .cb{background:var(--bp);border-color:var(--border);color:var(--blue);font-size:12px;border-radius:10px;}
+.ca{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:2px;}
+.cm.ai .ca{background:var(--g5);border:1px solid var(--g4);}
+.cm.vet .ca{background:var(--g1);color:#fff;font-weight:700;}
+.cc-toolbar{display:flex;gap:5px;padding:7px 14px;border-top:1px solid var(--border);flex-wrap:wrap;background:var(--paper);}
+.ct{display:flex;align-items:center;gap:4px;font-size:11px;padding:4px 9px;border:1px solid var(--borderS);border-radius:20px;cursor:pointer;background:var(--surface);color:var(--muted);transition:var(--tr);white-space:nowrap;}
+.ct:hover{background:var(--g5);color:var(--g1);}
+.ct.rec-on{background:var(--red);color:#fff;border-color:var(--red);}
+.cc-input-area{border-top:1px solid var(--border);padding:9px 14px;background:var(--paper);}
+.cc-row{display:flex;gap:8px;align-items:flex-end;}
+.cc-row textarea{flex:1;border:1px solid var(--borderS);border-radius:10px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:13px;resize:none;min-height:38px;max-height:90px;background:var(--surface);}
+.cc-row textarea:focus{outline:none;border-color:var(--g2);}
+.cc-send{width:36px;height:36px;background:var(--g1);border:none;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:var(--tr);}
+.cc-send:hover{background:var(--g2);}.cc-send:disabled{background:var(--g4);cursor:not-allowed;}
+.ccq{display:flex;gap:4px;flex-wrap:wrap;padding:5px 14px 0;}
+.ccqb{font-size:11px;padding:3px 8px;border:1px solid var(--borderS);border-radius:20px;cursor:pointer;background:var(--surface);color:var(--muted);transition:var(--tr);}
+.ccqb:hover{background:var(--g5);color:var(--g1);}
+.rec-timer{font-size:11px;color:var(--red);font-weight:700;}
+.dx-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;}
+.dx-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--g5);}
+.dx-head h3{font-family:'Playfair Display',serif;font-size:15px;color:var(--g1);}
+.dx-body{flex:1;overflow-y:auto;padding:14px 16px;}
+.dxt{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;margin-top:14px;display:flex;align-items:center;gap:5px;}
+.dxt:first-child{margin-top:0;}
+.dx-item{border-radius:var(--r);border:1px solid var(--border);margin-bottom:6px;background:var(--surface);overflow:hidden;transition:box-shadow var(--tr);}
+.dx-item:hover{box-shadow:var(--sh);}
+.dx-rank{display:flex;align-items:stretch;}
+.dx-rank-num{width:28px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;border-radius:var(--r) 0 0 var(--r);}
+.dx-rank-body{flex:1;padding:9px 11px;}
+.dx-ih{display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:4px;}
+.dx-name{font-size:13px;font-weight:600;line-height:1.3;}
+.conf{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.cH{background:var(--g5);color:var(--g1);}.cM{background:var(--ap);color:var(--amber);}.cL{background:var(--bp);color:var(--blue);}
+.dx-sub{font-size:11px;color:var(--muted);line-height:1.55;}
+.dx-bar-wrap{margin-top:6px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;}
+.dx-bar{height:100%;border-radius:2px;transition:width .6s ease;}
+.tx-item{padding:8px 11px;border-radius:var(--r);border:1px solid var(--border);margin-bottom:5px;background:var(--surface);font-size:12px;line-height:1.55;display:flex;gap:9px;align-items:flex-start;}
+.tx-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;margin-top:1px;}
+.tx-body strong{display:block;font-size:12px;font-weight:600;margin-bottom:2px;}
+.tx-body{flex:1;}
+.result-slot{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:10px;transition:border-color var(--tr);}
+.result-slot.loaded{border-color:var(--g3);}
+.rs-head{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;}
+.rs-head:hover{background:var(--g5);}
+.rs-icon{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.rs-info{flex:1;min-width:0;}
+.rs-name{font-size:12px;font-weight:600;}
+.rs-status{font-size:11px;color:var(--muted);}
+.rs-btn{font-size:11px;padding:4px 10px;border:1px solid var(--borderS);border-radius:6px;cursor:pointer;background:var(--surface);font-family:'DM Sans',sans-serif;white-space:nowrap;transition:var(--tr);}
+.rs-btn:hover{background:var(--g1);color:#fff;border-color:var(--g1);}
+.rs-body{display:none;padding:10px 14px;border-top:1px solid var(--border);background:var(--paper);}
+.rs-body.open{display:block;}
+.rs-preview{max-width:100%;max-height:180px;border-radius:6px;margin-bottom:8px;display:block;}
+.rs-pdf-name{font-size:11px;color:var(--blue);background:var(--bp);padding:6px 10px;border-radius:6px;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.rs-textarea{width:100%;min-height:80px;max-height:140px;border:1px solid var(--borderS);border-radius:7px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:12px;resize:vertical;background:var(--surface);}
+.rs-textarea:focus{outline:none;border-color:var(--g2);}
+.rs-actions{display:flex;gap:6px;margin-top:7px;}
+.disc{background:var(--ap);border:1px solid #e0c060;border-radius:var(--r);padding:9px 11px;font-size:11px;color:#5c3d00;line-height:1.5;margin-bottom:12px;}
+.note-box{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:11px 13px;font-size:11px;line-height:1.8;font-family:monospace;white-space:pre-wrap;max-height:240px;overflow-y:auto;cursor:text;margin-top:8px;}
+.note-hint{font-size:10px;color:var(--muted2);margin-top:4px;}
+.pt-hd{padding:11px 16px;border-bottom:1px solid var(--border);background:var(--g5);display:flex;justify-content:space-between;align-items:center;}
+.pt-hd h3{font-family:'Playfair Display',serif;font-size:14px;color:var(--g1);}
+.pt-row{display:flex;align-items:center;padding:8px 16px;border-bottom:1px solid var(--border);font-size:13px;gap:8px;}
+.pt-row:last-child{border-bottom:none;}.pt-row:hover{background:var(--g5);}
+.pts{flex:1;font-weight:500;}.ptp{min-width:60px;text-align:right;font-weight:600;}.ptb{min-width:60px;text-align:right;font-size:11px;color:var(--muted);}.ptf{min-width:20px;text-align:center;font-size:13px;}
+.tbl{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh);margin-bottom:18px;}
+.tbl-hd{padding:11px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.tbl-hd h3{font-family:'Playfair Display',serif;font-size:15px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{padding:8px 14px;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;border-bottom:1px solid var(--border);background:var(--g5);text-align:left;}
+td{padding:9px 14px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}tr:hover td{background:var(--g5);}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700;}
+.bpaid{background:var(--g5);color:var(--g1);}.bowed{background:var(--ap);color:var(--amber);}.btype{background:var(--bp);color:var(--blue);}
+.src-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.src-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rl);padding:14px;box-shadow:var(--sh);transition:var(--tr);}
+.src-card.has{border-color:var(--g3);}
+.src-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:8px;}
+.bar-list{display:flex;flex-direction:column;gap:8px;}
+.bar-row{display:flex;align-items:center;gap:9px;font-size:12px;}
+.bar-lbl{width:130px;flex-shrink:0;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-track{flex:1;height:9px;background:var(--g5);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;background:var(--g1);transition:width .7s cubic-bezier(.34,1.56,.64,1);}
+.bar-val{width:58px;text-align:right;font-weight:600;}
+.pbt{font-size:11px;padding:4px 10px;border:1px solid var(--borderS);border-radius:6px;cursor:pointer;background:var(--surface);color:var(--muted);font-family:'DM Sans',sans-serif;transition:var(--tr);white-space:nowrap;}
+.pbt:hover{background:var(--g5);color:var(--g1);border-color:var(--g3);}
+.pbt.on{background:var(--g1);color:#fff;border-color:var(--g1);}
+.svc-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.svc-row:last-child{border-bottom:none;}
+.svc-rank{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
+.svc-name{flex:1;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.svc-count{font-size:11px;color:var(--muted);min-width:30px;text-align:right;}
+.svc-bar-wrap{width:70px;height:6px;background:var(--g5);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.svc-bar-fill{height:100%;border-radius:3px;background:var(--g1);}
+.svc-val{min-width:55px;text-align:right;font-weight:600;color:var(--g1);}
+.empty{text-align:center;padding:50px 20px;}
+.ei{font-size:42px;margin-bottom:10px;}
+.empty h3{font-family:'Playfair Display',serif;font-size:21px;margin-bottom:6px;}
+.empty p{font-size:13px;color:var(--muted);max-width:340px;margin:0 auto 16px;}
+.toast{position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 18px;border-radius:var(--r);font-size:13px;font-weight:500;box-shadow:var(--shM);transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);max-width:340px;display:flex;align-items:center;gap:8px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.tok{background:var(--g1);color:#fff;}.terr{background:var(--red);color:#fff;}.twarn{background:var(--amber);color:#fff;}
+.api-inp{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:6px;color:var(--ink);font-size:12px;padding:7px 10px;font-family:'DM Sans',sans-serif;}
+.api-inp:focus{outline:none;border-color:var(--g2);}
+.sdot{width:6px;height:6px;border-radius:50%;background:#aaa;flex-shrink:0;display:inline-block;}
+.sdot.ok{background:#4ade80;}
+@media(max-width:1000px){.metrics{grid-template-columns:repeat(3,1fr);}.src-grid{grid-template-columns:repeat(2,1fr);}.gw,.g3{grid-template-columns:1fr;}}
+@media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr);}.g2{grid-template-columns:1fr;}.chat-layout,.clin-layout{grid-template-columns:1fr;height:auto;}.page{padding:14px;}}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="lc">
+    <div class="lc-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+        <path d="M12 2c2.8 0 5 2.2 5 5 0 3-2 5.8-5 9-3-3.2-5-6-5-9 0-2.8 2.2-5 5-5z"/>
+        <path d="M9 13.5L7.5 19h9L15 13.5"/>
+      </svg>
+    </div>
+    <h1>Village Vet</h1>
+    <p>AI Intelligence Platform &mdash; staff access only</p>
+    <div class="lf"><label>Practice PIN</label><input type="password" id="l-pin" maxlength="6" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" inputmode="numeric" onkeydown="if(event.key==='Enter')tryLogin()"></div>
+    <div class="lf"><label>Password</label><input type="password" id="l-pass" placeholder="Practice password" onkeydown="if(event.key==='Enter')tryLogin()"></div>
+    <button class="lb" onclick="tryLogin()">Sign in</button>
+    <div class="le" id="l-err"></div>
+    <div class="lh">Default PIN: 241085 &nbsp;|&nbsp; Default password: VillageVet2026!</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+          <path d="M12 2c2.8 0 5 2.2 5 5 0 3-2 5.8-5 9-3-3.2-5-6-5-9 0-2.8 2.2-5 5-5z"/>
+          <path d="M9 13.5L7.5 19h9L15 13.5"/>
+        </svg>
+      </div>
+      <div><div class="tb-name">Village Vet</div><div class="tb-tag">AI Intelligence Platform</div></div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-pill" id="tb-pill">No data</div>
+      <button class="tb-btn" onclick="goPage('clinical')">&#9673; New consultation</button>
+      <button class="tb-btn" onclick="doSignOut()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="nt on" id="nt-dashboard" onclick="goPage('dashboard')">&#128202; Dashboard</div>
+    <div class="nt" id="nt-ai" onclick="goPage('ai')">&#129302; AI Reports</div>
+    <div class="nt" id="nt-clinical" onclick="goPage('clinical')">&#128138; Clinical</div>
+    <div class="nt" id="nt-cases" onclick="goPage('cases')">&#128203; Cases</div>
+    <div class="nt" id="nt-pricing" onclick="goPage('pricing')">&#163; Pricing</div>
+    <div class="nt" id="nt-import" onclick="goPage('import')">&#128196; Import</div>
+    <div class="nt" id="nt-alerts" onclick="goPage('alerts')">&#9888; Alerts <span class="nb" id="alert-badge" style="display:none">0</span></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="page on" id="page-dashboard">
+    <div id="db-empty" class="empty">
+      <div class="ei">&#128202;</div>
+      <h3>Welcome to Village Vet AI</h3>
+      <p>Import CSV exports from Merlin and your other platforms, or load demo data to explore.</p>
+      <button class="btn btnP" onclick="goPage('import')">Import data</button>
+      &nbsp;<button class="btn" onclick="loadDemo()">Load demo data</button>
+    </div>
+    <div id="db-data" style="display:none">
+      <div class="metrics" id="db-metrics"></div>
+      <div id="db-alerts"></div>
+
+      <!-- Period selector — controls ALL charts -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:var(--sh)">
+        <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em">View by</span>
+        <div style="display:flex;gap:4px" id="period-btns">
+          <button class="pbt" id="pbt-day"    onclick="setPeriod('day')"   >Day</button>
+          <button class="pbt" id="pbt-week"   onclick="setPeriod('week')"  >Week</button>
+          <button class="pbt on" id="pbt-month"  onclick="setPeriod('month')" >Month</button>
+          <button class="pbt" id="pbt-year"   onclick="setPeriod('year')"  >Year</button>
+          <button class="pbt" id="pbt-import" onclick="setPeriod('import')" >Import</button>
+        </div>
+        <span style="font-size:12px;color:var(--muted)" id="period-desc">Grouped by calendar month</span>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em">Services</span>
+          <button class="pbt" id="svc-rev" onclick="setSvcView('revenue')" style="background:var(--g1);color:#fff;border-color:var(--g1)">By revenue</button>
+          <button class="pbt" id="svc-vol" onclick="setSvcView('volume')">By volume</button>
+        </div>
+      </div>
+
+      <!-- Row 1: Revenue trend + service mix -->
+      <div class="grid gw">
+        <div class="card">
+          <div class="ch">
+            <div><h3 id="rev-title">Revenue</h3><div class="sub" id="rev-sub"></div></div>
+          </div>
+          <div class="cw h240"><canvas id="c-rev"></canvas></div>
+        </div>
+        <div class="card"><div class="ch"><div><h3>Service mix</h3><div class="sub">By type</div></div></div><div class="cw h240"><canvas id="c-mix"></canvas></div></div>
+      </div>
+
+      <!-- Row 2: Records, avg invoice, outstanding -->
+      <div class="grid g3">
+        <div class="card"><div class="ch"><div><h3>Appointment volume</h3><div class="sub" id="rpp-sub"></div></div></div><div class="cw h160"><canvas id="c-rpp"></canvas></div></div>
+        <div class="card"><div class="ch"><div><h3>Avg invoice value</h3><div class="sub" id="avg-sub"></div></div></div><div class="cw h160"><canvas id="c-avg"></canvas></div></div>
+        <div class="card"><div class="ch"><div><h3>Outstanding balance</h3><div class="sub" id="owed-trend-sub"></div></div></div><div class="cw h160"><canvas id="c-owed"></canvas></div></div>
+      </div>
+
+      <!-- Row 3: Top services + revenue by vet + species -->
+      <div class="grid g3">
+        <div class="card">
+          <div class="ch">
+            <div><h3>Top services</h3><div class="sub" id="svcs-sub">By revenue</div></div>
+          </div>
+          <div id="db-topsvcs"></div>
+        </div>
+        <div class="card"><div class="ch"><div><h3>Revenue by vet</h3></div></div><div class="cw h200"><canvas id="c-vets"></canvas></div></div>
+        <div class="card"><div class="ch"><div><h3>Species seen</h3></div></div><div class="cw h200"><canvas id="c-species"></canvas></div></div>
+      </div>
+
+      <!-- Row 4: Payment status + outstanding invoices -->
+      <div class="grid g2" style="margin-bottom:18px">
+        <div class="card"><div class="ch"><div><h3>Payment status</h3></div></div><div class="cw h180"><canvas id="c-paystatus"></canvas></div></div>
+        <div class="card">
+          <div class="ch"><div><h3>Outstanding invoices</h3><div class="sub" id="owed-sub"></div></div></div>
+          <div id="db-owed-list" style="font-size:12px;max-height:180px;overflow-y:auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI REPORTS -->
+  <div class="page" id="page-ai">
+    <div class="ph"><h1>AI Practice Intelligence</h1><p>Ask anything about your practice data in plain English.</p></div>
+    <div class="chat-layout">
+      <div class="chat-main">
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="cmsg ai"><div class="cavatar">&#128062;</div><div class="cbubble">Hello &mdash; I'm your Village Vet AI analyst. I have access to all your imported practice data. Ask me anything about revenue, trends, clients, or performance.</div></div>
+        </div>
+        <div class="chat-input-area">
+          <div class="ci-row">
+            <textarea id="chat-in" placeholder="Ask about your practice data..." rows="1" onkeydown="chatKey(event)" oninput="resize(this)"></textarea>
+            <button class="send-btn" id="chat-send" onclick="sendChat()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+          <div class="qbtns">
+            <button class="qb" onclick="qChat('What is my total revenue and how does it compare to last period?')">Revenue comparison</button>
+            <button class="qb" onclick="qChat('Which services are generating the most revenue? Top 5.')">Top services</button>
+            <button class="qb" onclick="qChat('Are there any concerning trends or issues I should know about?')">Flag concerns</button>
+            <button class="qb" onclick="qChat('Give me 3 specific suggestions to grow revenue at my practice.')">Growth ideas</button>
+            <button class="qb" onclick="qChat('Which clients have outstanding balances?')">Outstanding</button>
+            <button class="qb" onclick="qChat('Give me a full practice performance report.')">Full report</button>
+          </div>
+        </div>
+      </div>
+      <div class="chat-side">
+        <div class="ctx-card"><h4>Data in context</h4><div id="ctx-data"><div style="font-size:12px;color:var(--muted)">No data loaded.</div></div></div>
+        <div class="ctx-card">
+          <h4>Claude API key</h4>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:8px">Get your key from console.anthropic.com</p>
+          <input class="api-inp" type="password" id="api-key-input" placeholder="sk-ant-..." oninput="setKey(this.value)" style="background:var(--paper);color:var(--ink);border-color:var(--borderS);">
+          <div style="display:flex;align-items:center;gap:5px;margin-top:6px;font-size:11px;color:var(--muted)"><div class="sdot" id="key-dot"></div><span id="key-status">Not set</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLINICAL -->
+  <div class="page" id="page-clinical">
+    <div class="notice clin" style="margin-bottom:14px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div><strong>Clinical decision support only.</strong> All AI suggestions must be reviewed and validated by the attending veterinary surgeon before any clinical action.</div>
+    </div>
+    <div class="clin-layout">
+      <div class="cc-panel">
+        <div class="cc-head">
+          <h3>&#128138; Consultation</h3>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="rec-timer" id="rec-timer" style="display:none">&#9679; 00:00</span>
+            <button class="btn btnS" onclick="newConsult()">New consultation</button>
+          </div>
+        </div>
+        <div class="cc-strip">
+          <div><label>Client</label><input type="text" id="cc-client" placeholder="e.g. Sarah Mitchell" style="width:140px"></div>
+          <div><label>Pet</label><input type="text" id="cc-pet" placeholder="e.g. Buddy (Lab 4yr M)" style="width:160px"></div>
+          <div><label>Weight</label><input type="text" id="cc-weight" placeholder="kg" style="width:54px"></div>
+          <div><label>Temp</label><input type="text" id="cc-temp" placeholder="&#176;C" style="width:54px"></div>
+        </div>
+        <div class="cc-msgs" id="cc-msgs">
+          <div class="cm sys"><div class="cb">Describe the patient's presenting signs, record the consultation, or add diagnostic results using the toolbar. Ask any clinical question &mdash; I'll help build a differential diagnosis.</div></div>
+        </div>
+        <div class="ccq">
+          <button class="ccqb" onclick="ccQ('Vomiting and lethargy for 3 days')">Vomiting + lethargy</button>
+          <button class="ccqb" onclick="ccQ('Lameness on right foreleg')">Lameness</button>
+          <button class="ccqb" onclick="ccQ('Increased thirst and urination')">PU/PD</button>
+          <button class="ccqb" onclick="ccQ('Skin mass noticed by owner')">Skin mass</button>
+          <button class="ccqb" onclick="ccQ('Coughing and exercise intolerance')">Cough</button>
+          <button class="ccqb" onclick="ccQ('Sudden collapse episode')">Collapse</button>
+        </div>
+
+        <!-- RESULT ATTACHMENT SLOTS -->
+        <div id="result-slots" style="padding:8px 14px;border-top:1px solid var(--border);background:var(--paper);display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="result-slot" id="slot-idexx">
+            <div class="rs-head" onclick="toggleSlot('idexx')">
+              <div class="rs-icon" style="background:var(--bp)">&#129514;</div>
+              <div class="rs-info"><div class="rs-name">IDEXX bloods</div><div class="rs-status" id="st-idexx">No results — tap to add PDF</div></div>
+              <button class="rs-btn" onclick="event.stopPropagation();triggerFile('idexx')">&#128196; PDF</button>
+            </div>
+            <div class="rs-body" id="body-idexx">
+              <div id="prev-idexx"></div>
+              <textarea class="rs-textarea" id="txt-idexx" placeholder="Key values: e.g. WBC 18.4 (H), ALT 180 (H), ALP 95, BUN 28, CREA 1.4, PLT 220..." oninput="slotChanged('idexx')"></textarea>
+              <div class="rs-actions">
+                <button class="btn btnS btnP" onclick="extractPDF('idexx')" id="xpdf-idexx" style="display:none">&#128161; Extract from PDF</button>
+                <button class="btn btnS" onclick="sendSlotToChat('idexx')">Send to chat</button>
+              </div>
+            </div>
+          </div>
+          <div class="result-slot" id="slot-signal">
+            <div class="rs-head" onclick="toggleSlot('signal')">
+              <div class="rs-icon" style="background:var(--g5)">&#129467;</div>
+              <div class="rs-info"><div class="rs-name">Signal Pet x-ray</div><div class="rs-status" id="st-signal">No image — tap to add JPEG</div></div>
+              <button class="rs-btn" onclick="event.stopPropagation();triggerFile('signal')">&#128247; Image</button>
+            </div>
+            <div class="rs-body" id="body-signal">
+              <div id="prev-signal"></div>
+              <textarea class="rs-textarea" id="txt-signal" placeholder="AI findings: e.g. Normal thorax. No pleural effusion. Mild cardiomegaly suspected..." oninput="slotChanged('signal')"></textarea>
+              <div class="rs-actions">
+                <button class="btn btnS btnP" onclick="extractImage('signal')" id="ximg-signal" style="display:none">&#128161; Describe image with AI</button>
+                <button class="btn btnS" onclick="sendSlotToChat('signal')">Send to chat</button>
+              </div>
+            </div>
+          </div>
+          <div class="result-slot" id="slot-zoetis">
+            <div class="rs-head" onclick="toggleSlot('zoetis')">
+              <div class="rs-icon" style="background:var(--ap)">&#128300;</div>
+              <div class="rs-info"><div class="rs-name">Zoetis cytology</div><div class="rs-status" id="st-zoetis">No results — tap to add PDF</div></div>
+              <button class="rs-btn" onclick="event.stopPropagation();triggerFile('zoetis')">&#128196; PDF</button>
+            </div>
+            <div class="rs-body" id="body-zoetis">
+              <div id="prev-zoetis"></div>
+              <textarea class="rs-textarea" id="txt-zoetis" placeholder="Cytology findings: e.g. FNA — round cell neoplasia, moderate anisocytosis..." oninput="slotChanged('zoetis')"></textarea>
+              <div class="rs-actions">
+                <button class="btn btnS btnP" onclick="extractPDF('zoetis')" id="xpdf-zoetis" style="display:none">&#128161; Extract from PDF</button>
+                <button class="btn btnS" onclick="sendSlotToChat('zoetis')">Send to chat</button>
+              </div>
+            </div>
+          </div>
+          <div class="result-slot" id="slot-htv">
+            <div class="rs-head" onclick="toggleSlot('htv')">
+              <div class="rs-icon" style="background:var(--rp)">&#127919;</div>
+              <div class="rs-info"><div class="rs-name">HT Vista</div><div class="rs-status" id="st-htv">No results — tap to add PDF</div></div>
+              <button class="rs-btn" onclick="event.stopPropagation();triggerFile('htv')">&#128196; PDF</button>
+            </div>
+            <div class="rs-body" id="body-htv">
+              <div id="prev-htv"></div>
+              <textarea class="rs-textarea" id="txt-htv" placeholder="HT Vista findings: e.g. Mast cell tumour grade II, Ki67 8%, c-Kit negative..." oninput="slotChanged('htv')"></textarea>
+              <div class="rs-actions">
+                <button class="btn btnS btnP" onclick="extractPDF('htv')" id="xpdf-htv" style="display:none">&#128161; Extract from PDF</button>
+                <button class="btn btnS" onclick="sendSlotToChat('htv')">Send to chat</button>
+              </div>
+            </div>
+          </div>
+          <div class="result-slot" style="grid-column:1/-1" id="slot-extra">
+            <div class="rs-head" onclick="toggleSlot('extra')">
+              <div class="rs-icon" style="background:var(--g5)">&#128203;</div>
+              <div class="rs-info"><div class="rs-name">Additional findings</div><div class="rs-status" id="st-extra">Urinalysis, ECG, ultrasound, other notes</div></div>
+              <button class="rs-btn" onclick="event.stopPropagation();toggleSlot('extra')">&#43; Add</button>
+            </div>
+            <div class="rs-body" id="body-extra">
+              <textarea class="rs-textarea" id="txt-extra" placeholder="e.g. Urine SG 1.008, 2+ protein. ECG — sinus rhythm, occasional APCs. Abdominal ultrasound — mild hepatomegaly..." oninput="slotChanged('extra')"></textarea>
+              <div class="rs-actions"><button class="btn btnS" onclick="sendSlotToChat('extra')">Send to chat</button></div>
+            </div>
+          </div>
+        </div>
+        <!-- Hidden file inputs for result slots -->
+        <input type="file" id="rf-idexx" accept=".pdf,.csv" onchange="onResultFile(this,'idexx')" style="display:none">
+        <input type="file" id="rf-signal" accept=".jpg,.jpeg,.png,.gif" onchange="onResultFile(this,'signal')" style="display:none">
+        <input type="file" id="rf-zoetis" accept=".pdf,.csv" onchange="onResultFile(this,'zoetis')" style="display:none">
+        <input type="file" id="rf-htv" accept=".pdf,.csv" onchange="onResultFile(this,'htv')" style="display:none">
+
+        <div class="cc-toolbar">
+          <button class="ct" id="rec-btn" onclick="toggleRec()">&#127908; Record</button>
+          <button class="ct" onclick="ccQ('Vomiting and lethargy for 3 days')">Vomit/lethargy</button>
+          <button class="ct" onclick="ccQ('Lameness on right foreleg')">Lameness</button>
+          <button class="ct" onclick="ccQ('Increased thirst and urination')">PU/PD</button>
+          <button class="ct" onclick="ccQ('Skin mass noticed by owner')">Skin mass</button>
+          <button class="ct" onclick="ccQ('Collapse episode')">Collapse</button>
+          <button class="ct" style="border-color:var(--g3);color:var(--g1);font-weight:600" onclick="ccDiagnose()">&#128303; Diagnose</button>
+        </div>
+        <div class="cc-input-area">
+          <div class="cc-row">
+            <textarea id="cc-in" placeholder="Describe symptoms, add results, ask a clinical question..." rows="1" onkeydown="ccKey(event)" oninput="resize(this)"></textarea>
+            <button class="cc-send" id="cc-send" onclick="sendCC()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+          </div>
+        </div>
+      </div>
+      <div class="dx-panel">
+        <div class="dx-head"><h3>Clinical summary</h3><span style="font-size:10px;background:var(--ap);color:var(--amber);padding:2px 8px;border-radius:8px;font-weight:700">Decision support</span></div>
+        <div class="dx-body">
+          <div id="cc-nokey" class="notice" style="display:none;font-size:12px;margin-bottom:12px">Add your Claude API key on the AI Reports page to enable clinical AI.</div>
+          <div id="cc-placeholder" style="text-align:center;padding:28px 10px;color:var(--muted);font-size:13px">
+            <div style="font-size:30px;margin-bottom:8px">&#128298;</div>
+            <p>Describe the case in the chat. Click Diagnose for a full differential.</p>
+          </div>
+          <div id="cc-loading" style="display:none;text-align:center;padding:24px;color:var(--muted)">
+            <div class="thinking" style="justify-content:center;margin-bottom:8px"><span></span><span></span><span></span></div>
+            <div style="font-size:13px">Analysing case...</div>
+          </div>
+          <div id="cc-output" style="display:none">
+            <!-- DDx ranked list -->
+            <div class="dxt">&#128200; Differential diagnoses</div>
+            <div id="cc-diffs"></div>
+
+            <!-- Recommended tests with icons -->
+            <div class="dxt" style="margin-top:16px">&#128269; Recommended tests</div>
+            <div id="cc-tests"></div>
+
+            <!-- Treatment -->
+            <div class="dxt" style="margin-top:16px">&#128138; Treatment options</div>
+            <div id="cc-tx"></div>
+
+            <div class="disc" style="margin-top:14px">&#9877; <strong>Clinical decision support only</strong> &mdash; all suggestions must be reviewed by the attending veterinary surgeon.</div>
+
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px">
+              <button class="btn btnS btnP" id="gen-note-btn" onclick="genNote()">&#128196; Generate clinical note</button>
+              <button class="btn btnS" onclick="saveCase()">Save case</button>
+              <button class="btn btnS" onclick="printReport()">Print</button>
+              <button class="btn btnS" onclick="resetDx()">Clear</button>
+            </div>
+
+            <div id="note-area" style="display:none">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+                <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em">&#128196; Clinical note for Merlin</div>
+                <button class="btn btnS" id="copy-btn" onclick="copyNote()">Copy</button>
+              </div>
+              <div id="note-text" class="note-box"></div>
+              <div class="note-hint">Click Copy then paste directly into the Merlin patient history field.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASES -->
+  <div class="page" id="page-cases">
+    <div class="ph"><h1>Case history</h1><p>Saved consultation records and clinical notes ready to paste into Merlin.</p></div>
+    <div id="cases-empty" class="empty"><div class="ei">&#128203;</div><h3>No cases saved</h3><p>Complete a consultation and click Save case.</p></div>
+    <div id="cases-list"></div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="page" id="page-pricing">
+    <div class="ph"><h1>Pricing Analysis</h1><p>Your prices vs BVA/RCVS UK benchmarks. &#9660; below benchmark may be a revenue opportunity.</p></div>
+    <div class="notice warn">Benchmarks are based on published BVA fee guidance. Consider your local costs and client base before making changes.</div>
+    <div class="grid g2" id="pricing-tables"></div>
+    <div class="card" id="pricing-summary"></div>
+  </div>
+
+  <!-- IMPORT -->
+  <div class="page" id="page-import">
+    <div class="ph"><h1>Import CSV data</h1><p>Upload exports from each platform. Data is stored locally in your browser and builds trends over time.</p></div>
+    <div class="notice">&#8505; Export from each platform and upload below. The AI analyses trends automatically as you add more imports.</div>
+    <div class="src-grid" id="src-grid"></div>
+    <div style="display:flex;gap:10px;margin-bottom:20px">
+      <button class="btn btnP" onclick="loadDemo()">Load demo data</button>
+      <button class="btn btnD" onclick="clearAll()">Clear all data</button>
+    </div>
+    <div class="tbl"><div class="tbl-hd"><h3>Import history</h3></div><div id="imp-hist"></div></div>
+    <input type="file" id="fi-merlin" accept=".csv" onchange="onFile(this,'merlin')" style="display:none">
+    <input type="file" id="fi-idexx" accept=".csv" onchange="onFile(this,'idexx')" style="display:none">
+    <input type="file" id="fi-gocardless" accept=".csv" onchange="onFile(this,'gocardless')" style="display:none">
+    <input type="file" id="fi-petsapp" accept=".csv" onchange="onFile(this,'petsapp')" style="display:none">
+    <input type="file" id="fi-google" accept=".csv" onchange="onFile(this,'google')" style="display:none">
+    <input type="file" id="fi-signal" accept=".csv" onchange="onFile(this,'signal')" style="display:none">
+    <input type="file" id="fi-zoetis" accept=".csv" onchange="onFile(this,'zoetis')" style="display:none">
+    <input type="file" id="fi-htv" accept=".csv" onchange="onFile(this,'htv')" style="display:none">
+  </div>
+
+  <!-- ALERTS -->
+  <div class="page" id="page-alerts">
+    <div class="ph"><h1>Alerts</h1><p>Active alerts and configurable thresholds.</p></div>
+    <div id="alert-list"></div>
+    <div class="card">
+      <div class="ch"><div><h3>Alert thresholds</h3></div></div>
+      <div id="thresh-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px"></div>
+      <div style="margin-top:14px;display:flex;gap:8px">
+        <button class="btn btnP" onclick="saveThresh()">Save</button>
+        <button class="btn" onclick="resetThresh()">Reset defaults</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var PIN='241085',PASS='VillageVet2026!',SK='vv_s';
+function checkAuth(){try{var s=JSON.parse(sessionStorage.getItem(SK));if(s&&s.e>Date.now())return true;}catch(e){}return false;}
+function tryLogin(){
+  var p=document.getElementById('l-pin').value.trim(),w=document.getElementById('l-pass').value.trim();
+  if(p===PIN&&w===PASS){
+    sessionStorage.setItem(SK,JSON.stringify({e:Date.now()+43200000}));
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('app').style.flexDirection='column';
+    boot();
+  }else{
+    document.getElementById('l-err').textContent='Incorrect PIN or password — try again';
+    document.getElementById('l-pin').value='';document.getElementById('l-pass').value='';
+    document.getElementById('l-pin').focus();
+  }
+}
+function doSignOut(){sessionStorage.removeItem(SK);location.reload();}
+
+var STORE='vvp2',CSTORE='vvp2c';
+var S={imports:[],apiKey:'',thresh:{outstanding:15,revdrop:15,ddfail:5,cprise:25}};
+var cases=[],charts={},chatHist=[],ccHist=[],recog=null,recOn=false,recInt=null,recSec=0;
+var _tt,_tc=0;
+
+function boot(){
+  try{var d=JSON.parse(localStorage.getItem(STORE)||'{}');S=Object.assign(S,d);}catch(e){}
+  try{cases=JSON.parse(localStorage.getItem(CSTORE)||'[]');}catch(e){}
+  if(!S.thresh)S.thresh={outstanding:15,revdrop:15,ddfail:5,cprise:25};
+  if(S.apiKey){document.getElementById('api-key-input').value=S.apiKey;setKey(S.apiKey,true);}
+  renderAll();
+}
+function save(){localStorage.setItem(STORE,JSON.stringify(S));localStorage.setItem(CSTORE,JSON.stringify(cases));renderAll();}
+function renderAll(){updatePill();renderSrcGrid();renderImpHist();renderPricing();renderThresh();checkAlerts();}
+
+var TITLES={dashboard:'Dashboard',ai:'AI Practice Intelligence',clinical:'Clinical Assistant',cases:'Case History',pricing:'Pricing Analysis',import:'Import Data',alerts:'Alerts'};
+function goPage(p){
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('on');});
+  document.querySelectorAll('.nt').forEach(function(el){el.classList.remove('on');});
+  var pg=document.getElementById('page-'+p),nt=document.getElementById('nt-'+p);
+  if(pg)pg.classList.add('on');if(nt)nt.classList.add('on');
+  if(p==='dashboard')renderDash();
+  if(p==='ai')renderCtx();
+  if(p==='cases')renderCases();
+  if(p==='alerts')renderAlerts();
+}
+
+function allRows(src){var imp=S.imports;if(src)imp=imp.filter(function(i){return i.src===src;});return imp.reduce(function(a,i){return a.concat(i.rows);},[]);}
+function srcRows(){var srcs=Array.prototype.slice.call(arguments);return S.imports.filter(function(i){return srcs.indexOf(i.src)>-1;}).reduce(function(a,i){return a.concat(i.rows);},[]);}
+var PAL=['#1b5e38','#277a4a','#4aa572','#b0d9bc','#1a3f7a','#c47f12','#9b2517','#4a2278','#0e6a52'];
+var TC='#5c6e5c',GC='rgba(0,0,0,0.05)';
+function mkChart(id,cfg){if(charts[id])charts[id].destroy();var el=document.getElementById(id);if(!el)return;charts[id]=new Chart(el,cfg);}
+function bOpts(yFmt){return{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:TC,font:{size:11}},grid:{display:false}},y:{ticks:{color:TC,font:{size:11},callback:yFmt||function(v){return v;}},grid:{color:GC}}}};}
+function esc(s){if(typeof s!=='string')return String(s||'');return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtMd(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/^#{1,3} (.+)$/gm,'<strong>$1</strong>').replace(/^[*\-] (.+)$/gm,'<li>$1</li>').replace(/(<li>[\s\S]*?<\/li>)+/g,function(m){return'<ul style="padding-left:15px;margin:3px 0">'+m+'</ul>';}).replace(/\n\n+/g,'<br><br>').replace(/\n/g,'<br>');}
+function resize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+function toast(msg,type){var t=document.getElementById('toast');t.textContent=msg;t.className='toast '+(type==='err'?'terr':type==='warn'?'twarn':'tok')+' show';clearTimeout(_tt);_tt=setTimeout(function(){t.classList.remove('show');},3500);}
+function updatePill(){var n=allRows().length;document.getElementById('tb-pill').textContent=n?(n.toLocaleString()+' records &middot; '+S.imports.length+' imports'):'No data';}
+
+function setKey(v,silent){S.apiKey=v.trim();if(!silent)localStorage.setItem(STORE,JSON.stringify(S));var ok=!!v.trim();document.getElementById('key-dot').className='sdot'+(ok?' ok':'');document.getElementById('key-status').textContent=ok?'Key saved':'Not set';}
+
+// ═══ PERIOD SELECTOR + DASHBOARD RENDERING ═══
+var _period = 'month';   // day | week | month | year | import
+var _svcView = 'revenue'; // revenue | volume
+
+var PERIOD_DESCS = {
+  day:    'Grouped by calendar day',
+  week:   'Grouped by calendar week',
+  month:  'Grouped by calendar month',
+  year:   'Grouped by calendar year',
+  import: 'Grouped by CSV import'
+};
+
+function setPeriod(p) {
+  _period = p;
+  document.querySelectorAll('.pbt[id^="pbt-"]').forEach(function(b) {
+    b.classList.toggle('on', b.id === 'pbt-' + p);
+  });
+  var desc = document.getElementById('period-desc');
+  if (desc) desc.textContent = PERIOD_DESCS[p] || '';
+  renderDash();
+}
+
+function setSvcView(v) {
+  _svcView = v;
+  document.getElementById('svc-rev').classList.toggle('on', v === 'revenue');
+  document.getElementById('svc-vol').classList.toggle('on', v === 'volume');
+  renderTopServices(srcRows('merlin','gocardless'));
+}
+
+// ── Key helper: get a time bucket label for a record ──
+function getBucket(r) {
+  if (_period === 'import') return r._imp || 'Unknown';
+  var d = r.date ? String(r.date) : '';
+  if (!d) return r._month || 'Unknown';
+  // Parse to a proper Date
+  var dt = parseRawDate(d);
+  if (!dt) return r._month || 'Unknown';
+  if (_period === 'day')   return fmtDay(dt);
+  if (_period === 'week')  return fmtWeek(dt);
+  if (_period === 'month') return fmtMonth(dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0'));
+  if (_period === 'year')  return String(dt.getFullYear());
+  return r._month || 'Unknown';
+}
+
+function parseRawDate(v) {
+  if (!v) return null;
+  v = v.trim();
+  var m;
+  // ISO: 2025-10-15
+  m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return new Date(+m[1], +m[2]-1, +m[3]);
+  // UK: 15/10/2025
+  m = v.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if (m) return new Date(+m[3], +m[2]-1, +m[1]);
+  // US: 10/15/2025 — try both, pick the one that makes sense
+  m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) {
+    if (+m[1] > 12) return new Date(+m[3], +m[1]-1, +m[2]); // must be US
+    return new Date(+m[3], +m[2]-1, +m[1]); // assume UK
+  }
+  return null;
+}
+
+function fmtDay(dt) {
+  return dt.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()] + ' ' + String(dt.getFullYear()).slice(2);
+}
+
+function fmtWeek(dt) {
+  // ISO week: Monday-based
+  var d = new Date(Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate()));
+  var day = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - day);
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+  return 'W' + weekNo + ' \'' + String(d.getUTCFullYear()).slice(2);
+}
+
+// ── Build bucketed data from a row array ──
+function bucketRows(rows) {
+  var buckets = {};
+  rows.forEach(function(r) {
+    var k = getBucket(r);
+    if (!k) return;
+    if (!buckets[k]) buckets[k] = { rev: 0, n: 0, _sort: getSortKey(r) };
+    buckets[k].rev += (r.amount || 0);
+    buckets[k].n++;
+  });
+  // Sort keys
+  var keys = Object.keys(buckets).sort(function(a, b) {
+    return (buckets[a]._sort || a).localeCompare(buckets[b]._sort || b);
+  });
+  return { keys: keys, data: buckets };
+}
+
+function getSortKey(r) {
+  if (_period === 'import') return r._month || '';
+  var d = r.date ? parseRawDate(String(r.date)) : null;
+  if (!d) return r._month || '';
+  return d.toISOString();
+}
+
+
+// ── renderTopServices — shows name, count, and revenue bar ──
+function renderTopServices(fin) {
+  var svcs = {};
+  fin.forEach(function(r) {
+    var name = (r.service || '').trim();
+    if (!name || name === '-' || name === 'Unknown') return;
+    if (!svcs[name]) svcs[name] = { rev: 0, n: 0 };
+    svcs[name].rev += (r.amount || 0);
+    svcs[name].n++;
+  });
+
+  var sorted = Object.entries(svcs).sort(function(a, b) {
+    return _svcView === 'volume' ? b[1].n - a[1].n : b[1].rev - a[1].rev;
+  }).slice(0, 10);
+
+  var sub = document.getElementById('svcs-sub');
+  if (sub) sub.textContent = _svcView === 'volume' ? 'By number of appointments' : 'By revenue generated';
+
+  if (!sorted.length) {
+    document.getElementById('db-topsvcs').innerHTML = '<div style="font-size:12px;color:var(--muted);padding:8px 0">No service data found. Check your CSV has a service/item column.</div>';
+    return;
+  }
+
+  var maxRev = sorted[0][1].rev || 1;
+  var maxVol = sorted[0][1].n || 1;
+  var rankColors = ['#1b5e38','#227a47','#2e9558','#3dab68','#52be7d','#6fcf97','#90dba8','#afebc0','#c8f2d4','#e0f9e8'];
+
+  document.getElementById('db-topsvcs').innerHTML = sorted.map(function(e, i) {
+    var name = e[0], v = e[1];
+    var barPct = _svcView === 'volume' ? Math.round(v.n / maxVol * 100) : Math.round(v.rev / maxRev * 100);
+    var valStr = _svcView === 'volume' ? v.n + ' appts' : '\u00a3' + Math.round(v.rev).toLocaleString();
+    var secStr = _svcView === 'volume' ? '\u00a3' + Math.round(v.rev).toLocaleString() : v.n + ' appts';
+    var col = rankColors[Math.min(i, rankColors.length - 1)];
+    return '<div class="svc-row">' +
+      '<div class="svc-rank" style="background:' + col + '">' + (i+1) + '</div>' +
+      '<div class="svc-name" title="' + esc(name) + '">' + esc(name) + '</div>' +
+      '<div class="svc-bar-wrap"><div class="svc-bar-fill" style="width:' + barPct + '%;background:' + col + '"></div></div>' +
+      '<div class="svc-count">' + secStr + '</div>' +
+      '<div class="svc-val">' + valStr + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── Main dashboard render ──
+function renderDash() {
+  var rows = allRows();
+  document.getElementById('db-empty').style.display = rows.length ? 'none' : 'block';
+  document.getElementById('db-data').style.display = rows.length ? 'block' : 'none';
+  if (!rows.length) return;
+
+  var fin = srcRows('merlin', 'gocardless');
+  var rev = fin.reduce(function(s,r){ return s + (r.amount||0); }, 0);
+  var owed = fin.filter(function(r){ return /outstanding|unpaid/i.test(r.status||''); }).reduce(function(s,r){ return s + (r.amount||0); }, 0);
+  var avg = fin.length ? rev / fin.length : 0;
+  var adSpend = srcRows('google').reduce(function(s,r){ return s + (r.spend||0); }, 0);
+  var clients = {};
+  fin.forEach(function(r){ if (r.client && r.client !== 'Unknown') clients[r.client] = 1; });
+  var clientCount = Object.keys(clients).length;
+
+  // Period delta (compare last two buckets)
+  var bd = bucketRows(fin);
+  var dv = '';
+  if (bd.keys.length >= 2) {
+    var lk = bd.keys[bd.keys.length-1], pk = bd.keys[bd.keys.length-2];
+    var lv = bd.data[lk].rev, pv = bd.data[pk].rev;
+    if (pv > 0) {
+      var dd = ((lv-pv)/pv*100).toFixed(1);
+      dv = '<span class="' + (dd>=0?'up':'dn') + '">' + (dd>=0?'\u25b2':'\u25bc') + Math.abs(dd) + '% vs prev</span>';
+    }
+  }
+
+  document.getElementById('db-metrics').innerHTML =
+    '<div class="metric"><div class="ml">Total revenue</div><div class="mv">\u00a3' + Math.round(rev).toLocaleString() + '</div><div class="md">' + (dv || '<span class="neu">' + S.imports.length + ' imports</span>') + '</div></div>' +
+    '<div class="metric"><div class="ml">Financial records</div><div class="mv">' + fin.length.toLocaleString() + '</div><div class="md neu">' + rows.length + ' total all sources</div></div>' +
+    '<div class="metric"><div class="ml">Avg invoice</div><div class="mv">\u00a3' + Math.round(avg) + '</div><div class="md neu">Per record</div></div>' +
+    '<div class="metric"><div class="ml">Outstanding</div><div class="mv" style="color:' + (owed>0?'var(--amber)':'inherit') + '">\u00a3' + Math.round(owed).toLocaleString() + '</div><div class="md neu">' + (rev>0?((owed/rev)*100).toFixed(1)+'% of revenue':'Unpaid') + '</div></div>' +
+    '<div class="metric"><div class="ml">Active clients</div><div class="mv">' + clientCount + '</div><div class="md neu">Unique</div></div>';
+
+  var alts = computeAlerts();
+  document.getElementById('db-alerts').innerHTML = alts.length ? '<div style="margin-bottom:16px">' + alts.slice(0,3).map(function(a){ return '<div class="alert-bar ' + a.level + '"><div class="adot"></div><div><strong>' + a.src + ':</strong> ' + a.msg + '</div></div>'; }).join('') + '</div>' : '';
+
+  // ── Revenue chart ──
+  var revTitle = document.getElementById('rev-title');
+  if (revTitle) revTitle.textContent = 'Revenue by ' + _period;
+  var revSub = document.getElementById('rev-sub');
+  if (revSub) revSub.textContent = bd.keys.length + ' ' + (_period === 'import' ? 'imports' : _period + 's');
+
+  mkChart('c-rev', { type: 'bar', data: { labels: bd.keys, datasets: [{ data: bd.keys.map(function(k){ return Math.round(bd.data[k].rev); }), backgroundColor: PAL[0], borderRadius: 4, borderSkipped: false }] }, options: bOpts(function(v){ return '\u00a3' + (v>=1000?Math.round(v/1000)+'k':v); }) });
+
+  // ── Service mix donut ──
+  var types = {};
+  fin.forEach(function(r){ var t = r.type||'Other'; types[t] = (types[t]||0) + 1; });
+  mkChart('c-mix', { type: 'doughnut', data: { labels: Object.keys(types), datasets: [{ data: Object.values(types), backgroundColor: PAL, borderWidth: 2, borderColor: '#fff' }] }, options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ font:{size:10}, color:TC, boxWidth:8, padding:5 } } } } });
+
+  // ── Records per period ──
+  var rppSub = document.getElementById('rpp-sub');
+  if (rppSub) rppSub.textContent = 'By ' + _period;
+  mkChart('c-rpp', { type: 'line', data: { labels: bd.keys, datasets: [{ data: bd.keys.map(function(k){ return bd.data[k].n; }), borderColor: PAL[0], backgroundColor: 'rgba(27,94,56,0.07)', fill:true, tension:0.35, pointRadius:3, pointBackgroundColor:PAL[0] }] }, options: bOpts() });
+
+  // ── Avg invoice per period ──
+  var avgSub = document.getElementById('avg-sub');
+  if (avgSub) avgSub.textContent = 'By ' + _period;
+  mkChart('c-avg', { type: 'line', data: { labels: bd.keys, datasets: [{ data: bd.keys.map(function(k){ return bd.data[k].n ? Math.round(bd.data[k].rev/bd.data[k].n) : 0; }), borderColor: PAL[4], backgroundColor: 'rgba(26,63,122,0.07)', fill:true, tension:0.35, pointRadius:3, pointBackgroundColor:PAL[4] }] }, options: bOpts(function(v){ return '\u00a3'+v; }) });
+
+  // ── Outstanding per period ──
+  var owedTrendSub = document.getElementById('owed-trend-sub');
+  if (owedTrendSub) owedTrendSub.textContent = 'By ' + _period;
+  var owedBuckets = {};
+  fin.filter(function(r){ return /outstanding|unpaid/i.test(r.status||''); }).forEach(function(r) {
+    var k = getBucket(r);
+    owedBuckets[k] = (owedBuckets[k]||0) + (r.amount||0);
+  });
+  var owKeys = Object.keys(owedBuckets).sort(function(a,b){ return (bd.keys.indexOf(a)||0)-(bd.keys.indexOf(b)||0); });
+  // Keep same x-axis as revenue for alignment
+  mkChart('c-owed', { type: 'bar', data: { labels: bd.keys, datasets: [{ data: bd.keys.map(function(k){ return Math.round(owedBuckets[k]||0); }), backgroundColor: PAL[5], borderRadius: 4 }] }, options: bOpts(function(v){ return '\u00a3'+v; }) });
+
+  // ── Top services ──
+  renderTopServices(fin);
+
+  // ── Revenue by vet ──
+  var vets = {};
+  fin.forEach(function(r){ if (r.vet && r.vet !== 'Unknown' && r.vet !== '-') { vets[r.vet] = (vets[r.vet]||0) + (r.amount||0); } });
+  var vetE = Object.entries(vets).sort(function(a,b){ return b[1]-a[1]; });
+  if (vetE.length) {
+    mkChart('c-vets', { type:'bar', data:{ labels:vetE.map(function(e){return e[0];}), datasets:[{ data:vetE.map(function(e){return Math.round(e[1]);}), backgroundColor:PAL, borderRadius:5 }] }, options:{ responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{display:false} }, scales:{ x:{ ticks:{color:TC,font:{size:10},callback:function(v){return '\u00a3'+Math.round(v/1000)+'k';}}, grid:{color:GC} }, y:{ ticks:{color:TC,font:{size:11}}, grid:{display:false} } } } });
+  }
+
+  // ── Species ──
+  var sp = {};
+  fin.forEach(function(r){ var s = r.species||'Unknown'; sp[s]=(sp[s]||0)+1; });
+  mkChart('c-species', { type:'doughnut', data:{ labels:Object.keys(sp), datasets:[{ data:Object.values(sp), backgroundColor:PAL, borderWidth:2, borderColor:'#fff' }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'right', labels:{ font:{size:10}, color:TC, boxWidth:8, padding:5 } } } } });
+
+  // ── Payment status ──
+  var paid = fin.filter(function(r){ return /^paid$/i.test(r.status||''); }).reduce(function(s,r){ return s+(r.amount||0); }, 0);
+  var owedV = fin.filter(function(r){ return /outstanding|unpaid/i.test(r.status||''); }).reduce(function(s,r){ return s+(r.amount||0); }, 0);
+  var other2 = Math.max(0, rev - paid - owedV);
+  mkChart('c-paystatus', { type:'doughnut', data:{ labels:['Paid \u00a3'+Math.round(paid).toLocaleString(), 'Outstanding \u00a3'+Math.round(owedV).toLocaleString(), 'Other \u00a3'+Math.round(other2).toLocaleString()], datasets:[{ data:[Math.round(paid),Math.round(owedV),Math.round(other2)], backgroundColor:['#1b5e38','#c47f12','#9a9a9a'], borderWidth:2, borderColor:'#fff' }] }, options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{size:10}, color:TC, boxWidth:8, padding:4 } } } } });
+
+  // ── Outstanding invoices list ──
+  var owedRows = fin.filter(function(r){ return /outstanding|unpaid/i.test(r.status||''); }).sort(function(a,b){ return (b.amount||0)-(a.amount||0); }).slice(0,10);
+  document.getElementById('owed-sub').textContent = owedRows.length + ' invoices \u2014 \u00a3' + Math.round(owed).toLocaleString();
+  document.getElementById('db-owed-list').innerHTML = owedRows.length ?
+    owedRows.map(function(r){ return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)"><div><div style="font-weight:600">' + esc(r.client||'-') + '</div><div style="color:var(--muted);font-size:11px">' + esc(r.service||'-') + (r.date?' \u00b7 '+esc(r.date):'') + '</div></div><div style="font-weight:700;color:var(--amber)">\u00a3' + (r.amount||0).toFixed(2) + '</div></div>'; }).join('') :
+    '<div style="padding:12px 0;color:var(--muted)">No outstanding invoices.</div>';
+}
+
+// Keep old helpers for buildCtx AI chat
+function setRevView() {} // no-op, replaced by setPeriod
+function buildMonthlyData() { return bucketRows(srcRows('merlin','gocardless')); }
+function buildImportData() {
+  var grouped = {};
+  S.imports.forEach(function(i){ if(!grouped[i.label])grouped[i.label]={rev:0,n:0,month:i.month};i.rows.forEach(function(r){grouped[i.label].rev+=(r.amount||0);grouped[i.label].n++;});});
+  var keys=Object.keys(grouped).sort(function(a,b){return grouped[a].month.localeCompare(grouped[b].month);});
+  return{keys:keys,data:grouped};
+}
+
+
+
+function buildCtx(){
+  var rows=allRows();if(!rows.length)return'No data imported yet.';
+  var fin=srcRows('merlin','gocardless');
+  var rev=fin.reduce(function(s,r){return s+(r.amount||0);},0);
+  var owed=fin.filter(function(r){return/outstanding|unpaid/i.test(r.status||'');}).reduce(function(s,r){return s+(r.amount||0);},0);
+  var svcs={};rows.forEach(function(r){if(r.service)svcs[r.service]=(svcs[r.service]||0)+(r.amount||0);});
+  var topS=Object.entries(svcs).sort(function(a,b){return b[1]-a[1];}).slice(0,8).map(function(e){return e[0]+': \u00a3'+Math.round(e[1]);}).join(', ');
+  var vets={};rows.forEach(function(r){if(r.vet&&r.vet!=='-')vets[r.vet]=(vets[r.vet]||0)+(r.amount||0);});
+  var topV=Object.entries(vets).sort(function(a,b){return b[1]-a[1];}).map(function(e){return e[0]+': \u00a3'+Math.round(e[1]);}).join(', ');
+  var byImp={};S.imports.forEach(function(i){if(!byImp[i.label])byImp[i.label]={rev:0,n:0};i.rows.forEach(function(r){byImp[i.label].rev+=(r.amount||0);byImp[i.label].n++;});});
+  var periods=Object.entries(byImp).map(function(e){return e[0]+': \u00a3'+Math.round(e[1].rev)+', '+e[1].n+' records';}).join(' | ');
+  return'Village Veterinary Surgery, Hatfield Garden Village AL10 9JS. Independent practice, Dr Kobi and Dr Anat.\nTotal records: '+rows.length+' across '+S.imports.length+' imports.\nTotal revenue: \u00a3'+Math.round(rev).toLocaleString()+'\nOutstanding: \u00a3'+Math.round(owed).toLocaleString()+' ('+( rev>0?((owed/rev)*100).toFixed(1):0)+'% of revenue)\nAvg invoice: \u00a3'+(fin.length?(rev/fin.length).toFixed(2):0)+'\nPeriods: '+periods+'\nTop services: '+topS+'\nRevenue by vet: '+topV;
+}
+
+function renderCtx(){
+  var rows=allRows();var fin=srcRows('merlin','gocardless');
+  var rev=fin.reduce(function(s,r){return s+(r.amount||0);},0);
+  var owed=fin.filter(function(r){return/outstanding|unpaid/i.test(r.status||'');}).reduce(function(s,r){return s+(r.amount||0);},0);
+  document.getElementById('ctx-data').innerHTML=rows.length?[['Records',rows.length.toLocaleString()],['\u00a3 Revenue','\u00a3'+Math.round(rev).toLocaleString()],['Outstanding','\u00a3'+Math.round(owed).toLocaleString()],['Imports',S.imports.length]].map(function(r){return'<div class="ctx-row"><span>'+r[0]+'</span><span class="ctx-v">'+r[1]+'</span></div>';}).join(''):'<div style="font-size:12px;color:var(--muted)">No data loaded.</div>';
+}
+
+async function sendChat(){
+  var inp=document.getElementById('chat-in'),msg=inp.value.trim();
+  if(!msg)return;
+  if(!S.apiKey){toast('Add your Claude API key on this page','err');return;}
+  inp.value='';inp.style.height='auto';document.getElementById('chat-send').disabled=true;
+  addMsg('user',msg,'chat-msgs','cmsg','cbubble','cavatar');
+  chatHist.push({role:'user',content:msg});
+  var tid=addThink('chat-msgs','cmsg','cbubble','cavatar');
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:'You are a veterinary practice business analyst for Village Veterinary Surgery, Hatfield UK. Practice data:\n'+buildCtx()+'\n\nAnswer concisely with specific numbers. Use \u00a3 for currency. Flag issues proactively.',messages:chatHist.slice(-12)})});
+    var d=await resp.json();removeThink(tid);
+    if(d.content&&d.content[0]){var r=d.content[0].text;chatHist.push({role:'assistant',content:r});addMsg('ai',r,'chat-msgs','cmsg','cbubble','cavatar');}
+    else addMsg('ai','Error: '+(d.error?d.error.message:'Check your API key.'),'chat-msgs','cmsg','cbubble','cavatar');
+  }catch(e){removeThink(tid);addMsg('ai','Connection error.','chat-msgs','cmsg','cbubble','cavatar');}
+  document.getElementById('chat-send').disabled=false;
+}
+function qChat(m){document.getElementById('chat-in').value=m;sendChat();}
+function chatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+
+var CC_SYS='You are a veterinary clinical AI assistant at Village Veterinary Surgery, Hatfield UK.\n1. Ask ONE focused follow-up question at a time.\n2. When asked to diagnose, respond ONLY with valid JSON:\n{"differentials":[{"diagnosis":"Name","confidence":"High|Medium|Low","reasoning":"1-2 sentences"}],"additional_tests":[{"test":"Name","reason":"Why"}],"treatment_options":[{"option":"Name","detail":"Brief description"}]}\n3. Flag emergencies immediately.\n4. Be concise. This is clinical decision support only.';
+
+function newConsult(){
+  if(ccHist.length>0&&!confirm('Start new consultation?'))return;
+  ccHist=[];
+  document.getElementById('cc-msgs').innerHTML='<div class="cm sys"><div class="cb">Describe the patient\'s presenting signs, record the consultation, or add diagnostic results. I\'ll help build a clinical picture and differential diagnosis.</div></div>';
+  ['cc-client','cc-pet','cc-weight','cc-temp'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('cc-placeholder').style.display='block';
+  document.getElementById('cc-output').style.display='none';
+  document.getElementById('cc-loading').style.display='none';
+  document.getElementById('note-area').style.display='none';
+  // Clear result slots
+  slotFiles={};
+  ['idexx','signal','zoetis','htv','extra'].forEach(function(s){
+    var ta=document.getElementById('txt-'+s);if(ta)ta.value='';
+    var prev=document.getElementById('prev-'+s);if(prev)prev.innerHTML='';
+    var body=document.getElementById('body-'+s);if(body)body.classList.remove('open');
+    var sl=document.getElementById('slot-'+s);if(sl)sl.classList.remove('loaded');
+    var st=document.getElementById('st-'+s);if(st){st.style.color='';}
+    ['xpdf-','ximg-'].forEach(function(p){var b=document.getElementById(p+s);if(b){b.style.display='none';b.disabled=false;}});
+  });
+}
+function ccQ(m){document.getElementById('cc-in').value=m;sendCC();}
+function ccKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendCC();}}
+function ccDiagnose(){document.getElementById('cc-in').value='Please generate a full differential diagnosis based on everything discussed. Respond in the structured JSON format.';sendCC();}
+function addResult(type){var inp=document.getElementById('cc-in');inp.value='['+type+'] ';inp.focus();inp.selectionStart=inp.selectionEnd=inp.value.length;resize(inp);}
+
+async function sendCC(){
+  var inp=document.getElementById('cc-in'),msg=inp.value.trim();
+  if(!msg)return;
+  if(!S.apiKey){document.getElementById('cc-nokey').style.display='flex';toast('Add your Claude API key on the AI Reports page','err');return;}
+  inp.value='';inp.style.height='auto';document.getElementById('cc-send').disabled=true;
+  addMsg('vet',msg,'cc-msgs','cm','cb','ca');
+  var ctx=[document.getElementById('cc-client').value?'Owner: '+document.getElementById('cc-client').value:'',document.getElementById('cc-pet').value?'Patient: '+document.getElementById('cc-pet').value:'',document.getElementById('cc-weight').value?'Weight: '+document.getElementById('cc-weight').value+'kg':'',document.getElementById('cc-temp').value?'Temp: '+document.getElementById('cc-temp').value+'C':''].filter(Boolean).join(' | ');
+  if(ccHist.length===0&&ctx)ccHist.push({role:'user',content:'New consultation. '+ctx+'\n\n'+msg});
+  else ccHist.push({role:'user',content:msg});
+  var tid=addThink('cc-msgs','cm','cb','ca');
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:CC_SYS,messages:ccHist.slice(-20)})});
+    var d=await resp.json();removeThink(tid);
+    if(d.content&&d.content[0]){
+      var reply=d.content[0].text;ccHist.push({role:'assistant',content:reply});
+      if(reply.trim().charAt(0)==='{'){addMsg('ai','Structured diagnosis generated:','cc-msgs','cm','cb','ca');tryRenderDx(reply);}
+      else addMsg('ai',reply,'cc-msgs','cm','cb','ca');
+    }else addMsg('ai','Error: '+(d.error?d.error.message:'Check API key.'),'cc-msgs','cm','cb','ca');
+  }catch(e){removeThink(tid);addMsg('ai','Connection error.','cc-msgs','cm','cb','ca');}
+  document.getElementById('cc-send').disabled=false;
+}
+
+function tryRenderDx(text){
+  try{var c=text.replace(/```json\n?|\n?```/g,'').trim();var s=c.indexOf('{'),e=c.lastIndexOf('}');if(s===-1||e===-1)return;var j=JSON.parse(c.slice(s,e+1));if(j.differentials)renderDx(j);}catch(e){console.log('DX parse error',e);}
+}
+function renderDx(j){
+  var diffs=j.differentials||[];
+  var rankColors=['#1b5e38','#277a4a','#4aa572','#7cbf96','#a8d8b8'];
+  var confData=function(c){return c==='High'?{cls:'cH',col:'#1b5e38',bar:92}:c==='Medium'?{cls:'cM',col:'#c47f12',bar:62}:{cls:'cL',col:'#1a3f7a',bar:34};};
+  document.getElementById('cc-diffs').innerHTML=diffs.map(function(d,i){
+    var cd=confData(d.confidence||'Low');
+    var bg=rankColors[Math.min(i,rankColors.length-1)];
+    return '<div class="dx-item"><div class="dx-rank"><div class="dx-rank-num" style="background:'+bg+'">'+(i+1)+'</div><div class="dx-rank-body"><div class="dx-ih"><span class="dx-name">'+esc(d.diagnosis||'')+'</span><span class="conf '+cd.cls+'">'+esc(d.confidence||'')+'</span></div><div class="dx-sub">'+esc(d.reasoning||d.rationale||'')+'</div><div class="dx-bar-wrap"><div class="dx-bar" style="width:'+cd.bar+'%;background:'+cd.col+'"></div></div></div></div></div>';
+  }).join('');
+  var testIcon=function(n){n=(n||'').toLowerCase();if(/blood|haem|biochem/.test(n))return'\u{1F9EA}';if(/urin/.test(n))return'\u{1F4A7}';if(/xray|x-ray|radio|ct|mri/.test(n))return'\u{1FA7B}';if(/echo|cardiac|ecg/.test(n))return'\u{1F493}';if(/cytol|biopsy|fna/.test(n))return'\u{1F52C}';if(/culture|pcr/.test(n))return'\u{1F9AB}';return'\u{1F4CB}';};
+  document.getElementById('cc-tests').innerHTML=(j.additional_tests||j.tests||[]).map(function(t){var name=t.test||t.name||String(t);return'<div class="tx-item"><div class="tx-icon" style="background:var(--bp)">'+testIcon(name)+'</div><div class="tx-body"><strong>'+esc(name)+'</strong>'+esc(t.reason||t.rationale||'')+'</div></div>';}).join('');
+  var txIcons=['\u{1F48A}','\u{1F489}','\u26A1','\u{1F527}'];
+  document.getElementById('cc-tx').innerHTML=(j.treatment_options||j.treatments||[]).map(function(t,i){var name=t.option||t.name||String(t);return'<div class="tx-item"><div class="tx-icon" style="background:var(--g5)">'+txIcons[Math.min(i,txIcons.length-1)]+'</div><div class="tx-body"><strong>'+esc(name)+'</strong>'+esc(t.detail||t.description||'')+'</div></div>';}).join('');
+  document.getElementById('cc-placeholder').style.display='none';
+  document.getElementById('cc-loading').style.display='none';
+  document.getElementById('cc-output').style.display='block';
+}
+
+function resetDx(){
+  document.getElementById('cc-output').style.display='none';
+  document.getElementById('cc-placeholder').style.display='block';
+  document.getElementById('note-area').style.display='none';
+  document.getElementById('note-text').textContent='';
+  ['cc-diffs','cc-tests','cc-tx'].forEach(function(id){document.getElementById(id).innerHTML='';});
+}
+
+async function genNote(){
+  if(!S.apiKey){toast('API key required','err');return;}
+  if(!ccHist.length){toast('No consultation data yet','err');return;}
+  var btn=document.getElementById('gen-note-btn');btn.textContent='Generating...';btn.disabled=true;
+  var client=document.getElementById('cc-client').value||'Unknown',pet=document.getElementById('cc-pet').value||'Unknown';
+  var weight=document.getElementById('cc-weight').value,temp=document.getElementById('cc-temp').value;
+  var today=new Date().toLocaleDateString('en-GB');
+  var dxText=document.getElementById('cc-diffs').innerText||'Not generated';
+  var slotsSummary=getSlotsSummary();
+  var testsText=document.getElementById('cc-tests').innerText||'None';
+  var txText=document.getElementById('cc-tx').innerText||'Not generated';
+  var conv=ccHist.slice(-14).map(function(m){return(m.role==='user'?'Vet: ':'AI: ')+m.content;}).join('\n')+(slotsSummary?'\n\nDiagnostic results:\n'+slotsSummary:'');
+  var prompt='Generate a structured SOAP-format veterinary clinical note for pasting into Merlin PMS (UK practice).\n\nDate: '+today+'\nClinician: Dr Kobi / Dr Anat\nOwner: '+client+'\nPatient: '+pet+(weight?'\nWeight: '+weight+'kg':'')+(temp?'\nTemperature: '+temp+'C':'')+'\n\nConsultation:\n'+conv+'\n\nDifferentials:\n'+dxText+'\n\nRecommended tests:\n'+testsText+'\n\nTreatment:\n'+txText+'\n\nWrite a professional clinical note. Plain text only, no markdown. Format:\n\nDATE: [date]\nCLINICIAN: [name]\nPATIENT: [details]\nOWNER: [name]\n\nS - SUBJECTIVE:\n[Presenting complaint and owner history]\n\nO - OBJECTIVE:\n[Physical findings, vitals]\n\nA - ASSESSMENT:\n[Working diagnosis / differentials]\n\nP - PLAN:\n[Tests, treatments, follow-up, owner advice]\n\nNOTE: AI-assisted differential diagnosis used as decision support, reviewed by attending vet.\n\nMax 380 words. Professional UK veterinary language.';
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:prompt}]})});
+    var d=await resp.json();
+    if(d.content&&d.content[0]){document.getElementById('note-text').textContent=d.content[0].text.trim();document.getElementById('note-area').style.display='block';document.getElementById('note-area').scrollIntoView({behavior:'smooth',block:'nearest'});toast('Clinical note generated \u2014 click Copy to add to Merlin','ok');}
+    else toast('Could not generate note','err');
+  }catch(e){toast('Error generating note','err');}
+  btn.innerHTML='&#128196; Generate clinical note';btn.disabled=false;
+}
+
+function copyNote(){
+  var text=document.getElementById('note-text').textContent;
+  if(!text){toast('No note yet','err');return;}
+  navigator.clipboard.writeText(text).then(function(){
+    var b=document.getElementById('copy-btn');b.textContent='Copied!';b.style.background='var(--g1)';b.style.color='#fff';b.style.borderColor='var(--g1)';
+    setTimeout(function(){b.textContent='Copy';b.style.background='';b.style.color='';b.style.borderColor='';},2500);
+    toast('Copied \u2014 paste into Merlin patient history','ok');
+  }).catch(function(){var r=document.createRange();r.selectNodeContents(document.getElementById('note-text'));var sel=window.getSelection();sel.removeAllRanges();sel.addRange(r);document.execCommand('copy');toast('Selected \u2014 press Ctrl+C to copy','ok');});
+}
+
+function saveCase(){
+  var c={id:Date.now(),date:new Date().toISOString().slice(0,10),client:document.getElementById('cc-client').value||'Unknown',pet:document.getElementById('cc-pet').value||'Unknown',weight:document.getElementById('cc-weight').value,temp:document.getElementById('cc-temp').value,conversation:ccHist,dx:document.getElementById('cc-diffs').innerHTML,tests:document.getElementById('cc-tests').innerHTML,tx:document.getElementById('cc-tx').innerHTML,note:document.getElementById('note-text').textContent||''};
+  cases.unshift(c);if(cases.length>100)cases.pop();localStorage.setItem(CSTORE,JSON.stringify(cases));toast('Case saved','ok');
+}
+
+function printReport(){
+  var pet=document.getElementById('cc-pet').value||'Unknown',client=document.getElementById('cc-client').value||'Unknown';
+  var win=window.open('','_blank');
+  win.document.write('<html><head><title>Clinical Report</title><style>body{font-family:sans-serif;max-width:820px;margin:40px auto;font-size:13px}h2{font-size:15px;margin-top:18px;border-bottom:1px solid #ddd;padding-bottom:4px;color:#1b5e38}.disc{background:#fdf6e3;border:1px solid #e0c060;padding:10px;border-radius:6px;font-size:11px;margin-top:14px}.note{background:#f5f5f0;padding:12px;border-radius:6px;font-size:12px;white-space:pre-wrap;font-family:monospace}</style></head><body>');
+  win.document.write('<h1>Clinical Report &mdash; '+pet+' ('+client+') &mdash; '+new Date().toLocaleDateString('en-GB')+'</h1>');
+  win.document.write('<h2>Differentials</h2>'+(document.getElementById('cc-diffs').innerHTML||'<p>Not generated</p>'));
+  win.document.write('<h2>Tests</h2>'+(document.getElementById('cc-tests').innerHTML||'<p>None</p>'));
+  win.document.write('<h2>Treatment</h2>'+(document.getElementById('cc-tx').innerHTML||'<p>Not generated</p>'));
+  var note=document.getElementById('note-text').textContent;if(note)win.document.write('<h2>Clinical note</h2><div class="note">'+esc(note)+'</div>');
+  win.document.write('<div class="disc"><strong>CLINICAL DECISION SUPPORT ONLY</strong> &mdash; AI-generated. Must be reviewed by attending vet.</div></body></html>');win.print();
+}
+
+function toggleRec(){if(recOn)stopRec();else startRec();}
+function startRec(){
+  var btn=document.getElementById('rec-btn');
+  if(!('SpeechRecognition' in window||'webkitSpeechRecognition' in window)){toast('Speech recognition requires Chrome','warn');return;}
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;recog=new SR();recog.continuous=true;recog.interimResults=true;recog.lang='en-GB';
+  var final='';
+  recog.onresult=function(e){var interim='';for(var i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript+' ';else interim+=e.results[i][0].transcript;}var inp=document.getElementById('cc-in');inp.value=final+interim;resize(inp);};
+  recog.onerror=function(){stopRec();toast('Microphone error','err');};recog.start();toast('Recording started','ok');
+  recOn=true;btn.classList.add('rec-on');btn.textContent='&#9632; Stop';
+  document.getElementById('rec-timer').style.display='inline';recSec=0;
+  recInt=setInterval(function(){recSec++;var m=String(Math.floor(recSec/60)).padStart(2,'0');var s=String(recSec%60).padStart(2,'0');document.getElementById('rec-timer').textContent='\u25CF '+m+':'+s;},1000);
+}
+function stopRec(){
+  if(recog){try{recog.stop();}catch(e){}recog=null;}recOn=false;clearInterval(recInt);
+  var btn=document.getElementById('rec-btn');btn.classList.remove('rec-on');btn.textContent='&#127908; Record';
+  document.getElementById('rec-timer').style.display='none';
+  if(document.getElementById('cc-in').value.trim())toast('Recording stopped \u2014 press Send','ok');
+}
+
+function renderCases(){
+  document.getElementById('cases-empty').style.display=cases.length?'none':'block';
+  document.getElementById('cases-list').style.display=cases.length?'block':'none';
+  if(!cases.length)return;
+  document.getElementById('cases-list').innerHTML=cases.map(function(c){
+    return'<div class="card" style="margin-bottom:14px"><div class="ch"><div><h3>'+esc(c.pet)+' &mdash; '+esc(c.client)+'</h3><div class="sub">'+c.date+(c.weight?' &middot; '+c.weight+'kg':'')+(c.temp?' &middot; '+c.temp+'&deg;C':'')+(c.conversation?' &middot; '+c.conversation.length+' messages':'')+'</div></div><div style="display:flex;gap:6px"><button class="btn btnS btnP" onclick="restoreCase('+c.id+')">Restore</button><button class="btn btnS btnD" onclick="delCase('+c.id+')">Delete</button></div></div>'+
+    (c.dx?'<div style="font-size:12px;color:var(--muted);margin-bottom:8px"><strong>Differentials:</strong> '+c.dx.replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,200)+'...</div>':'')+
+    (c.note?'<details style="margin-top:6px"><summary style="font-size:12px;font-weight:600;cursor:pointer;color:var(--g1)">&#128196; Clinical note for Merlin</summary><pre class="note-box" style="margin-top:6px">'+esc(c.note)+'</pre><button class="btn btnS btnP" style="margin-top:6px" onclick="copyNoteById('+c.id+')">Copy note</button></details>':'')+
+    '</div>';
+  }).join('');
+}
+function restoreCase(id){
+  var c=cases.find(function(x){return x.id===id;});if(!c)return;
+  ccHist=c.conversation||[];
+  ['cc-client','cc-pet','cc-weight','cc-temp'].forEach(function(fid){var key=fid.replace('cc-','');var el=document.getElementById(fid);if(el)el.value=c[key]||c[fid.replace('cc-','')]||'';});
+  document.getElementById('cc-client').value=c.client||'';document.getElementById('cc-pet').value=c.pet||'';document.getElementById('cc-weight').value=c.weight||'';document.getElementById('cc-temp').value=c.temp||'';
+  document.getElementById('cc-diffs').innerHTML=c.dx||'';document.getElementById('cc-tests').innerHTML=c.tests||'';document.getElementById('cc-tx').innerHTML=c.tx||'';
+  if(c.note){document.getElementById('note-text').textContent=c.note;document.getElementById('note-area').style.display='block';}
+  if(c.dx){document.getElementById('cc-placeholder').style.display='none';document.getElementById('cc-output').style.display='block';}
+  var msgs=document.getElementById('cc-msgs');msgs.innerHTML='<div class="cm sys"><div class="cb">Case restored: '+esc(c.pet)+' &mdash; '+esc(c.client)+' ('+c.date+'). Continue or regenerate note.</div></div>';
+  ccHist.forEach(function(m){addMsg(m.role==='user'?'vet':'ai',m.content,'cc-msgs','cm','cb','ca');});
+  goPage('clinical');toast('Case restored','ok');
+}
+function delCase(id){if(!confirm('Delete?'))return;cases=cases.filter(function(c){return c.id!==id;});localStorage.setItem(CSTORE,JSON.stringify(cases));renderCases();toast('Deleted','ok');}
+function copyNoteById(id){var c=cases.find(function(x){return x.id===id;});if(!c||!c.note){toast('No note for this case','err');return;}navigator.clipboard.writeText(c.note).then(function(){toast('Note copied \u2014 paste into Merlin','ok');}).catch(function(){toast('Could not copy automatically','warn');});}
+
+function addMsg(role,text,containerId,msgCls,bubCls,avCls){
+  var el=document.getElementById(containerId);if(!el)return;
+  var d=document.createElement('div');
+  var isVet=role==='vet';
+  d.className=msgCls+' '+(isVet?'user vet':'ai');
+  d.innerHTML='<div class="'+avCls+'" style="'+(isVet?'background:var(--g1);color:#fff;font-weight:700;font-size:10px':'background:var(--g5);border:1px solid var(--g4)')+'">'+( isVet?'VET':'&#128062;')+'</div><div class="'+bubCls+'">'+fmtMd(text)+'</div>';
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
+}
+function addThink(containerId,msgCls,bubCls,avCls){
+  var id='tk-'+(++_tc);var el=document.getElementById(containerId);if(!el)return id;
+  var d=document.createElement('div');d.className=(msgCls||'cmsg')+' ai';d.id=id;
+  d.innerHTML='<div class="'+(avCls||'cavatar')+'" style="background:var(--g5);border:1px solid var(--g4)">&#128062;</div><div class="'+(bubCls||'cbubble')+'"><div class="thinking"><span></span><span></span><span></span></div></div>';
+  el.appendChild(d);el.scrollTop=el.scrollHeight;return id;
+}
+function removeThink(id){var el=document.getElementById(id);if(el)el.remove();}
+
+var BENCH={'Standard consultation':{y:55,b:52,cat:'Consultations'},'Vaccination (dog)':{y:68,b:65,cat:'Consultations'},'Vaccination (cat)':{y:62,b:60,cat:'Consultations'},'Annual health check':{y:72,b:78,cat:'Consultations'},'Microchipping':{y:28,b:32,cat:'Consultations'},'Flea/worm treatment':{y:34,b:28,cat:'Consultations'},'Neutering (dog)':{y:245,b:265,cat:'Surgery'},'Keyhole spay':{y:680,b:720,cat:'Surgery'},'Cruciate repair':{y:1850,b:2100,cat:'Surgery'},'Patellar luxation':{y:1200,b:1350,cat:'Surgery'},'Hospitalisation/day':{y:180,b:165,cat:'Surgery'},'X-ray (1 view)':{y:148,b:135,cat:'Diagnostics'},'Full blood count':{y:68,b:72,cat:'Diagnostics'},'Biochemistry panel':{y:95,b:98,cat:'Diagnostics'},'Ultrasound':{y:220,b:240,cat:'Diagnostics'},'Dental scale & polish':{y:185,b:210,cat:'Dental & Specialist'},'Dental extraction':{y:95,b:110,cat:'Dental & Specialist'},'Oncology consult':{y:390,b:420,cat:'Dental & Specialist'},'Laser therapy':{y:95,b:88,cat:'Dental & Specialist'}};
+function renderPricing(){
+  var cats={Consultations:'',Surgery:'',Diagnostics:'','Dental & Specialist':''};
+  var flagCount=0;
+  Object.entries(BENCH).forEach(function(e){var name=e[0],v=e[1];var diff=((v.y-v.b)/v.b*100);var flag=diff<-10?'&#9660;':diff>15?'&#10003;':'~';var fc=diff<-10?'color:var(--red)':diff>15?'color:var(--g2)':'color:var(--muted)';if(diff<-10)flagCount++;cats[v.cat]+='<div class="pt-row"><span class="pts">'+name+'</span><span class="ptp">&pound;'+v.y+'</span><span class="ptb">&pound;'+v.b+'</span><span class="ptf" style="'+fc+'">'+flag+'</span></div>';});
+  document.getElementById('pricing-tables').innerHTML=Object.entries(cats).map(function(e){return'<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)"><div class="pt-hd"><h3>'+e[0]+'</h3></div><div style="display:flex;padding:6px 16px;background:var(--paper);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em"><span style="flex:1">Service</span><span style="min-width:60px;text-align:right">Yours</span><span style="min-width:60px;text-align:right">Benchmark</span><span style="min-width:20px"></span></div>'+e[1]+'</div>';}).join('');
+  var under=Object.entries(BENCH).filter(function(e){return((e[1].y-e[1].b)/e[1].b*100)<-10;});
+  document.getElementById('pricing-summary').innerHTML=under.length?'<div class="notice warn" style="margin:0">&#9888; <strong>'+under.length+' services below benchmark:</strong> '+under.map(function(e){return e[0]+' (yours &pound;'+e[1].y+', benchmark &pound;'+e[1].b+')';}).join('; ')+'</div>':'<div style="font-size:13px;color:var(--muted)">All services within or above benchmark.</div>';
+}
+
+var SRCS=[{id:'merlin',name:'Merlin PMS',icon:'&#127973;',col:'#1b5e38',pale:'#eaf4ee'},{id:'idexx',name:'IDEXX VetConnect',icon:'&#129514;',col:'#1a3f7a',pale:'#e8f0fc'},{id:'gocardless',name:'GoCardless',icon:'&#128179;',col:'#c47f12',pale:'#fdf6e3'},{id:'petsapp',name:'PetsApp',icon:'&#128241;',col:'#4a2278',pale:'#f0eafc'},{id:'google',name:'Google Ads',icon:'&#128226;',col:'#9b2517',pale:'#fdf0ee'},{id:'signal',name:'Signal Pet',icon:'&#129467;',col:'#0e6a52',pale:'#e0f4ee'},{id:'zoetis',name:'Zoetis',icon:'&#128300;',col:'#c47f12',pale:'#fdf6e3'},{id:'htv',name:'HT Vista',icon:'&#127919;',col:'#9b2517',pale:'#fdf0ee'}];
+function renderSrcGrid(){
+  var grid=document.getElementById('src-grid');if(!grid)return;
+  grid.innerHTML=SRCS.map(function(src){var myImps=S.imports.filter(function(i){return i.src===src.id;});var n=myImps.reduce(function(t,i){return t+i.rows.length;},0);return'<div class="src-card '+(n?'has':'')+'"><div class="src-icon" style="background:'+src.pale+'">'+src.icon+'</div><div style="font-size:12px;font-weight:600;margin-bottom:2px">'+src.name+'</div><div style="font-size:11px;color:var(--muted);margin-bottom:10px">'+(n?n+' records':'No data')+'</div><button class="btn btnP btnS" style="width:100%;background:'+src.col+';border-color:'+src.col+'" onclick="document.getElementById(\'fi-'+src.id+'\').click()">Upload CSV</button></div>';}).join('');
+}
+function parseDate(v) {
+  if (!v) return null;
+  v = v.trim();
+  // Try ISO: 2025-10-15
+  var m = v.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (m) return v.slice(0,7);
+  // Try UK: 15/10/2025 or 15-10-2025
+  m = v.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+  if (m) return m[3]+'-'+m[2].padStart(2,'0');
+  // Try US: 10/15/2025
+  m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return m[3]+'-'+m[1].padStart(2,'0');
+  // Try named month: 15 Oct 2025 or Oct 15 2025
+  var months={jan:'01',feb:'02',mar:'03',apr:'04',may:'05',jun:'06',jul:'07',aug:'08',sep:'09',oct:'10',nov:'11',dec:'12'};
+  m = v.toLowerCase().match(/(\d{1,2})\s+([a-z]{3})\s+(\d{4})/);
+  if (m && months[m[2]]) return m[3]+'-'+months[m[2]];
+  m = v.toLowerCase().match(/([a-z]{3})\s+(\d{1,2})\s*,?\s*(\d{4})/);
+  if (m && months[m[1]]) return m[3]+'-'+months[m[1]];
+  return null;
+}
+
+function fmtMonth(ym) {
+  if (!ym || ym.length < 7) return ym;
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var parts = ym.split('-');
+  var m = parseInt(parts[1]) - 1;
+  return months[m] + ' ' + parts[0].slice(2);
+}
+
+function onFile(inp,src){
+  var f=inp.files[0];if(!f)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var lines=e.target.result.split('\n').map(function(l){return l.trim();}).filter(function(l){return l;});
+    if(lines.length<2){toast('CSV appears empty','err');return;}
+    var headers=parseLine(lines[0]);
+    var rows=lines.slice(1).map(function(l){return parseLine(l);}).filter(function(r){return r.some(function(c){return c;});});
+    var fm=autoMap(headers,src);
+
+    var parsed=rows.map(function(row){
+      var rec={_src:src,_imp:f.name.replace('.csv',''),_month:''};
+      headers.forEach(function(h,i){
+        if(fm[h]){
+          var v=(row[i]||'').trim();
+          if(['amount','spend','cpc'].indexOf(fm[h])>-1) v=parseFloat(v.replace(/[£$€£,\s]/g,''))||0;
+          if(['impressions','clicks','conversions'].indexOf(fm[h])>-1) v=parseInt(v.replace(/[,\s]/g,''))||0;
+          rec[fm[h]]=v;
+        }
+      });
+      // Derive month from date field
+      if(rec.date){
+        var dm=parseDate(String(rec.date));
+        if(dm) rec._month=dm;
+      }
+      if(!rec._month) rec._month=new Date().toISOString().slice(0,7);
+      if(!rec.client) rec.client='Unknown';
+      if(!rec.status) rec.status='Unknown';
+      if(!rec.type) rec.type=guessType(rec.service||rec.item||rec.description||'');
+      if(!rec.species) rec.species=guessSpecies(rec.pet||rec.patient||'');
+      return rec;
+    }).filter(function(r){return r.amount||r.service||r.test||r.campaign||r.finding||r.item;});
+
+    // Derive import period from the actual date range in the data
+    var months=parsed.map(function(r){return r._month;}).filter(Boolean).sort();
+    var importMonth=months.length ? months[0] : new Date().toISOString().slice(0,7);
+    var importLabel=f.name.replace('.csv','');
+
+    // If all records are in the same month, use that as the label
+    var uniqueMonths=[...new Set(months)];
+    if(uniqueMonths.length===1){
+      importLabel=fmtMonth(uniqueMonths[0])+' — '+importLabel;
+    } else if(uniqueMonths.length>1){
+      importLabel=fmtMonth(uniqueMonths[0])+'–'+fmtMonth(uniqueMonths[uniqueMonths.length-1])+' — '+importLabel;
+    }
+
+    S.imports.push({id:Date.now(),src:src,label:importLabel,month:importMonth,imported:new Date().toISOString(),rows:parsed});
+    S.imports.sort(function(a,b){return a.month.localeCompare(b.month);});
+    save();
+    toast('Imported '+parsed.length+' records across '+uniqueMonths.length+' month'+(uniqueMonths.length>1?'s':''),'ok');
+  };reader.readAsText(f);inp.value='';
+}
+function parseLine(line){var res=[],cur='',q=false;for(var i=0;i<line.length;i++){var ch=line[i];if(ch==='"')q=!q;else if(ch===','&&!q){res.push(cur.trim());cur='';}else cur+=ch;}res.push(cur.trim());return res;}
+function autoMap(headers,src){
+  var m={};
+  headers.forEach(function(h){
+    var c=h.toLowerCase().replace(/[^a-z0-9\s]/g,'').replace(/\s+/g,'');
+    // CLIENT / OWNER — Merlin uses "Client", "Client Name", "Owner", "Surname"
+    if(/^client$|clientname|ownername|^owner$|surname|lastname|clientsurname/.test(c)) m[h]='client';
+    // PET — Merlin uses "Patient", "Animal", "Pet Name"
+    else if(/^patient$|patientname|animalname|^pet$|petname/.test(c)) m[h]='pet';
+    // SPECIES — Merlin uses "Species", "Animal Type"
+    else if(/species|animaltype|breed/.test(c)) m[h]='species';
+    // SERVICE — Merlin uses "Service", "Item", "Description", "Product", "Procedure", "Treatment"
+    else if(/^service$|servicedescription|itemdescription|^item$|^description$|productdesc|procedure|treatment|servicename|invoiceitem|^product$/.test(c)) m[h]='service';
+    // VET — Merlin uses "Vet", "Clinician", "Assigned To", "Created By", "Staff"
+    else if(/^vet$|clinician|assignedto|createdby|^staff$|veterinarian|doctor|providedby|performedby|attendingvet/.test(c)) m[h]='vet';
+    // DATE — Merlin: "Date", "Invoice Date", "Appointment Date", "Visit Date", "Date of Service"
+    else if(/^date$|invoicedate|appointmentdate|visitdate|dateofservice|dateofvisit|servicedate|apptdate|transactiondate|datecreated/.test(c)) m[h]='date';
+    // AMOUNT — Merlin: "Total", "Amount", "Net", "Gross", "Price", "Fee", "Charge", "Invoice Total", "Line Total"
+    else if(/^total$|^amount$|^net$|^gross$|^price$|^fee$|^charge$|invoicetotal|linetotal|subtotal|nettotal|grosstotal|totalamount|lineamount|unitprice|extendedprice|^balance$/.test(c)) m[h]='amount';
+    // STATUS — Merlin: "Status", "Payment Status", "Paid", "Invoice Status"
+    else if(/^status$|paymentstatus|invoicestatus|^paid$|^outstanding$/.test(c)) m[h]='status';
+    // TYPE / CATEGORY — Merlin: "Category", "Type", "Department", "Section"
+    else if(/^category$|^type$|^department$|^section$|servicetype|itemtype|producttype/.test(c)) m[h]='type';
+    // GOOGLE ADS specific
+    else if(src==='google'&&/^spend$|^cost$|totalcost|totalspend/.test(c)) m[h]='spend';
+    else if(/campaign|campaignname/.test(c)) m[h]='campaign';
+    else if(/impression/.test(c)) m[h]='impressions';
+    else if(/^clicks$|totalclicks/.test(c)) m[h]='clicks';
+    else if(/costperclick|^cpc$/.test(c)) m[h]='cpc';
+    else if(/clickthroughrate|^ctr$/.test(c)) m[h]='ctr';
+    // IDEXX / diagnostic
+    else if(/^test$|testname|assayname/.test(c)) m[h]='test';
+    else if(/^result$|resultvalue|testresult/.test(c)) m[h]='result';
+    else if(/^finding$|diagnosis|impression/.test(c)) m[h]='finding';
+    else if(/^outcome$/.test(c)) m[h]='outcome';
+    // MANDATE / GoCardless
+    else if(/mandate|mandateid|directdebit/.test(c)) m[h]='mandate';
+    else if(/failurereason|reason/.test(c)) m[h]='failure_reason';
+  });
+  return m;
+}
+function guessType(s){
+  if(!s) return 'Other';
+  var t=s.toLowerCase();
+  if(/vacc|boost|annual|prevent|flea|worm|parasite|tick|microchip|health.?plan|wellness/.test(t)) return 'Preventive';
+  if(/neut|spay|castrat|cruc|patel|keyhole|surg|operat|anaesth|anaesth|bitch.?spay|laparoscop|repair|luxat/.test(t)) return 'Surgery';
+  if(/consult|check|exam|appoint|visit|review|follow.?up|second.?opin/.test(t)) return 'Consultation';
+  if(/dental|teeth|scale|polish|extract|periodon|oral/.test(t)) return 'Dentistry';
+  if(/xray|x.ray|radio|scan|ultra|diagnos|mri|ct.scan|echo|imag|endoscop|biopsy/.test(t)) return 'Diagnostics';
+  if(/laser|physio|aqua|therapy|rehab|hydro/.test(t)) return 'Therapy';
+  if(/hospit|admit|overnight|board|kennel|inpatient|ward/.test(t)) return 'Hospitalisation';
+  if(/cancer|oncol|tumour|tumor|mass|growth|lesion|lymphom|mast.cell/.test(t)) return 'Oncology';
+  if(/drug|medic|tablet|capsule|inject|antibiotic|anti.inflam|pain|nsaid|steroid|fluids|saline/.test(t)) return 'Medication';
+  if(/blood|lab|idexx|sample|panel|profile|haem|biochem|urin|faec|swab|culture/.test(t)) return 'Diagnostics';
+  if(/nurse|clip|groom|bath|nail|anal.gland/.test(t)) return 'Nurse/Grooming';
+  if(/insur|claim/.test(t)) return 'Insurance';
+  return 'Other';
+}
+function guessSpecies(p){
+  if(!p) return 'Unknown';
+  var s=p.toLowerCase();
+  if(/cat|kitten|feline|moggy|tabby|persian|siamese|bengal|ragdoll|burmese|maine.coon/.test(s)) return 'Cat';
+  if(/dog|puppy|canine|bitch|lab|labrad|spaniel|terrier|retriev|collie|shepherd|staffie|staffy|husky|beagle|whippet|poodle|cockapoo|dachshund|shih|pug|bulldog|border|golden|springer|cavalier|cocker/.test(s)) return 'Dog';
+  if(/rabbit|bunny/.test(s)) return 'Rabbit';
+  if(/bird|parrot|budg|canary|cockatiel/.test(s)) return 'Bird';
+  if(/hamster|gerbil|guinea.pig|rat|mouse|rodent|chinchilla/.test(s)) return 'Small animal';
+  if(/horse|pony|equine/.test(s)) return 'Equine';
+  if(/tortoise|turtle|reptile|snake|lizard|gecko/.test(s)) return 'Reptile';
+  return 'Other';
+}
+function renderImpHist(){var el=document.getElementById('imp-hist');if(!el)return;if(!S.imports.length){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No imports yet.</div>';return;}el.innerHTML='<table><thead><tr><th>Source</th><th>Label</th><th>Period</th><th>Records</th><th>Value</th><th></th></tr></thead><tbody>'+S.imports.slice().reverse().map(function(i){var src=SRCS.find(function(s){return s.id===i.src;})||{name:i.src,col:'#888',pale:'#eee'};var rev=i.rows.reduce(function(t,r){return t+(r.amount||r.spend||0);},0);return'<tr><td><span class="badge btype" style="background:'+src.pale+';color:'+src.col+'">'+src.name+'</span></td><td>'+esc(i.label)+'</td><td>'+i.month+'</td><td>'+i.rows.length+'</td><td>'+(rev?'&pound;'+Math.round(rev).toLocaleString():'&mdash;')+'</td><td><button class="btn btnS btnD" onclick="delImport('+i.id+')">Delete</button></td></tr>';}).join('')+'</tbody></table>';}
+function delImport(id){if(!confirm('Delete?'))return;S.imports=S.imports.filter(function(i){return i.id!==id;});save();toast('Deleted','ok');}
+function clearAll(){if(!confirm('Delete all data?'))return;S.imports=[];save();toast('Cleared','ok');}
+
+var DT={outstanding:{label:'Outstanding > X% of revenue',val:15},revdrop:{label:'Revenue drops > X% period',val:15},ddfail:{label:'DD failure rate > X%',val:5},cprise:{label:'Google CPC rises > X%',val:25}};
+function computeAlerts(){
+  var alerts=[],t=S.thresh||{};
+  var fin=srcRows('merlin','gocardless');
+  if(fin.length){
+    var rev=fin.reduce(function(s,r){return s+(r.amount||0);},0);
+    var owed=fin.filter(function(r){return/outstanding|unpaid/i.test(r.status||'');}).reduce(function(s,r){return s+(r.amount||0);},0);
+    var op=rev>0?(owed/rev*100):0;if(op>(t.outstanding||15))alerts.push({level:'red',src:'Finance',msg:'Outstanding is '+op.toFixed(1)+'% of revenue (threshold: '+t.outstanding+'%)'});
+    var gcRows=srcRows('gocardless');if(gcRows.length){var fails=gcRows.filter(function(r){return/fail/i.test(r.status||'');}).length;var fp=fails/gcRows.length*100;if(fp>(t.ddfail||5))alerts.push({level:'red',src:'GoCardless',msg:'DD failure rate is '+fp.toFixed(1)+'% (threshold: '+t.ddfail+'%)'});}
+    if(S.imports.length>=2){var grouped={};S.imports.filter(function(i){return['merlin','gocardless'].indexOf(i.src)>-1;}).forEach(function(i){grouped[i.label]=(grouped[i.label]||0)+i.rows.reduce(function(s,r){return s+(r.amount||0);},0);});var vals=Object.values(grouped);if(vals.length>=2){var last=vals[vals.length-1],prev=vals[vals.length-2];if(prev>0){var drop=(prev-last)/prev*100;if(drop>(t.revdrop||15))alerts.push({level:'red',src:'Revenue',msg:'Revenue dropped '+drop.toFixed(1)+'% (threshold: '+t.revdrop+'%)'});}}}
+  }
+  var gads=S.imports.filter(function(i){return i.src==='google';});if(gads.length>=2){var getCPC=function(imp){var r=imp.rows.filter(function(r){return r.cpc>0;});return r.length?r.reduce(function(s,x){return s+x.cpc;},0)/r.length:0;};var lc=getCPC(gads[gads.length-1]),pc=getCPC(gads[gads.length-2]);if(pc>0){var rise=(lc-pc)/pc*100;if(rise>(t.cprise||25))alerts.push({level:'amber',src:'Google Ads',msg:'CPC rose '+rise.toFixed(1)+'% (threshold: '+t.cprise+'%)'});}}
+  return alerts;
+}
+function checkAlerts(){var a=computeAlerts();var b=document.getElementById('alert-badge');if(a.length){b.style.display='inline';b.textContent=a.length;}else b.style.display='none';}
+function renderAlerts(){var a=computeAlerts();document.getElementById('alert-list').innerHTML=a.length?a.map(function(al){return'<div class="alert-bar '+al.level+'"><div class="adot"></div><div><strong>'+al.src+':</strong> '+al.msg+'</div></div>';}).join(''):'<div class="card" style="margin-bottom:16px;text-align:center;padding:20px;color:var(--muted)">&#10003; No active alerts.</div>';}
+function renderThresh(){var el=document.getElementById('thresh-grid');if(!el)return;el.innerHTML=Object.entries(DT).map(function(e){var k=e[0],v=e[1];return'<div style="background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:12px"><label style="font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">'+v.label+'</label><input type="number" id="th-'+k+'" value="'+(S.thresh&&S.thresh[k]!==undefined?S.thresh[k]:v.val)+'" min="0" style="width:80px;padding:5px 8px;border:1px solid var(--borderS);border-radius:6px;font-family:inherit;font-size:13px"></div>';}).join('');}
+function saveThresh(){if(!S.thresh)S.thresh={};Object.keys(DT).forEach(function(k){var el=document.getElementById('th-'+k);if(el)S.thresh[k]=parseFloat(el.value)||0;});save();checkAlerts();toast('Saved','ok');}
+function resetThresh(){S.thresh={};Object.keys(DT).forEach(function(k){S.thresh[k]=DT[k].val;});renderThresh();saveThresh();}
+
+function loadDemo(){
+  var demo=[{_src:'merlin',_imp:'Oct 25',_month:'2025-10',client:'Sarah Mitchell',pet:'Buddy',species:'Dog',service:'Vaccination booster',vet:'Dr Kobi',date:'2025-10-12',amount:68,status:'Paid',type:'Preventive'},{_src:'merlin',_imp:'Oct 25',_month:'2025-10',client:'James Patel',pet:'Mochi',species:'Cat',service:'Neutering',vet:'Dr Anat',date:'2025-10-14',amount:245,status:'Paid',type:'Surgery'},{_src:'merlin',_imp:'Oct 25',_month:'2025-10',client:'Carol Simmons',pet:'Rex',species:'Dog',service:'Cruciate repair',vet:'Dr Kobi',date:'2025-10-18',amount:1850,status:'Paid',type:'Surgery'},{_src:'merlin',_imp:'Nov 25',_month:'2025-11',client:'Tom Hughes',pet:'Daisy',species:'Dog',service:'Annual health check',vet:'Dr Anat',date:'2025-11-04',amount:72,status:'Paid',type:'Consultation'},{_src:'merlin',_imp:'Nov 25',_month:'2025-11',client:'Emily Newton',pet:'Luna',species:'Cat',service:'Dental scale & polish',vet:'Dr Kobi',date:'2025-11-12',amount:185,status:'Paid',type:'Dentistry'},{_src:'merlin',_imp:'Nov 25',_month:'2025-11',client:'Anna Brierley',pet:'Poppy',species:'Rabbit',service:'Consultation',vet:'Dr Anat',date:'2025-11-20',amount:55,status:'Outstanding',type:'Consultation'},{_src:'merlin',_imp:'Dec 25',_month:'2025-12',client:'David Walsh',pet:'Charlie',species:'Dog',service:'X-ray diagnostics',vet:'Dr Kobi',date:'2025-12-08',amount:320,status:'Paid',type:'Diagnostics'},{_src:'merlin',_imp:'Jan 26',_month:'2026-01',client:'Mark Fowler',pet:'Tilly',species:'Dog',service:'Keyhole spay',vet:'Dr Kobi',date:'2026-01-09',amount:680,status:'Paid',type:'Surgery'},{_src:'merlin',_imp:'Feb 26',_month:'2026-02',client:'Ben Lawson',pet:'Bear',species:'Dog',service:'Patellar luxation',vet:'Dr Kobi',date:'2026-02-05',amount:1200,status:'Paid',type:'Surgery'},{_src:'merlin',_imp:'Mar 26',_month:'2026-03',client:'Phil Yates',pet:'Bruno',species:'Dog',service:'Oncology consult',vet:'Dr Kobi',date:'2026-03-04',amount:390,status:'Paid',type:'Oncology'},{_src:'merlin',_imp:'Mar 26',_month:'2026-03',client:'Kim Shah',pet:'Fizz',species:'Cat',service:'Vaccination',vet:'Dr Anat',date:'2026-03-10',amount:62,status:'Paid',type:'Preventive'},{_src:'gocardless',_imp:'GC Q4',_month:'2025-10',client:'Sarah Mitchell',amount:22,status:'Paid',date:'2025-10-01'},{_src:'gocardless',_imp:'GC Q4',_month:'2025-11',client:'Tom Hughes',amount:22,status:'Failed',date:'2025-11-01'},{_src:'google',_imp:'Google Q4',_month:'2025-10',campaign:'New clients Hatfield',impressions:4200,clicks:88,spend:142,cpc:1.61,ctr:2.1},{_src:'google',_imp:'Google Q1',_month:'2026-01',campaign:'New clients Hatfield',impressions:5800,clicks:124,spend:198,cpc:1.60,ctr:2.1},{_src:'idexx',_imp:'IDEXX Jan',_month:'2026-01',client:'Ben Lawson',pet:'Bear',test:'Biochemistry panel',result:'ALT 180 IU/L',date:'2026-01-20',outcome:'Elevated liver enzymes',amount:95}];
+  var grouped={};demo.forEach(function(r){if(!grouped[r._imp])grouped[r._imp]={id:Date.now()+Math.random(),src:r._src,label:r._imp,month:r._month,imported:new Date().toISOString(),rows:[]};grouped[r._imp].rows.push(r);});
+  S.imports=Object.values(grouped).sort(function(a,b){return a.month.localeCompare(b.month);});save();renderDash();toast('Demo data loaded \u2014 '+allRows().length+' records','ok');
+}
+
+// ═══ RESULT SLOTS ═══
+var slotFiles = {};  // stores base64 data for each slot
+
+function triggerFile(slot) {
+  document.getElementById('rf-' + slot).click();
+}
+
+function toggleSlot(slot) {
+  var body = document.getElementById('body-' + slot);
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  // close all first
+  ['idexx','signal','zoetis','htv','extra'].forEach(function(s) {
+    var b = document.getElementById('body-' + s);
+    if (b) b.classList.remove('open');
+  });
+  if (!isOpen) body.classList.add('open');
+}
+
+function onResultFile(inp, slot) {
+  var f = inp.files[0]; if (!f) return;
+  var isPDF = f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
+  var isImage = /image\//.test(f.type);
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var data = e.target.result;
+    slotFiles[slot] = { name: f.name, type: f.type, data: data, isPDF: isPDF, isImage: isImage };
+    var prevEl = document.getElementById('prev-' + slot);
+    if (prevEl) {
+      if (isImage) {
+        prevEl.innerHTML = '<img src="' + data + '" class="rs-preview" alt="' + f.name + '">';
+        var xbtn = document.getElementById('ximg-' + slot);
+        if (xbtn) xbtn.style.display = 'inline-flex';
+      } else if (isPDF) {
+        prevEl.innerHTML = '<div class="rs-pdf-name">&#128196; ' + f.name + '</div>';
+        var xbtn = document.getElementById('xpdf-' + slot);
+        if (xbtn) xbtn.style.display = 'inline-flex';
+      }
+    }
+    // Auto-populate filename hint in textarea if empty
+    var ta = document.getElementById('txt-' + slot);
+    if (ta && !ta.value) ta.placeholder = 'File loaded: ' + f.name + '\nClick Extract to pull key findings, or type results manually...';
+    // Open the slot body
+    var body = document.getElementById('body-' + slot);
+    if (body) body.classList.add('open');
+    // Update status
+    updateSlotStatus(slot, f.name);
+    document.getElementById('slot-' + slot).classList.add('loaded');
+    toast('File loaded: ' + f.name, 'ok');
+  };
+  reader.readAsDataURL(f);
+  inp.value = '';
+}
+
+function slotChanged(slot) {
+  var ta = document.getElementById('txt-' + slot);
+  var hasText = ta && ta.value.trim().length > 0;
+  var slotEl = document.getElementById('slot-' + slot);
+  if (slotEl) slotEl.classList.toggle('loaded', hasText || !!slotFiles[slot]);
+  if (hasText) updateSlotStatus(slot, 'Results entered');
+}
+
+function updateSlotStatus(slot, text) {
+  var st = document.getElementById('st-' + slot);
+  if (st) { st.textContent = text; st.style.color = 'var(--g1)'; }
+}
+
+async function extractPDF(slot) {
+  if (!S.apiKey) { toast('Add your Claude API key to extract PDF content', 'err'); return; }
+  var sf = slotFiles[slot];
+  if (!sf || !sf.isPDF) { toast('No PDF loaded for this slot', 'err'); return; }
+  var btn = document.getElementById('xpdf-' + slot);
+  if (btn) { btn.textContent = 'Extracting...'; btn.disabled = true; }
+  var slotNames = { idexx: 'IDEXX laboratory report', zoetis: 'Zoetis cytology report', htv: 'HT Vista tumour diagnosis report' };
+  var slotName = slotNames[slot] || 'veterinary diagnostic report';
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': S.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        messages: [{
+          role: 'user',
+          content: [{
+            type: 'document',
+            source: { type: 'base64', media_type: 'application/pdf', data: sf.data.split(',')[1] }
+          }, {
+            type: 'text',
+            text: 'This is a ' + slotName + '. Extract the key clinical findings as a concise summary suitable for a veterinary consultation note. Include: key values with reference ranges where shown, any abnormal findings highlighted, overall interpretation if given. Plain text only, no markdown. Be concise — max 120 words.'
+          }]
+        }]
+      })
+    });
+    var d = await resp.json();
+    if (d.content && d.content[0]) {
+      var ta = document.getElementById('txt-' + slot);
+      if (ta) { ta.value = d.content[0].text.trim(); slotChanged(slot); }
+      toast('Key findings extracted from PDF', 'ok');
+    } else {
+      toast('Could not extract — type results manually', 'warn');
+    }
+  } catch(e) {
+    toast('Extraction failed — check API key and connection', 'err');
+  }
+  if (btn) { btn.innerHTML = '&#128161; Extract from PDF'; btn.disabled = false; }
+}
+
+async function extractImage(slot) {
+  if (!S.apiKey) { toast('Add your Claude API key to analyse the image', 'err'); return; }
+  var sf = slotFiles[slot];
+  if (!sf || !sf.isImage) { toast('No image loaded for this slot', 'err'); return; }
+  var btn = document.getElementById('ximg-' + slot);
+  if (btn) { btn.textContent = 'Analysing...'; btn.disabled = true; }
+  try {
+    var mediaType = sf.type || 'image/jpeg';
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': S.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        messages: [{
+          role: 'user',
+          content: [{
+            type: 'image',
+            source: { type: 'base64', media_type: mediaType, data: sf.data.split(',')[1] }
+          }, {
+            type: 'text',
+            text: 'This is a veterinary diagnostic image (likely an x-ray or radiograph from Signal Pet AI analysis). Describe the key findings relevant to a clinical consultation. Note any abnormalities, relevant structures, and overall impression. Plain text, concise, max 100 words. Clinical veterinary language.'
+          }]
+        }]
+      })
+    });
+    var d = await resp.json();
+    if (d.content && d.content[0]) {
+      var ta = document.getElementById('txt-' + slot);
+      if (ta) { ta.value = d.content[0].text.trim(); slotChanged(slot); }
+      toast('Image findings extracted', 'ok');
+    } else {
+      toast('Could not analyse — type findings manually', 'warn');
+    }
+  } catch(e) {
+    toast('Analysis failed — check API key and connection', 'err');
+  }
+  if (btn) { btn.innerHTML = '&#128161; Describe image with AI'; btn.disabled = false; }
+}
+
+function sendSlotToChat(slot) {
+  var ta = document.getElementById('txt-' + slot);
+  if (!ta || !ta.value.trim()) { toast('No results to send — enter or extract findings first', 'warn'); return; }
+  var slotNames = { idexx: 'IDEXX blood results', signal: 'Signal Pet x-ray findings', zoetis: 'Zoetis cytology report', htv: 'HT Vista tumour diagnosis', extra: 'Additional clinical findings' };
+  var label = slotNames[slot] || slot;
+  document.getElementById('cc-in').value = '[' + label + '] ' + ta.value.trim();
+  sendCC();
+  // Close the slot
+  var body = document.getElementById('body-' + slot);
+  if (body) body.classList.remove('open');
+}
+
+function getSlotsSummary() {
+  var parts = [];
+  ['idexx','signal','zoetis','htv','extra'].forEach(function(slot) {
+    var ta = document.getElementById('txt-' + slot);
+    if (ta && ta.value.trim()) {
+      var names = { idexx: 'IDEXX bloods', signal: 'X-ray', zoetis: 'Cytology', htv: 'HT Vista', extra: 'Other findings' };
+      parts.push((names[slot] || slot) + ': ' + ta.value.trim());
+    }
+  });
+  return parts.join('\n\n');
+}
+
+
+(function init(){
+  if(checkAuth()){
+    document.getElementById('app').style.display='flex';
+    document.getElementById('app').style.flexDirection='column';
+    boot();
+  }else{
+    document.getElementById('login-screen').style.display='flex';
+  }
+})();
+</script>
+</body>
+</html>
