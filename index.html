@@ -230,6 +230,115 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:var(--g5);}
 .sdot.ok{background:#4ade80;}
 @media(max-width:1000px){.metrics{grid-template-columns:repeat(3,1fr);}.src-grid{grid-template-columns:repeat(2,1fr);}.gw,.g3{grid-template-columns:1fr;}}
 @media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr);}.g2{grid-template-columns:1fr;}.chat-layout,.clin-layout{grid-template-columns:1fr;height:auto;}.page{padding:14px;}}
+
+/* ═══ REVENUE GROWTH MODULE STYLES ═══ */
+.opp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;margin-bottom:10px;box-shadow:var(--sh);transition:box-shadow var(--tr);}
+.opp-card:hover{box-shadow:var(--shM);}
+.opp-hd{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.opp-avatar{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.opp-main{flex:1;min-width:0;}
+.opp-name{font-size:14px;font-weight:600;line-height:1.3;}
+.opp-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.opp-right{text-align:right;flex-shrink:0;}
+.opp-value{font-size:20px;font-weight:700;font-family:'Playfair Display',serif;color:var(--g1);}
+.opp-vsub{font-size:10px;color:var(--muted);margin-top:1px;}
+.priority-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-left:6px;}
+.pri-high{background:#fee2e2;color:#991b1b;}
+.pri-med{background:#fef3c7;color:#92400e;}
+.pri-low{background:#e0f2fe;color:#0369a1;}
+.opp-reasons{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.reason-tag{font-size:11px;padding:3px 9px;border-radius:6px;font-weight:500;}
+.rt-vaccines{background:var(--g5);color:var(--g1);}
+.rt-dental{background:var(--bp);color:var(--blue);}
+.rt-senior{background:#f3e8ff;color:#6b21a8;}
+.rt-lapsed{background:var(--paper);color:var(--muted);border:1px solid var(--border);}
+.rt-estimate{background:var(--ap);color:var(--amber);}
+.rt-parasite{background:#ecfdf5;color:#065f46;}
+.rt-chronic{background:#fdf2f8;color:#9d174d;}
+.rt-postop{background:#eff6ff;color:#1e40af;}
+.rt-neutering{background:#fdf4ff;color:#7e22ce;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;display:none;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:var(--rl);padding:24px;width:min(600px,96vw);max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.modal-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.modal-hd h2{font-family:'Playfair Display',serif;font-size:20px;}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);padding:2px 6px;border-radius:4px;line-height:1;}
+.modal-close:hover{background:var(--g5);color:var(--ink);}
+.script-tabs{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:14px;}
+.stab{flex:1;padding:8px;font-size:12px;font-weight:600;border:none;background:var(--paper);cursor:pointer;color:var(--muted);font-family:'DM Sans',sans-serif;transition:var(--tr);border-right:1px solid var(--border);}
+.stab:last-child{border-right:none;}.stab:hover{color:var(--ink);}
+.stab.on{background:var(--g1);color:#fff;}
+.script-content{background:var(--paper);border:1px solid var(--border);border-radius:var(--r);padding:14px;font-size:13px;line-height:1.7;white-space:pre-wrap;min-height:80px;max-height:260px;overflow-y:auto;}
+.plan-tier{background:var(--surface);border:2px solid var(--border);border-radius:var(--rl);padding:18px;transition:all var(--tr);}
+.plan-tier.recommended{border-color:var(--g1);position:relative;}
+.plan-tier.recommended::before{content:'MOST POPULAR';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--g1);color:#fff;font-size:9px;font-weight:700;padding:2px 10px;border-radius:20px;letter-spacing:0.1em;}
+.plan-tier h3{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:2px;}
+.plan-tier .species-tag{font-size:10px;color:var(--muted);margin-bottom:8px;}
+.plan-price{font-size:28px;font-weight:700;font-family:'Playfair Display',serif;color:var(--g1);margin:8px 0;}
+.plan-price span{font-size:13px;font-weight:400;color:var(--muted);}
+.plan-item{font-size:12px;padding:4px 0;border-bottom:1px solid var(--border);display:flex;gap:6px;align-items:flex-start;line-height:1.4;}
+.plan-item:last-child{border-bottom:none;}
+.plan-chk{color:var(--g1);font-size:13px;flex-shrink:0;margin-top:1px;}
+.calc-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:16px;box-shadow:var(--sh);}
+.calc-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.calc-row:last-child{border-bottom:none;}
+.calc-lbl{flex:1;font-weight:500;}
+.calc-inp{width:72px;padding:5px 8px;border:1px solid var(--borderS);border-radius:6px;font-size:13px;font-family:'DM Sans',sans-serif;text-align:right;}
+.calc-result{font-weight:700;color:var(--g1);min-width:75px;text-align:right;}
+.calc-total{background:var(--g5);border-radius:var(--r);padding:12px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;}
+.calc-total-lbl{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;}
+.calc-total-val{font-size:26px;font-weight:700;font-family:'Playfair Display',serif;color:var(--g1);}
+.campaign-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:12px;box-shadow:var(--sh);transition:box-shadow var(--tr);}
+.campaign-card:hover{box-shadow:var(--shM);}
+.ccamp-hd{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;}
+.ccamp-hd:hover{background:var(--g5);}
+.ccamp-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.ccamp-info{flex:1;}.ccamp-info h3{font-size:14px;font-weight:600;}.ccamp-info .sub{font-size:11px;color:var(--muted);}
+.camp-body{padding:14px 16px;border-top:1px solid var(--border);background:var(--paper);}
+.camp-tabs{display:flex;gap:4px;margin-bottom:12px;flex-wrap:wrap;}
+.ctab{font-size:11px;padding:4px 10px;border:1px solid var(--borderS);border-radius:6px;cursor:pointer;background:var(--surface);color:var(--muted);font-family:'DM Sans',sans-serif;transition:var(--tr);}
+.ctab:hover{background:var(--g5);color:var(--g1);}
+.ctab.on{background:var(--g1);color:#fff;border-color:var(--g1);}
+.camp-copy{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px;font-size:12px;line-height:1.8;white-space:pre-wrap;max-height:220px;overflow-y:auto;}
+.prompt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:14px 16px;margin-bottom:10px;box-shadow:var(--sh);}
+.prompt-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.prompt-ava{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--g5);border:1.5px solid var(--g4);flex-shrink:0;}
+.prompt-info h3{font-size:14px;font-weight:600;}
+.prompt-info .sub{font-size:11px;color:var(--muted);}
+.prompt-list{display:flex;flex-direction:column;gap:5px;}
+.prompt-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:var(--r);font-size:12px;line-height:1.5;}
+.pi-urgent{background:#fee2e2;border:1px solid #fecaca;color:#991b1b;}
+.pi-action{background:var(--g5);border:1px solid var(--g4);color:var(--g1d);}
+.pi-info{background:var(--bp);border:1px solid #c3d4f0;color:var(--blue);}
+.pi-amber{background:var(--ap);border:1px solid #e8c86a;color:#7a4a00;}
+.pi-neutral{background:var(--paper);border:1px solid var(--border);color:var(--muted);}
+.pi-icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+.scenario-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--rl);padding:16px;cursor:pointer;transition:all var(--tr);}
+.scenario-card:hover,.scenario-card.active{border-color:var(--g1);box-shadow:var(--sh);}
+.scenario-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:4px;}
+.scenario-value{font-family:'Playfair Display',serif;font-size:28px;color:var(--g1);line-height:1.1;}
+.scenario-desc{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4;}
+.fc-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.fc-row:last-child{border-bottom:none;}
+.fc-lbl{flex:1;color:var(--muted);}
+.fc-val{font-weight:700;min-width:75px;text-align:right;}
+.fc-bar-wrap{width:90px;height:5px;background:var(--g5);border-radius:3px;overflow:hidden;}
+.fc-bar{height:100%;border-radius:3px;background:var(--g1);}
+.gr-filter{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:16px;}
+.grf{font-size:12px;padding:5px 12px;border:1px solid var(--borderS);border-radius:20px;cursor:pointer;background:var(--surface);color:var(--muted);font-family:'DM Sans',sans-serif;transition:var(--tr);}
+.grf:hover{background:var(--g5);color:var(--g1);}
+.grf.on{background:var(--g1);color:#fff;border-color:var(--g1);}
+.search-row{display:flex;gap:8px;align-items:center;margin-bottom:16px;}
+.search-inp{flex:1;padding:9px 13px;border:1.5px solid var(--borderS);border-radius:9px;font-size:13px;font-family:'DM Sans',sans-serif;background:var(--surface);}
+.search-inp:focus{outline:none;border-color:var(--g2);}
+.plan-eligible-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;gap:8px;}
+.plan-eligible-row:last-child{border-bottom:none;}
+.plan-eligible-row:hover{background:var(--g5);}
+.opp-score-bar{height:4px;background:var(--g5);border-radius:2px;overflow:hidden;margin-top:6px;}
+.opp-score-fill{height:100%;border-radius:2px;transition:width .6s ease;}
+@media(max-width:900px){.scenario-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.scenario-grid{grid-template-columns:1fr;}.opp-hd{flex-wrap:wrap;}.opp-right{text-align:left;}}
 </style>
 </head>
 <body>
@@ -278,6 +387,11 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:var(--g5);}
     <div class="nt" id="nt-pricing" onclick="goPage('pricing')">&#163; Pricing</div>
     <div class="nt" id="nt-import" onclick="goPage('import')">&#128196; Import</div>
     <div class="nt" id="nt-alerts" onclick="goPage('alerts')">&#9888; Alerts <span class="nb" id="alert-badge" style="display:none">0</span></div>
+    <div class="nt" id="nt-growth" onclick="goPage('growth')">&#128200; Growth <span class="nb" id="growth-badge" style="display:none">0</span></div>
+    <div class="nt" id="nt-plans" onclick="goPage('plans')">&#129505; Health Plans</div>
+    <div class="nt" id="nt-campaigns" onclick="goPage('campaigns')">&#128226; Campaigns</div>
+    <div class="nt" id="nt-staff" onclick="goPage('staff')">&#128101; Staff Prompts</div>
+    <div class="nt" id="nt-forecast" onclick="goPage('forecast')">&#128302; Forecast</div>
   </div>
 
   <!-- DASHBOARD -->
@@ -647,6 +761,262 @@ tr:last-child td{border-bottom:none;}tr:hover td{background:var(--g5);}
       </div>
     </div>
   </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MODULE B: CLIENT REACTIVATION & REVENUE GROWTH ENGINE
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="page" id="page-growth">
+    <div class="ph">
+      <h1>Revenue Growth Engine</h1>
+      <p>Lapsed patients, missed follow-ups, and reactivation opportunities — ranked by estimated revenue impact.</p>
+    </div>
+    <div class="notice clin" style="margin-bottom:16px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>All outreach scripts are templates only &mdash; review and personalise before sending. Never contact the same client more than once per month on the same matter. All recommendations must be clinically appropriate.</div>
+    </div>
+
+    <!-- Summary KPI row -->
+    <div class="metrics" id="gr-metrics" style="grid-template-columns:repeat(5,1fr)"></div>
+
+    <!-- Filter bar -->
+    <div class="gr-filter" id="gr-filter">
+      <button class="grf on" id="grf-all"       onclick="filterGrowth('all')">All opportunities</button>
+      <button class="grf"    id="grf-vaccines"   onclick="filterGrowth('vaccines')">&#128137; Vaccines overdue</button>
+      <button class="grf"    id="grf-dental"     onclick="filterGrowth('dental')">&#129463; Dental</button>
+      <button class="grf"    id="grf-senior"     onclick="filterGrowth('senior')">&#11088; Senior wellness</button>
+      <button class="grf"    id="grf-estimate"   onclick="filterGrowth('estimate')">&#128203; Estimate pending</button>
+      <button class="grf"    id="grf-chronic"    onclick="filterGrowth('chronic')">&#10084; Chronic care</button>
+      <button class="grf"    id="grf-parasite"   onclick="filterGrowth('parasite')">&#128027; Parasite prevention</button>
+      <button class="grf"    id="grf-postop"     onclick="filterGrowth('postop')">&#128138; Post-op review</button>
+      <button class="grf"    id="grf-lapsed"     onclick="filterGrowth('lapsed')">&#128336; Lapsed (12m+)</button>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;color:var(--muted)" id="gr-count">Loading opportunities&hellip;</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btnS" onclick="renderGrowthList()">&#8635; Refresh</button>
+        <button class="btn btnS btnP" onclick="exportGrowthList()">&#8595; Export CSV</button>
+      </div>
+    </div>
+
+    <div id="gr-list"></div>
+  </div>
+
+  <!-- Outreach Script Modal -->
+  <div class="modal-overlay" id="outreach-modal" onclick="closeOutreachModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-hd">
+        <div>
+          <h2 id="om-title">Outreach Scripts</h2>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px" id="om-sub"></div>
+        </div>
+        <button class="modal-close" onclick="closeOutreachModal()">&times;</button>
+      </div>
+      <div class="notice" style="margin-bottom:14px;font-size:12px">
+        &#9998; These are suggested templates. Always personalise and review before sending. Ensure GDPR compliance for all client communications.
+      </div>
+      <div class="script-tabs">
+        <button class="stab on" id="stab-sms"      onclick="showScriptTab('sms')">SMS</button>
+        <button class="stab"    id="stab-email"     onclick="showScriptTab('email')">Email</button>
+        <button class="stab"    id="stab-call"      onclick="showScriptTab('call')">Call script</button>
+        <button class="stab"    id="stab-reception" onclick="showScriptTab('reception')">Reception note</button>
+      </div>
+      <div id="om-script-content" class="script-content"></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btnP" onclick="copyOutreachScript()">&#128203; Copy script</button>
+        <button class="btn btnS" id="om-ai-btn" onclick="aiGenerateOutreach()">&#129302; Improve with AI</button>
+        <button class="btn btnS" style="margin-left:auto" onclick="closeOutreachModal()">Close</button>
+      </div>
+      <div id="om-ai-output" style="display:none;margin-top:12px;background:var(--g5);border:1px solid var(--g4);border-radius:var(--r);padding:12px;font-size:12px;line-height:1.7"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MODULE C: PREVENTIVE CARE & HEALTH PLANS ENGINE
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="page" id="page-plans">
+    <div class="ph">
+      <h1>Health Plan Growth</h1>
+      <p>Manage and grow your monthly health plan revenue. Identify eligible patients and forecast recurring income.</p>
+    </div>
+
+    <!-- Plan KPIs -->
+    <div class="metrics" id="plans-metrics" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px"></div>
+
+    <!-- Plan tier cards + Revenue calculator -->
+    <div class="grid g2" style="margin-bottom:20px">
+      <!-- Plan tiers -->
+      <div class="card">
+        <div class="ch"><div><h3>Plan structure</h3><div class="sub">Village Vet Health Plan tiers</div></div>
+          <div style="display:flex;gap:5px">
+            <button class="pbt on" id="pspc-dog" onclick="showPlanSpecies('dog')">&#128021; Dogs</button>
+            <button class="pbt"    id="pspc-cat" onclick="showPlanSpecies('cat')">&#128008; Cats</button>
+          </div>
+        </div>
+        <div id="plan-tiers-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
+      </div>
+
+      <!-- Revenue calculator -->
+      <div class="calc-card">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:12px">&#128200; Monthly Revenue Calculator</div>
+        <div id="plan-calc-rows"></div>
+        <div class="calc-total">
+          <div>
+            <div class="calc-total-lbl">Total MRR</div>
+            <div style="font-size:11px;color:var(--muted)">Monthly recurring revenue</div>
+          </div>
+          <div class="calc-total-val" id="plan-mrr">&pound;0</div>
+        </div>
+        <div style="margin-top:10px;background:var(--g5);border-radius:var(--r);padding:10px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:4px">ANNUAL RECURRING REVENUE</div>
+          <div style="font-size:22px;font-weight:700;font-family:'Playfair Display',serif;color:var(--g1)" id="plan-arr">&pound;0</div>
+        </div>
+        <button class="btn btnP" style="width:100%;margin-top:10px" onclick="recalcPlanRevenue()">&#8635; Recalculate</button>
+      </div>
+    </div>
+
+    <!-- Eligible non-members + current members -->
+    <div class="grid g2">
+      <div class="card">
+        <div class="ch">
+          <div><h3>Eligible non-members</h3><div class="sub" id="eligible-sub">Patients who would benefit from a health plan</div></div>
+          <button class="btn btnS btnP" onclick="filterGrowth('vaccines');goPage('growth')">View in Growth</button>
+        </div>
+        <div id="plan-eligible-list" style="max-height:320px;overflow-y:auto"></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><h3>Current plan members</h3><div class="sub" id="members-sub"></div></div></div>
+        <div id="plan-members-list" style="max-height:320px;overflow-y:auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MODULE F: MARKETING CAMPAIGN BUILDER
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="page" id="page-campaigns">
+    <div class="ph">
+      <h1>Campaign Builder</h1>
+      <p>Ready-to-use campaign copy for SMS, email, social, and reception. Focus on existing clients first.</p>
+    </div>
+
+    <div class="notice" style="margin-bottom:16px">
+      &#128161; These campaigns target your <strong>existing client base</strong> — always the highest-ROI marketing channel before paid acquisition.
+    </div>
+
+    <!-- Campaign calendar summary -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="ch"><div><h3>&#128197; Recommended campaign calendar</h3><div class="sub">April &ndash; June 2026 priority campaigns</div></div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+        <div style="background:var(--g5);border-radius:var(--r);padding:12px;border:1px solid var(--g4)">
+          <div style="font-size:11px;font-weight:700;color:var(--g1);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">April</div>
+          <div style="font-size:12px;line-height:1.6"><strong>Spring dental month</strong><br>Target: dogs/cats 3yr+<br>Est. value: &pound;3,200–&pound;5,400</div>
+        </div>
+        <div style="background:var(--bp);border-radius:var(--r);padding:12px;border:1px solid #c3d4f0">
+          <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">May</div>
+          <div style="font-size:12px;line-height:1.6"><strong>Parasite prevention push</strong><br>Target: all lapsed preventive<br>Est. value: &pound;1,800–&pound;2,600</div>
+        </div>
+        <div style="background:var(--ap);border-radius:var(--r);padding:12px;border:1px solid #e8c86a">
+          <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px">June</div>
+          <div style="font-size:12px;line-height:1.6"><strong>Senior wellness screening</strong><br>Target: pets aged 7+<br>Est. value: &pound;2,100–&pound;3,800</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Campaign cards -->
+    <div id="campaigns-list"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MODULE G: RECEPTION & TEAM STAFF PROMPTS
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="page" id="page-staff">
+    <div class="ph">
+      <h1>Staff Prompts</h1>
+      <p>Smart prompts for reception and nursing teams. Look up any patient for instant care reminders and action flags.</p>
+    </div>
+
+    <!-- Patient search -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="ch"><div><h3>&#128270; Patient lookup</h3><div class="sub">Type a pet name or owner surname</div></div></div>
+      <div class="search-row">
+        <input class="search-inp" type="text" id="staff-search" placeholder="e.g. Buddy, Mitchell, Rosie..." oninput="staffSearch(this.value)">
+        <button class="btn btnP" onclick="staffSearch(document.getElementById('staff-search').value)">Look up</button>
+      </div>
+      <div id="staff-search-results"></div>
+    </div>
+
+    <!-- Today's prompt summary -->
+    <div class="grid g2">
+      <div class="card">
+        <div class="ch"><div><h3>&#128276; Today's priority actions</h3><div class="sub">Patients needing contact today</div></div></div>
+        <div id="staff-today-prompts"></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><h3>&#128101; Morning briefing</h3><div class="sub">Practice overview for the team</div></div></div>
+        <div id="staff-briefing"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       MODULE H: KPI FORECASTING
+  ══════════════════════════════════════════════════════════════════════ -->
+  <div class="page" id="page-forecast">
+    <div class="ph">
+      <h1>Revenue Forecast</h1>
+      <p>Projected uplift from growth initiatives. Conservative, base-case, and optimistic scenarios.</p>
+    </div>
+
+    <!-- Scenario selector -->
+    <div class="scenario-grid" id="forecast-scenarios" style="margin-bottom:18px">
+      <div class="scenario-card active" id="sc-conservative" onclick="setScenario('conservative')">
+        <div class="scenario-label">Conservative</div>
+        <div class="scenario-value" id="sc-conservative-val">&pound;0</div>
+        <div class="scenario-desc">25% reactivation rate. 5 new health plan sign-ups. 1 dental campaign.</div>
+      </div>
+      <div class="scenario-card" id="sc-base" onclick="setScenario('base')">
+        <div class="scenario-label">Base case</div>
+        <div class="scenario-value" id="sc-base-val">&pound;0</div>
+        <div class="scenario-desc">40% reactivation rate. 12 new health plan sign-ups. 2 campaigns.</div>
+      </div>
+      <div class="scenario-card" id="sc-optimistic" onclick="setScenario('optimistic')">
+        <div class="scenario-label">Optimistic</div>
+        <div class="scenario-value" id="sc-optimistic-val">&pound;0</div>
+        <div class="scenario-desc">60% reactivation rate. 20 new health plan sign-ups. Full campaign calendar.</div>
+      </div>
+    </div>
+
+    <!-- Forecast breakdown -->
+    <div class="grid g2" style="margin-bottom:18px">
+      <div class="card">
+        <div class="ch"><div><h3>12-month revenue uplift</h3><div class="sub" id="fc-scenario-label">Conservative scenario</div></div></div>
+        <div class="cw h240"><canvas id="c-forecast"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><h3>Uplift by initiative</h3><div class="sub">Estimated annual contribution</div></div></div>
+        <div id="fc-breakdown"></div>
+      </div>
+    </div>
+
+    <!-- Detailed forecast table -->
+    <div class="grid g2">
+      <div class="card">
+        <div class="ch"><div><h3>&#128200; Health plan MRR growth</h3><div class="sub">Monthly recurring revenue projection</div></div></div>
+        <div class="cw h200"><canvas id="c-plan-growth"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div><h3>&#128203; Initiative ROI summary</h3></div></div>
+        <div id="fc-roi-table"></div>
+        <div style="margin-top:12px;background:var(--g5);border-radius:var(--r);padding:12px">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Total 12-month revenue opportunity</div>
+          <div style="font-size:28px;font-weight:700;font-family:'Playfair Display',serif;color:var(--g1)" id="fc-total-opp">&pound;0</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:3px">Based on current patient data and selected scenario</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -685,7 +1055,7 @@ function boot(){
 function save(){localStorage.setItem(STORE,JSON.stringify(S));localStorage.setItem(CSTORE,JSON.stringify(cases));renderAll();}
 function renderAll(){updatePill();renderSrcGrid();renderImpHist();renderPricing();renderThresh();checkAlerts();}
 
-var TITLES={dashboard:'Dashboard',ai:'AI Practice Intelligence',clinical:'Clinical Assistant',cases:'Case History',pricing:'Pricing Analysis',import:'Import Data',alerts:'Alerts'};
+var TITLES={dashboard:'Dashboard',ai:'AI Practice Intelligence',clinical:'Clinical Assistant',cases:'Case History',pricing:'Pricing Analysis',import:'Import Data',alerts:'Alerts',growth:'Revenue Growth',plans:'Health Plans',campaigns:'Campaigns',staff:'Staff Prompts',forecast:'KPI Forecast'};
 function goPage(p){
   document.querySelectorAll('.page').forEach(function(el){el.classList.remove('on');});
   document.querySelectorAll('.nt').forEach(function(el){el.classList.remove('on');});
@@ -1735,6 +2105,1059 @@ function getSlotsSummary() {
   });
   return parts.join('\n\n');
 }
+
+
+
+// ═══════════════════════════════════════════════════════════
+// VILLAGE VET — REVENUE GROWTH MODULES
+// Demo patient data, reactivation engine, health plans,
+// campaigns, staff prompts, KPI forecasting
+// ═══════════════════════════════════════════════════════════
+
+// ── Demo patient registry (30 patients) ──
+// lastVisit / nextVaccDue / lastDental: ISO date strings
+// estimatePending: false or £ amount
+// conditions: chronic conditions array
+// Today in demo = 2026-04-03
+var DEMO_PATIENTS = [
+  {id:1,  name:'Buddy',   species:'Dog', breed:'Labrador Retriever', age:7,  sex:'M', weight:32, neutered:true,  owner:'James Mitchell',   phone:'07700 900123', email:'j.mitchell@example.com', lastVisit:'2025-07-15', nextVaccDue:'2025-08-01', lastDental:'2023-06-10', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Overweight — target 29kg'},
+  {id:2,  name:'Charlie', species:'Dog', breed:'Cockapoo',           age:3,  sex:'M', weight:9,  neutered:true,  owner:'Emma Thompson',    phone:'07700 900234', email:'e.thompson@example.com', lastVisit:'2026-03-10', nextVaccDue:'2027-03-10', lastDental:'2026-01-05', onHealthPlan:true,  planTier:'Silver', conditions:[], estimatePending:false, postOpDue:false, notes:''},
+  {id:3,  name:'Rosie',   species:'Dog', breed:'Golden Retriever',   age:5,  sex:'F', weight:28, neutered:true,  owner:'Claire Jenkins',   phone:'07700 900345', email:'c.jenkins@example.com', lastVisit:'2024-12-20', nextVaccDue:'2025-01-10', lastDental:'2023-12-01', onHealthPlan:false, planTier:null, conditions:[], estimatePending:340, postOpDue:false, notes:'Dental estimate issued Nov 2024 — not converted'},
+  {id:4,  name:'Max',     species:'Dog', breed:'English Springer Spaniel', age:9, sex:'M', weight:22, neutered:true, owner:'Robert Williams', phone:'07700 900456', email:'r.williams@example.com', lastVisit:'2025-09-05', nextVaccDue:'2025-10-05', lastDental:'2025-01-20', onHealthPlan:false, planTier:null, conditions:['Osteoarthritis'], estimatePending:false, postOpDue:false, notes:'On Metacam long-term — needs 6-monthly recheck'},
+  {id:5,  name:'Bella',   species:'Dog', breed:'Miniature Dachshund', age:2, sex:'F', weight:5,  neutered:false, owner:'Sophie Harris',    phone:'07700 900567', email:'s.harris@example.com', lastVisit:'2026-01-15', nextVaccDue:'2027-01-15', lastDental:null, onHealthPlan:false, planTier:null, conditions:[], estimatePending:185, postOpDue:false, notes:'Spinal MRI estimate pending — IVDD risk discussion'},
+  {id:6,  name:'Oscar',   species:'Dog', breed:'Border Collie',      age:4,  sex:'M', weight:20, neutered:true,  owner:'Peter Davies',     phone:'07700 900678', email:'p.davies@example.com', lastVisit:'2025-10-01', nextVaccDue:'2025-11-01', lastDental:'2024-08-15', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Active farm dog — parasite prevention lapsed'},
+  {id:7,  name:'Archie',  species:'Dog', breed:'Labrador',           age:11, sex:'M', weight:35, neutered:true,  owner:'David Robinson',   phone:'07700 900789', email:'d.robinson@example.com', lastVisit:'2025-06-01', nextVaccDue:'2025-07-01', lastDental:'2025-02-10', onHealthPlan:true,  planTier:'Gold', conditions:['Osteoarthritis','Hypothyroidism'], estimatePending:false, postOpDue:false, notes:'6-monthly bloods due — on Thyroxine + Librela'},
+  {id:8,  name:'Luna',    species:'Dog', breed:'Toy Poodle',         age:2,  sex:'F', weight:4,  neutered:false, owner:'Hannah Brown',     phone:'07700 900890', email:'h.brown@example.com', lastVisit:'2026-02-20', nextVaccDue:'2027-02-20', lastDental:null, onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Neutering discussed — owner hesitant'},
+  {id:9,  name:'Milo',    species:'Dog', breed:'Staffordshire Bull Terrier', age:6, sex:'M', weight:18, neutered:true, owner:'Craig Wilson', phone:'07700 900901', email:'c.wilson@example.com', lastVisit:'2025-05-10', nextVaccDue:'2025-06-10', lastDental:'2023-11-01', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Grade 3 dental disease noted last visit'},
+  {id:10, name:'Daisy',   species:'Dog', breed:'Beagle',             age:4,  sex:'F', weight:12, neutered:true,  owner:'Karen Taylor',     phone:'07700 901012', email:'k.taylor@example.com', lastVisit:'2026-03-25', nextVaccDue:'2027-03-25', lastDental:'2025-11-10', onHealthPlan:true,  planTier:'Gold', conditions:[], estimatePending:false, postOpDue:false, notes:''},
+  {id:11, name:'Teddy',   species:'Dog', breed:'Golden Retriever',   age:8,  sex:'M', weight:30, neutered:true,  owner:'Alan Moore',       phone:'07700 901123', email:'a.moore@example.com', lastVisit:'2025-10-10', nextVaccDue:'2025-11-10', lastDental:'2025-04-01', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Senior wellness screen recommended at last visit'},
+  {id:12, name:'Ruby',    species:'Dog', breed:'Springer Spaniel',   age:3,  sex:'F', weight:19, neutered:true,  owner:'Fiona Anderson',   phone:'07700 901234', email:'f.anderson@example.com', lastVisit:'2026-01-10', nextVaccDue:'2027-01-10', lastDental:null, onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:true,  notes:'TPLO surgery 06 Jan 2026 — 12-week post-op review not booked'},
+  {id:13, name:'Cooper',  species:'Dog', breed:'French Bulldog',     age:2,  sex:'M', weight:14, neutered:true,  owner:'Tom Jackson',      phone:'07700 901345', email:'t.jackson@example.com', lastVisit:'2025-11-15', nextVaccDue:'2026-11-15', lastDental:null, onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'BCS 7/9 — weight management referral recommended'},
+  {id:14, name:'Poppy',   species:'Dog', breed:'Labrador',           age:5,  sex:'F', weight:26, neutered:true,  owner:'Sarah Martin',     phone:'07700 901456', email:'s.martin@example.com', lastVisit:'2025-09-20', nextVaccDue:'2025-10-20', lastDental:'2024-03-05', onHealthPlan:false, planTier:null, conditions:[], estimatePending:210, postOpDue:false, notes:'Full dental estimate issued Sep 2025 — pending'},
+  {id:15, name:'Bailey',  species:'Dog', breed:'Golden Retriever',   age:7,  sex:'M', weight:33, neutered:true,  owner:'Mike Thompson',    phone:'07700 901567', email:'m.thompson@example.com', lastVisit:'2026-02-01', nextVaccDue:'2027-02-01', lastDental:'2024-08-01', onHealthPlan:true,  planTier:'Silver', conditions:[], estimatePending:false, postOpDue:false, notes:'Dental overdue — last done Aug 2024'},
+  {id:16, name:'Whiskers',species:'Cat', breed:'Domestic Shorthair', age:5,  sex:'M', weight:5,  neutered:true,  owner:'Janet Clarke',     phone:'07700 901678', email:'j.clarke@example.com', lastVisit:'2025-04-20', nextVaccDue:'2025-05-20', lastDental:'2023-10-10', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Indoor/outdoor — FeLV/FIV screen overdue'},
+  {id:17, name:'Mittens', species:'Cat', breed:'Persian',            age:3,  sex:'F', weight:4,  neutered:true,  owner:'Susan Evans',      phone:'07700 901789', email:'s.evans@example.com', lastVisit:'2026-03-15', nextVaccDue:'2027-03-15', lastDental:'2025-10-20', onHealthPlan:true,  planTier:'Bronze', conditions:[], estimatePending:false, postOpDue:false, notes:''},
+  {id:18, name:'Simba',   species:'Cat', breed:'Maine Coon',         age:6,  sex:'M', weight:7,  neutered:true,  owner:'Paul Roberts',     phone:'07700 901890', email:'p.roberts@example.com', lastVisit:'2025-08-10', nextVaccDue:'2025-09-10', lastDental:'2025-03-01', onHealthPlan:false, planTier:null, conditions:['Chronic Kidney Disease Stg 2'], estimatePending:false, postOpDue:false, notes:'CKD — 3-monthly UPC + bloods required'},
+  {id:19, name:'Luna',    species:'Cat', breed:'Siamese',            age:2,  sex:'F', weight:3,  neutered:false, owner:'Rachel Walker',    phone:'07700 901901', email:'r.walker@example.com', lastVisit:'2025-12-01', nextVaccDue:'2026-12-01', lastDental:null, onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Neutering overdue — breeding status unclear'},
+  {id:20, name:'Oliver',  species:'Cat', breed:'Domestic Shorthair', age:9,  sex:'M', weight:5,  neutered:true,  owner:'Brian Hall',       phone:'07700 902012', email:'b.hall@example.com', lastVisit:'2025-08-25', nextVaccDue:'2025-09-25', lastDental:'2024-04-10', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Senior wellness screen due — hyperthyroidism risk age'},
+  {id:21, name:'Bella',   species:'Cat', breed:'Ragdoll',            age:4,  sex:'F', weight:5,  neutered:true,  owner:'Kate Lewis',       phone:'07700 902123', email:'k.lewis@example.com', lastVisit:'2025-11-05', nextVaccDue:'2025-12-05', lastDental:'2024-06-15', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Dental check overdue'},
+  {id:22, name:'Tigger',  species:'Cat', breed:'Domestic Shorthair', age:3,  sex:'M', weight:5,  neutered:true,  owner:'Chris Young',      phone:'07700 902234', email:'c.young@example.com', lastVisit:'2025-07-10', nextVaccDue:'2025-08-10', lastDental:null, onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Outdoor cat — parasite prevention never discussed'},
+  {id:23, name:'Molly',   species:'Cat', breed:'Domestic Shorthair', age:6,  sex:'F', weight:4,  neutered:true,  owner:'Ann King',         phone:'07700 902345', email:'a.king@example.com', lastVisit:'2025-12-10', nextVaccDue:'2026-12-10', lastDental:'2025-08-01', onHealthPlan:true,  planTier:'Bronze', conditions:['Diabetes Mellitus'], estimatePending:false, postOpDue:false, notes:'Monthly glucose curve due — owner monitoring at home'},
+  {id:24, name:'Oscar',   species:'Cat', breed:'Bengal',             age:4,  sex:'M', weight:5,  neutered:true,  owner:'James Wright',     phone:'07700 902456', email:'j.wright@example.com', lastVisit:'2024-12-15', nextVaccDue:'2025-01-15', lastDental:'2024-06-01', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Completely lapsed — over 15 months since last visit'},
+  {id:25, name:'Cleo',    species:'Cat', breed:'Burmese',            age:7,  sex:'F', weight:4,  neutered:true,  owner:'Linda Scott',      phone:'07700 902567', email:'l.scott@example.com', lastVisit:'2025-10-01', nextVaccDue:'2026-10-01', lastDental:'2025-05-10', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Senior wellness screen due — age 7'},
+  {id:26, name:'Pepper',  species:'Dog', breed:'Miniature Schnauzer', age:5, sex:'M', weight:8,  neutered:true,  owner:'James Hill',       phone:'07700 902678', email:'j.hill@example.com', lastVisit:'2026-01-20', nextVaccDue:'2027-01-20', lastDental:'2025-09-15', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Parasite prevention lapsed 3 months'},
+  {id:27, name:'Ginger',  species:'Dog', breed:'Cockapoo',           age:1,  sex:'F', weight:6,  neutered:false, owner:'Jenny Carter',     phone:'07700 902789', email:'j.carter@example.com', lastVisit:'2026-03-01', nextVaccDue:'2026-04-10', lastDental:null, onHealthPlan:true,  planTier:'Puppy', conditions:[], estimatePending:false, postOpDue:false, notes:'2nd vaccination booster due — neutering discussion needed'},
+  {id:28, name:'Bruno',   species:'Dog', breed:'German Shepherd',    age:4,  sex:'M', weight:35, neutered:true,  owner:'Steve Phillips',   phone:'07700 902890', email:'s.phillips@example.com', lastVisit:'2025-09-10', nextVaccDue:'2025-10-10', lastDental:'2024-10-20', onHealthPlan:false, planTier:null, conditions:[], estimatePending:false, postOpDue:false, notes:'Working dog — parasite prevention and booster both lapsed'},
+  {id:29, name:'Coco',    species:'Dog', breed:'Shih Tzu',           age:8,  sex:'F', weight:7,  neutered:true,  owner:'Mary Baker',       phone:'07700 902901', email:'m.baker@example.com', lastVisit:'2025-11-20', nextVaccDue:'2026-11-20', lastDental:'2023-09-15', onHealthPlan:false, planTier:null, conditions:[], estimatePending:285, postOpDue:false, notes:'Dental estimate £285 — owner concerned about anaesthetic risk'},
+  {id:30, name:'Alfie',   species:'Dog', breed:'Beagle',             age:2,  sex:'M', weight:11, neutered:true,  owner:'Tim Turner',       phone:'07700 903012', email:'t.turner@example.com', lastVisit:'2026-02-15', nextVaccDue:'2027-02-15', lastDental:null, onHealthPlan:true,  planTier:'Bronze', conditions:[], estimatePending:false, postOpDue:false, notes:''}
+];
+
+// ── Extended demo financial data load includes patient seed ──
+var _demoPatients = [];  // active patient registry
+
+function loadPatientsIfNeeded() {
+  if (_demoPatients.length === 0) _demoPatients = DEMO_PATIENTS.slice();
+}
+
+// ═══ MODULE B: REACTIVATION & GROWTH ENGINE ═══
+
+var TODAY_DEMO = new Date('2026-04-03');
+var _growthFilter = 'all';
+var _currentOutreachPatient = null;
+var _currentOutreachTab = 'sms';
+
+function daysSince(dateStr) {
+  if (!dateStr) return 9999;
+  return Math.floor((TODAY_DEMO - new Date(dateStr)) / 86400000);
+}
+function monthsSince(dateStr) {
+  if (!dateStr) return 9999;
+  return Math.floor(daysSince(dateStr) / 30.5);
+}
+
+// Score a patient and return reasons + estimated revenue
+function scorePatient(p) {
+  var reasons = [];
+  var score   = 0;
+  var estRev  = 0;
+  var ds = daysSince(p.lastVisit);
+
+  // 1. Vaccines overdue
+  if (p.nextVaccDue) {
+    var vaccOverdue = daysSince(p.nextVaccDue);
+    if (vaccOverdue > 0) {
+      var vaccVal = p.species === 'Cat' ? 62 : 68;
+      reasons.push({type:'vaccines', label:'Vaccination overdue by ' + Math.floor(vaccOverdue/7) + ' weeks', value: vaccVal});
+      score += 8; estRev += vaccVal;
+    }
+  }
+
+  // 2. Estimate pending — highest priority
+  if (p.estimatePending && p.estimatePending > 0) {
+    reasons.push({type:'estimate', label:'Estimate of \u00a3' + p.estimatePending + ' issued — not yet converted', value: Math.round(p.estimatePending * 0.85)});
+    score += 9; estRev += Math.round(p.estimatePending * 0.85);
+  }
+
+  // 3. Post-op review not booked
+  if (p.postOpDue) {
+    reasons.push({type:'postop', label:'Post-op review not yet booked (check notes)', value: 55});
+    score += 8; estRev += 55;
+  }
+
+  // 4. Chronic care recheck overdue (lapsed > 3 months)
+  if (p.conditions && p.conditions.length > 0 && ds > 90) {
+    var cVal = 85;
+    reasons.push({type:'chronic', label:'Chronic care recheck overdue: ' + p.conditions.join(', '), value: cVal});
+    score += 9; estRev += cVal;
+  }
+
+  // 5. Senior wellness (7+) — overdue if not seen in 6 months
+  if (p.age >= 7 && ds > 180) {
+    reasons.push({type:'senior', label:'Senior wellness screen due (age ' + p.age + ')', value: 148});
+    score += 7; estRev += 148;
+  }
+
+  // 6. Dental overdue (>12 months since last dental or >18 months with no dental on record for pets 3+)
+  if (p.age >= 3) {
+    var msDental = monthsSince(p.lastDental);
+    if (!p.lastDental && p.age >= 4) {
+      reasons.push({type:'dental', label:'No dental on record — check recommended', value: 185});
+      score += 6; estRev += 185;
+    } else if (p.lastDental && msDental > 14) {
+      reasons.push({type:'dental', label:'Dental health check overdue (' + msDental + ' months since last)', value: 185});
+      score += 6; estRev += 185;
+    }
+  }
+
+  // 7. Parasite prevention lapsed (only flag if not on health plan covering it)
+  if (!p.onHealthPlan && ds > 90) {
+    reasons.push({type:'parasite', label:'Parasite prevention likely lapsed — ' + monthsSince(p.lastVisit) + ' months since last dispensed', value: 34});
+    score += 5; estRev += 34;
+  }
+
+  // 8. Neutering not done
+  if (!p.neutered && p.age >= 0.5 && p.age <= 3) {
+    reasons.push({type:'neutering', label:'Neutering not yet performed — discuss at next visit', value: p.species === 'Cat' ? 185 : 245});
+    score += 6; estRev += p.species === 'Cat' ? 185 : 245;
+  }
+
+  // 9. General lapsed (12+ months, no specific reason above)
+  if (ds > 365 && reasons.length === 0) {
+    reasons.push({type:'lapsed', label:'No visit for ' + Math.round(ds/30) + ' months — general welfare check', value: 55});
+    score += 4; estRev += 55;
+  } else if (ds > 365 && reasons.length > 0) {
+    // Already flagged for other reasons, boost score slightly
+    score += 1;
+  }
+
+  var priority = score >= 17 ? 'high' : score >= 10 ? 'med' : 'low';
+  return { score, priority, reasons, estRev, daysSince: ds };
+}
+
+function computeGrowthOpps() {
+  loadPatientsIfNeeded();
+  var opps = _demoPatients.map(function(p) {
+    var s = scorePatient(p);
+    return Object.assign({patient: p}, s);
+  }).filter(function(o) { return o.reasons.length > 0; })
+    .sort(function(a, b) { return b.estRev - a.estRev; });
+  return opps;
+}
+
+function filterGrowth(type) {
+  _growthFilter = type;
+  document.querySelectorAll('.grf').forEach(function(b) {
+    b.classList.toggle('on', b.id === 'grf-' + type);
+  });
+  renderGrowthList();
+}
+
+function renderGrowth() {
+  loadPatientsIfNeeded();
+  var opps = computeGrowthOpps();
+  // Metrics
+  var totalVal  = opps.reduce(function(s,o){ return s+o.estRev; }, 0);
+  var highPri   = opps.filter(function(o){ return o.priority==='high'; }).length;
+  var vaccDue   = opps.filter(function(o){ return o.reasons.some(function(r){ return r.type==='vaccines'; }); }).length;
+  var estPend   = opps.filter(function(o){ return o.reasons.some(function(r){ return r.type==='estimate'; }); }).length;
+  var lapsed12  = opps.filter(function(o){ return o.daysSince > 365; }).length;
+  document.getElementById('gr-metrics').innerHTML =
+    metric('Total opportunity', '\u00a3'+Math.round(totalVal).toLocaleString(), 'Estimated 12-month value', '') +
+    metric('High-priority', highPri, 'patients', 'color:var(--red)') +
+    metric('Vaccines overdue', vaccDue, 'patients to contact', '') +
+    metric('Estimates pending', estPend, 'not yet converted', 'color:var(--amber)') +
+    metric('Lapsed 12m+', lapsed12, 'inactive patients', '');
+  // Update badge
+  var badge = document.getElementById('growth-badge');
+  if (badge) { badge.style.display = opps.length ? 'inline' : 'none'; badge.textContent = opps.length; }
+  renderGrowthList();
+}
+
+function metric(label, value, sub, valueStyle) {
+  return '<div class="metric"><div class="ml">'+label+'</div><div class="mv" style="'+valueStyle+'">'+value+'</div><div class="md neu">'+sub+'</div></div>';
+}
+
+function renderGrowthList() {
+  var opps = computeGrowthOpps();
+  var filter = _growthFilter;
+  if (filter !== 'all') {
+    opps = opps.filter(function(o) {
+      return o.reasons.some(function(r){ return r.type === filter; });
+    });
+  }
+  var countEl = document.getElementById('gr-count');
+  if (countEl) countEl.textContent = opps.length + ' opportunit' + (opps.length===1?'y':'ies') + (filter!=='all'?' (filtered)':'') + ' — estimated \u00a3' + opps.reduce(function(s,o){return s+o.estRev;},0).toLocaleString() + ' potential value';
+
+  if (!opps.length) {
+    document.getElementById('gr-list').innerHTML = '<div class="empty"><div class="ei">\u2705</div><h3>No opportunities in this category</h3><p>All patients in this segment are up to date.</p></div>';
+    return;
+  }
+
+  var html = opps.map(function(o, idx) {
+    var p = o.patient;
+    var ava = p.species === 'Cat' ? '\uD83D\uDC31' : '\uD83D\uDC15';
+    var priLabel = o.priority==='high'?'High priority':o.priority==='med'?'Medium':'Lower priority';
+    var priCls   = 'pri-'+o.priority;
+    var scoreW   = Math.min(100, Math.round(o.score / 25 * 100));
+    var scoreCol = o.priority==='high'?'var(--red)':o.priority==='med'?'var(--amber)':'var(--blue)';
+    var reasonTags = o.reasons.map(function(r){
+      return '<span class="reason-tag rt-'+r.type+'">'+r.label+'</span>';
+    }).join('');
+    return '<div class="opp-card">'+
+      '<div class="opp-hd">'+
+        '<div class="opp-avatar" style="background:var(--g5)">'+ava+'</div>'+
+        '<div class="opp-main">'+
+          '<div class="opp-name">'+esc(p.name)+' &mdash; <span style="font-weight:400">'+esc(p.owner)+'</span>'+
+            '<span class="priority-badge '+priCls+'">'+priLabel+'</span></div>'+
+          '<div class="opp-sub">'+esc(p.breed)+' \u00b7 '+p.age+'yr '+p.sex+' \u00b7 '+p.weight+'kg \u00b7 Last seen: '+fmtVisitDate(p.lastVisit)+(p.onHealthPlan?' \u00b7 \uD83D\uDC9A Plan: '+p.planTier:'')+'</div>'+
+          '<div class="opp-score-bar" style="margin-top:5px"><div class="opp-score-fill" style="width:'+scoreW+'%;background:'+scoreCol+'"></div></div>'+
+        '</div>'+
+        '<div class="opp-right">'+
+          '<div class="opp-value">\u00a3'+o.estRev.toLocaleString()+'</div>'+
+          '<div class="opp-vsub">est. value</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="opp-reasons">'+reasonTags+'</div>'+
+      (p.notes?'<div style="font-size:11px;color:var(--muted);background:var(--paper);padding:6px 9px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border)">\uD83D\uDCCB '+esc(p.notes)+'</div>':'')+
+      '<div class="opp-actions">'+
+        '<button class="btn btnP btnS" onclick="openOutreachModal('+p.id+')">\uD83D\uDCEC Generate outreach</button>'+
+        '<a href="tel:'+p.phone.replace(/\s/g,'')+'" class="btn btnS">\uD83D\uDCDE Call '+esc(p.owner.split(' ')[0])+'</a>'+
+        (p.email?'<a href="mailto:'+p.email+'" class="btn btnS">\u2709 Email</a>':'')+
+      '</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('gr-list').innerHTML = html;
+}
+
+function fmtVisitDate(d) {
+  if (!d) return 'Never';
+  var dt = new Date(d);
+  var ms = Math.floor((TODAY_DEMO - dt) / (86400000*30.5));
+  var mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()];
+  return mon+' '+dt.getFullYear()+' ('+ms+'m ago)';
+}
+
+function exportGrowthList() {
+  var opps = computeGrowthOpps();
+  var rows = [['Owner','Pet','Species','Breed','Age','Last Visit','Priority','Est Value (GBP)','Reasons','Phone','Email']];
+  opps.forEach(function(o) {
+    var p = o.patient;
+    rows.push([p.owner,p.name,p.species,p.breed,p.age,p.lastVisit,o.priority,o.estRev,
+      o.reasons.map(function(r){return r.label;}).join('; '),p.phone,p.email]);
+  });
+  var csv = rows.map(function(r){return r.map(function(c){return '"'+(String(c||'').replace(/"/g,'""'))+'"';}).join(',');}).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'village-vet-growth-opportunities.csv';
+  a.click();
+  toast('Exported '+opps.length+' opportunities','ok');
+}
+
+// ═══ OUTREACH MODAL ═══
+
+var _outreachScripts = {};
+
+function buildOutreachScripts(p, reasons) {
+  var firstName = p.owner.split(' ')[0];
+  var petName   = p.name;
+  var practice  = 'Village Vet';
+  var phone     = '01707 123456';
+  var mainReason = reasons[0] || {type:'lapsed', label:'general health check'};
+  var t = mainReason.type;
+
+  var smsMap = {
+    vaccines:  'Hi '+firstName+', a friendly reminder that '+petName+'\u2019s annual vaccination is now overdue. It\u2019s quick and easy to book \u2014 just call us on '+phone+' or reply to this message. The team at '+practice+' \uD83D\uDC3E',
+    dental:    'Hi '+firstName+', '+petName+' is due for a dental health check. Dental disease affects over 80% of pets by age 3 and can cause real discomfort. We\u2019re running dental checks this month \u2014 call '+phone+' to book a free nurse dental check.',
+    senior:    'Hi '+firstName+', '+petName+' is now '+p.age+' and eligible for our Senior Wellness Screen. Early detection of age-related conditions makes a real difference. Call '+phone+' to book \u2014 results same day.',
+    estimate:  'Hi '+firstName+', just following up on the estimate we prepared for '+petName+'. We\u2019re happy to discuss the options or answer any questions. Call us on '+phone+' \u2014 no pressure at all.',
+    chronic:   'Hi '+firstName+', '+petName+'\u2019s next health check for their ongoing condition is due. Regular monitoring keeps them comfortable and catches changes early. Please call '+phone+' to book.',
+    parasite:  'Hi '+firstName+', a quick reminder that '+petName+'\u2019s flea, tick, and worm prevention is likely due for renewal. We can post medication or you can collect \u2014 call '+phone+' or visit us.',
+    postop:    'Hi '+firstName+', we wanted to check in after '+petName+'\u2019s recent procedure. Could you call us on '+phone+' to book their follow-up check? It\u2019s a quick appointment and really important for their recovery.',
+    neutering: 'Hi '+firstName+', just a reminder that we\u2019d recommended discussing neutering for '+petName+'. It\u2019s a routine procedure with real long-term health benefits. Call '+phone+' to chat with our team.',
+    lapsed:    'Hi '+firstName+', we haven\u2019t seen '+petName+' for a while and wanted to check in! Regular health checks help us catch things early. Call '+phone+' to book \u2014 we\u2019d love to see you both.',
+  };
+  var emailMap = {
+    vaccines:  'Subject: '+petName+'\u2019s vaccination is overdue\n\nDear '+firstName+',\n\nWe hope you and '+petName+' are well. Our records show that '+petName+'\u2019s annual vaccination booster is now overdue.\n\nVaccinations protect against serious and potentially fatal diseases, and keeping them up to date also ensures continued cover under most pet insurance policies.\n\nBooking takes only a few minutes and appointments are available this week. Please call us on '+phone+' or reply to this email.\n\nWarm regards,\nThe '+practice+' Team',
+    dental:    'Subject: '+petName+'\u2019s dental health check\n\nDear '+firstName+',\n\nDental disease is one of the most common health problems we see in pets, and unfortunately it often goes unnoticed until it causes significant discomfort.\n\nWe\u2019d like to invite '+petName+' in for a complimentary nurse dental check this month. If any treatment is needed we\u2019ll provide a full estimate with no obligation.\n\nPlease call '+phone+' to book a convenient time.\n\nKind regards,\nThe '+practice+' Team',
+    senior:    'Subject: Senior Wellness Screen for '+petName+'\n\nDear '+firstName+',\n\nNow that '+petName+' has reached '+p.age+', we recommend an annual Senior Wellness Screen. This includes a full clinical examination, blood pressure check, and a blood profile to assess organ function.\n\nEarly detection gives us the best chance of keeping '+petName+' comfortable and well for longer.\n\nPlease call '+phone+' to book. We look forward to seeing you both.\n\nWarm regards,\nThe '+practice+' Team',
+    estimate:  'Subject: Your estimate for '+petName+'\n\nDear '+firstName+',\n\nWe just wanted to follow up on the estimate we prepared for '+petName+'. We completely understand these decisions take time, and we\u2019re very happy to talk through any questions or concerns you may have.\n\nIf cost is a consideration, please do ask us about payment plan options \u2014 we want to make sure '+petName+' gets the care they need.\n\nNo pressure at all \u2014 we\u2019re here whenever you\u2019re ready. Call '+phone+' or reply to this email.\n\nKind regards,\nThe '+practice+' Team',
+    chronic:   'Subject: '+petName+'\u2019s health monitoring is due\n\nDear '+firstName+',\n\nThank you for being so attentive to '+petName+'\u2019s ongoing health. Our records show that their next monitoring appointment is now due.\n\nRegular rechecks for '+p.conditions.join(' and ')+' are essential to ensure their condition remains well controlled and their medication is still appropriate.\n\nPlease call '+phone+' to book at your earliest convenience.\n\nWarm regards,\nThe '+practice+' Team',
+    lapsed:    'Subject: We\u2019d love to see '+petName+' again\n\nDear '+firstName+',\n\nWe hope you\u2019re both well! It\u2019s been a while since we\u2019ve seen '+petName+', and we just wanted to reach out with a friendly reminder that annual health checks are recommended for all pets.\n\nA routine examination helps us spot early signs of health changes before they become problems \u2014 and it\u2019s a great chance to discuss any questions you may have.\n\nCall '+phone+' to book, or simply reply to this email.\n\nWarm regards,\nThe '+practice+' Team',
+    parasite:  'Subject: '+petName+'\u2019s parasite prevention renewal\n\nDear '+firstName+',\n\nJust a friendly reminder that '+petName+'\u2019s flea, tick, and worming prevention is likely due for renewal.\n\nYear-round prevention is the most effective way to protect your pet \u2014 and your household! We can arrange for medication to be posted directly to you, or you\u2019re welcome to collect from the practice.\n\nCall '+phone+' or reply to arrange.\n\nKind regards,\nThe '+practice+' Team',
+    postop:    'Subject: '+petName+'\u2019s post-operative check\n\nDear '+firstName+',\n\nWe hope '+petName+' is recovering well following their recent procedure. Their post-operative check is now due, and it\u2019s an important step to make sure healing is progressing as expected.\n\nPlease call '+phone+' to arrange a convenient time \u2014 this appointment is included as part of your procedure.\n\nWarm regards,\nThe '+practice+' Team',
+    neutering: 'Subject: Neutering discussion for '+petName+'\n\nDear '+firstName+',\n\nWe wanted to follow up on our earlier conversation about neutering for '+petName+'. It\u2019s a routine, well-tolerated procedure that brings a number of long-term health benefits.\n\nOur nurses are happy to discuss the procedure, timing, and recovery with you before any decision is made \u2014 completely without pressure. Call '+phone+' to book a free nurse consultation.\n\nKind regards,\nThe '+practice+' Team',
+  };
+  var callMap = {
+    vaccines: 'CALL SCRIPT \u2014 VACCINE REMINDER\n\n"Good morning/afternoon, could I speak to '+firstName+' please? ... Hi '+firstName+', this is [Name] calling from '+practice+'. I\u2019m just calling because '+petName+'\u2019s annual vaccination is now due and I wanted to help get that booked in. Do you have a couple of minutes? ... [Listen] ... Great, we have some availability this week \u2014 would [day/time] work for you?"\n\nIf owner hesitates: "Keeping vaccinations up to date is really important for protection, and it also keeps their insurance valid. It\u2019s a quick visit \u2014 usually under 15 minutes."',
+    dental:   'CALL SCRIPT \u2014 DENTAL REMINDER\n\n"Hi '+firstName+', it\u2019s [Name] from '+practice+'. We\u2019re running a dental awareness month and I wanted to reach out because '+petName+'\u2019s dental health check is now due. ... We\u2019re offering complimentary nurse dental checks this month \u2014 it\u2019s a quick 10-minute check to see if any treatment is needed. Can I book one in for you?"\n\nIf owner declines: "Absolutely no pressure \u2014 dental disease is the most common condition we see, so it\u2019s always worth keeping an eye on. We\u2019re here whenever you\u2019re ready."',
+    estimate: 'CALL SCRIPT \u2014 ESTIMATE FOLLOW-UP\n\n"Hi '+firstName+', it\u2019s [Name] from '+practice+'. I\u2019m just following up on the estimate we put together for '+petName+' \u2014 I wanted to make sure you\u2019d received it and to see if you had any questions. ... [Listen] ... I completely understand \u2014 these are big decisions. If cost is a concern, we do have payment plan options that might help \u2014 would it be useful if I went through those with you?"\n\nIf not ready: "That\u2019s no problem at all \u2014 the estimate is valid for 30 days. Do call us whenever you\u2019re ready and we\u2019ll be happy to help."',
+    senior:   'CALL SCRIPT \u2014 SENIOR WELLNESS\n\n"Hi '+firstName+', this is [Name] from '+practice+'. I\u2019m calling because '+petName+' has reached the age where we recommend our Senior Wellness Screen. It\u2019s a really thorough check-up including blood tests and blood pressure \u2014 all done in one visit. ... Can I book one in? We have some slots this week and next."',
+    lapsed:   'CALL SCRIPT \u2014 LAPSED CLIENT\n\n"Hi '+firstName+', it\u2019s [Name] from '+practice+'. I\u2019m calling because we haven\u2019t seen '+petName+' for a while and we just wanted to check in. How are they getting on? ... [Listen] ... That\u2019s great to hear. We do recommend annual health checks for all pets \u2014 it\u2019s a great chance to make sure everything\u2019s in order. Could I book a routine check for you?"\n\nIf they\u2019ve moved or changed vet: "Of course, completely understood. Would it be okay if I updated your details before I let you go?"',
+    default:  'CALL SCRIPT \u2014 GENERAL FOLLOW-UP\n\n"Hi '+firstName+', it\u2019s [Name] from '+practice+'. I\u2019m just calling to follow up about '+petName+'. Our records suggest there may be something due for them soon. Do you have a couple of minutes? ... [Discuss reason for call] ... Can I book that in for you today?"',
+  };
+  var receptionMap = {
+    vaccines: '\uD83D\uDC89 VACCINE DUE\n'+petName+'\u2019s annual vaccination is overdue by '+Math.floor(daysSince(p.nextVaccDue))+' days.\nAction: Book booster before client leaves. Quote \u00a3'+( p.species==='Cat'?62:68)+'.',
+    dental:   '\uD83E\uDDB7 DENTAL CHECK DUE\n'+petName+' hasn\u2019t had a dental check for '+ monthsSince(p.lastDental)+' months.\nAction: Offer free nurse dental check. Flag to vet if >grade 2.',
+    senior:   '\u2B50 SENIOR WELLNESS\n'+petName+' is '+p.age+' years old. Senior Wellness Screen recommended.\nAction: Offer at check-out or call owner to book. Quote \u00a3148.',
+    estimate: '\uD83D\uDCCB ESTIMATE PENDING\nEstimate of \u00a3'+p.estimatePending+' has not been converted.\nAction: Ask owner if they have questions. Offer to walk through it again.',
+    chronic:  '\u2764\uFE0F CHRONIC CARE\n'+petName+' has '+p.conditions.join(', ')+'. Recheck overdue.\nAction: Do not leave without booking next monitoring appointment.',
+    parasite: '\uD83D\uDC1B PARASITE PREVENTION\n'+petName+'\u2019s flea/worm treatment is due.\nAction: Dispense today or set up a standing order.',
+    postop:   '\uD83C\uDFE5 POST-OP CHECK\nPost-operative review not yet booked after '+petName+'\u2019s procedure.\nAction: Book 12-week check before client leaves.',
+    lapsed:   '\uD83D\uDD57 LAPSED CLIENT\n'+firstName+' and '+petName+' haven\u2019t visited for '+monthsSince(p.lastVisit)+' months.\nAction: Warm welcome \u2014 book next annual check before they leave.',
+    default:  '\uD83D\uDCCB FLAG: '+petName+' may have items due. Check patient notes and ask vet to review at next visit.',
+  };
+  return {
+    sms:       smsMap[t]       || smsMap.lapsed,
+    email:     emailMap[t]     || emailMap.lapsed,
+    call:      callMap[t]      || callMap.default,
+    reception: receptionMap[t] || receptionMap.default,
+  };
+}
+
+function openOutreachModal(pid) {
+  loadPatientsIfNeeded();
+  var p = _demoPatients.find(function(x){ return x.id===pid; });
+  if (!p) return;
+  _currentOutreachPatient = p;
+  var scored = scorePatient(p);
+  _outreachScripts = buildOutreachScripts(p, scored.reasons);
+  document.getElementById('om-title').textContent = p.name + ' \u2014 ' + p.owner;
+  document.getElementById('om-sub').textContent = p.breed + ' \u00b7 ' + p.age + 'yr \u00b7 Last visit: ' + fmtVisitDate(p.lastVisit);
+  document.getElementById('om-ai-output').style.display = 'none';
+  showScriptTab('sms');
+  document.getElementById('outreach-modal').classList.add('open');
+}
+
+function closeOutreachModal(e) {
+  if (e && e.target !== document.getElementById('outreach-modal')) return;
+  document.getElementById('outreach-modal').classList.remove('open');
+  _currentOutreachPatient = null;
+}
+
+function showScriptTab(tab) {
+  _currentOutreachTab = tab;
+  ['sms','email','call','reception'].forEach(function(t) {
+    document.getElementById('stab-'+t).classList.toggle('on', t===tab);
+  });
+  document.getElementById('om-script-content').textContent = _outreachScripts[tab] || '';
+}
+
+function copyOutreachScript() {
+  var text = _outreachScripts[_currentOutreachTab] || '';
+  navigator.clipboard.writeText(text).then(function(){
+    toast('Script copied to clipboard','ok');
+  }).catch(function(){
+    toast('Select and copy manually','warn');
+  });
+}
+
+async function aiGenerateOutreach() {
+  if (!S.apiKey) { toast('Add your Claude API key to improve scripts with AI','err'); return; }
+  if (!_currentOutreachPatient) return;
+  var p = _currentOutreachPatient;
+  var scored = scorePatient(p);
+  var btn = document.getElementById('om-ai-btn');
+  btn.textContent = 'Generating\u2026'; btn.disabled = true;
+  var baseScript = _outreachScripts[_currentOutreachTab] || '';
+  var prompt = 'You are a friendly UK veterinary practice receptionist for Village Vet, Hatfield.\nImprove the following '+_currentOutreachTab+' outreach script for this patient:\n\nPatient: '+p.name+' ('+p.breed+', '+p.age+'yr, owner: '+p.owner+')\nReasons for contact: '+scored.reasons.map(function(r){return r.label;}).join('; ')+'\n\nCurrent draft:\n'+baseScript+'\n\nRequirements:\n- Warm, caring, professional UK tone\n- Not pushy or salesy — always client-first\n- Keep '+_currentOutreachTab+' appropriate length\n- For SMS: under 160 chars ideally\n- Mention the specific reason clearly\n- Include next step (book, call, reply)\n- Plain text only, no markdown';
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})});
+    var d = await resp.json();
+    if (d.content && d.content[0]) {
+      document.getElementById('om-ai-output').style.display='block';
+      document.getElementById('om-ai-output').textContent = d.content[0].text.trim();
+      toast('AI-improved script ready','ok');
+    } else {
+      toast('Could not generate \u2014 check API key','err');
+    }
+  } catch(e) { toast('Connection error','err'); }
+  btn.innerHTML = '\uD83E\uDD16 Improve with AI'; btn.disabled = false;
+}
+
+// ═══ MODULE C: HEALTH PLANS ═══
+
+var PLAN_SPECIES = 'dog';
+
+var PLAN_TIERS = {
+  dog: [
+    { name:'Bronze', price:22, recommended:false, includes:[
+      'Annual vaccination booster','Annual health check (vet)','Monthly flea & tick treatment','Monthly worming',
+      '10% off consultations','10% off medication'
+    ]},
+    { name:'Silver', price:32, recommended:true, includes:[
+      'Annual vaccination booster','Two vet health checks per year','Monthly flea, tick & worming','6-monthly nurse dental check',
+      '15% off consultations','15% off medication','Free nail clip x2/year'
+    ]},
+    { name:'Gold', price:45, recommended:false, includes:[
+      'Annual vaccination booster','Quarterly vet health checks','Monthly flea, tick & worming','Annual dental scale & polish',
+      'Annual senior bloods (7yr+)','20% off consultations','20% off medication & diagnostics',
+      'Free nail clip & anal gland x4/year','Unlimited nurse clinics'
+    ]},
+  ],
+  cat: [
+    { name:'Bronze', price:18, recommended:false, includes:[
+      'Annual vaccination booster','Annual health check (vet)','Monthly flea & tick treatment','3-monthly worming',
+      '10% off consultations','10% off medication'
+    ]},
+    { name:'Silver', price:26, recommended:true, includes:[
+      'Annual vaccination booster','Two vet health checks per year','Monthly flea & tick, 3-monthly worming','6-monthly nurse dental check',
+      '15% off consultations','15% off medication','Annual FeLV/FIV screen'
+    ]},
+    { name:'Gold', price:38, recommended:false, includes:[
+      'Annual vaccination booster','Quarterly vet health checks','Monthly flea & tick, monthly worming','Annual dental scale & polish',
+      'Annual senior bloods (8yr+)','20% off consultations','20% off medication & diagnostics',
+      'Unlimited nurse clinics','Annual microchip check & health passport'
+    ]},
+  ],
+  puppy: [
+    { name:'Puppy', price:28, recommended:true, includes:[
+      'Primary vaccination course (2 visits)','4-week nurse puppy check','Monthly flea, tick & worming to 6 months',
+      '10% off consultations','Puppy nutrition advice session','Free nail trim x2',
+      'Neutering discount: \u00a350 off standard neuter'
+    ]},
+  ],
+};
+
+var PLAN_CALC_DEFAULTS = {dog:{Bronze:4,Silver:7,Gold:2},cat:{Bronze:3,Silver:5,Gold:1}};
+
+function showPlanSpecies(sp) {
+  PLAN_SPECIES = sp;
+  document.getElementById('pspc-dog').classList.toggle('on', sp==='dog');
+  document.getElementById('pspc-cat').classList.toggle('on', sp==='cat');
+  renderPlanTiers();
+}
+
+function renderPlans() {
+  loadPatientsIfNeeded();
+  var members     = _demoPatients.filter(function(p){ return p.onHealthPlan; });
+  var nonMembers  = _demoPatients.filter(function(p){ return !p.onHealthPlan; });
+  var mrr         = members.reduce(function(s,p){ return s + planPrice(p.planTier, p.species); }, 0);
+  var arr         = mrr * 12;
+  var avgAge      = nonMembers.length ? nonMembers.reduce(function(s,p){return s+p.age;},0)/nonMembers.length : 0;
+
+  document.getElementById('plans-metrics').innerHTML =
+    metric('Plan members', members.length, 'active patients', '') +
+    metric('Monthly MRR', '\u00a3'+mrr.toLocaleString(), 'health plan income', 'color:var(--g1)') +
+    metric('Annual ARR', '\u00a3'+arr.toLocaleString(), 'recurring revenue', '') +
+    metric('Eligible non-members', nonMembers.length, 'patients to convert', 'color:var(--amber)');
+
+  renderPlanTiers();
+  renderPlanEligible(nonMembers);
+  renderPlanMembers(members);
+  renderPlanCalc();
+}
+
+function planPrice(tier, species) {
+  if (!tier) return 0;
+  var sp = (species||'').toLowerCase() === 'cat' ? 'cat' : 'dog';
+  var tiers = PLAN_TIERS[sp] || PLAN_TIERS.dog;
+  if (tier === 'Puppy') return 28;
+  var t = tiers.find(function(x){ return x.name === tier; });
+  return t ? t.price : 0;
+}
+
+function renderPlanTiers() {
+  var tiers = PLAN_TIERS[PLAN_SPECIES] || PLAN_TIERS.dog;
+  document.getElementById('plan-tiers-grid').innerHTML = tiers.map(function(t) {
+    return '<div class="plan-tier'+(t.recommended?' recommended':'')+'">'+
+      '<h3>'+t.name+'</h3>'+
+      '<div class="species-tag">'+(PLAN_SPECIES==='dog'?'\uD83D\uDC15 Dogs':'\uD83D\uDC08 Cats')+'</div>'+
+      '<div class="plan-price">\u00a3'+t.price+'<span>/month</span></div>'+
+      '<div style="font-size:10px;color:var(--muted);margin-bottom:8px">\u00a3'+( t.price*12)+'/year</div>'+
+      t.includes.map(function(item){ return '<div class="plan-item"><span class="plan-chk">\u2713</span><span>'+item+'</span></div>'; }).join('')+
+      '<button class="btn btnP" style="width:100%;margin-top:12px">Enrol a patient</button>'+
+    '</div>';
+  }).join('');
+}
+
+function renderPlanCalc() {
+  var rows = [];
+  ['dog','cat'].forEach(function(sp) {
+    (PLAN_TIERS[sp]||[]).forEach(function(t) {
+      var def = (PLAN_CALC_DEFAULTS[sp]||{})[t.name] || 0;
+      rows.push({sp:sp, tier:t.name, price:t.price, count:def});
+    });
+  });
+  document.getElementById('plan-calc-rows').innerHTML = rows.map(function(r,i) {
+    var icon = r.sp==='cat'?'\uD83D\uDC08':'\uD83D\uDC15';
+    return '<div class="calc-row">'+
+      '<div class="calc-lbl">'+icon+' '+r.tier+' (\u00a3'+r.price+'/mo)</div>'+
+      '<input class="calc-inp" type="number" id="calc-'+i+'" value="'+r.count+'" min="0" oninput="recalcPlanRevenue()" style="width:60px">'+
+      '<div class="calc-result" id="calcr-'+i+'">\u00a3'+(r.count*r.price)+'</div>'+
+    '</div>';
+  }).join('');
+  recalcPlanRevenue();
+  // store rows for recalc
+  window._planCalcRows = rows;
+}
+
+function recalcPlanRevenue() {
+  var rows = window._planCalcRows;
+  if (!rows) return;
+  var mrr = 0;
+  rows.forEach(function(r,i) {
+    var inp = document.getElementById('calc-'+i);
+    var n = inp ? parseInt(inp.value)||0 : r.count;
+    var v = n * r.price;
+    mrr += v;
+    var res = document.getElementById('calcr-'+i);
+    if (res) res.textContent = '\u00a3'+v;
+  });
+  var arr = mrr * 12;
+  document.getElementById('plan-mrr').textContent = '\u00a3'+mrr.toLocaleString();
+  document.getElementById('plan-arr').textContent = '\u00a3'+arr.toLocaleString();
+}
+
+function renderPlanEligible(nonMembers) {
+  var sorted = nonMembers.slice().sort(function(a,b){
+    var sa = scorePatient(a);
+    var sb = scorePatient(b);
+    return sb.estRev - sa.estRev;
+  }).slice(0,15);
+  document.getElementById('eligible-sub').textContent = nonMembers.length + ' patients eligible — top 15 shown';
+  document.getElementById('plan-eligible-list').innerHTML = sorted.map(function(p) {
+    var icon = p.species==='Cat'?'\uD83D\uDC31':'\uD83D\uDC15';
+    var suggestTier = p.age >= 7 ? 'Gold' : p.age <= 1 ? 'Puppy' : 'Silver';
+    var suggestPrice = p.species==='Cat' ?
+      (suggestTier==='Gold'?38:suggestTier==='Silver'?26:18) :
+      (suggestTier==='Gold'?45:suggestTier==='Silver'?32:28);
+    return '<div class="plan-eligible-row">'+
+      '<span style="font-size:16px;flex-shrink:0">'+icon+'</span>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-weight:600;font-size:12px">'+esc(p.name)+' &mdash; '+esc(p.owner)+'</div>'+
+        '<div style="font-size:11px;color:var(--muted)">'+esc(p.breed)+', '+p.age+'yr</div>'+
+      '</div>'+
+      '<div style="text-align:right;flex-shrink:0">'+
+        '<div style="font-size:11px;font-weight:700;color:var(--g1)">Suggest '+suggestTier+'</div>'+
+        '<div style="font-size:10px;color:var(--muted)">\u00a3'+suggestPrice+'/mo</div>'+
+      '</div>'+
+      '<button class="btn btnS btnP" style="margin-left:6px;font-size:10px;padding:3px 8px" onclick="toast(\'Open plan enrolment form for \'+\''+esc(p.name)+'\',\'ok\')">Enrol</button>'+
+    '</div>';
+  }).join('');
+}
+
+function renderPlanMembers(members) {
+  document.getElementById('members-sub').textContent = members.length + ' members · \u00a3' + members.reduce(function(s,p){return s+planPrice(p.planTier,p.species);},0) + '/mo MRR';
+  document.getElementById('plan-members-list').innerHTML = members.map(function(p) {
+    var icon = p.species==='Cat'?'\uD83D\uDC31':'\uD83D\uDC15';
+    var pr = planPrice(p.planTier, p.species);
+    return '<div class="plan-eligible-row">'+
+      '<span style="font-size:16px;flex-shrink:0">'+icon+'</span>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-weight:600;font-size:12px">'+esc(p.name)+' &mdash; '+esc(p.owner)+'</div>'+
+        '<div style="font-size:11px;color:var(--muted)">'+esc(p.breed)+', '+p.age+'yr</div>'+
+      '</div>'+
+      '<div style="text-align:right;flex-shrink:0">'+
+        '<span class="badge bpaid">'+esc(p.planTier)+'</span>'+
+        '<div style="font-size:11px;font-weight:700;color:var(--g1);margin-top:2px">\u00a3'+pr+'/mo</div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ═══ MODULE F: CAMPAIGN BUILDER ═══
+
+var CAMPAIGNS = [
+  {
+    id:'spring-dental',
+    title:'Spring Dental Awareness Month',
+    icon:'\uD83E\uDDB7',
+    colour:'var(--bp)',
+    iconBg:'#dbeafe',
+    category:'Dental',
+    target:'All dogs and cats aged 3+',
+    estValue:'£3,200–£5,400',
+    timing:'April–May',
+    copy:{
+      sms:'Hi [Name], April is Dental Awareness Month at Village Vet! Did you know 80% of pets have dental disease by age 3? Book a FREE nurse dental check for [Pet] this month. Call 01707 123456 — limited spaces.',
+      email:'Subject: Free dental check for [Pet] this April\n\nDear [Name],\n\nApril is Dental Awareness Month, and we\'re offering complimentary nurse dental checks throughout the month.\n\nDental disease is the most common condition we treat, and sadly it\'s often invisible until it causes real pain. An early check takes just 10 minutes and could save [Pet] from discomfort — and save you from a larger bill later.\n\nIf treatment is needed, we\'ll provide a full estimate with no obligation.\n\n\u2192 To book, call 01707 123456 or reply to this email.\n\nWarm regards,\nThe Village Vet Team',
+      social:'🦷 April is Dental Awareness Month at Village Vet!\n\nDid you know that 80% of dogs and cats show signs of dental disease by the age of 3? Many pets hide their pain until it\'s severe.\n\nThis month we\'re offering FREE nurse dental checks — just call us on 01707 123456 to book. Limited spaces available! 🐾\n\n#VillageVet #DentalMonth #DogTeeth #CatHealth #Hatfield',
+      reception:'DENTAL MONTH PROMPT\nFor every client this month:\n→ "Has [Pet] had a dental check recently? We\'re running free nurse dental checks all of April — shall I book one while you\'re here?"\nTarget: pets 3yr+, last dental >12 months or no dental on record.\nOffer: free 10-min nurse check. If grade 2+, flag to vet.',
+    }
+  },
+  {
+    id:'senior-wellness',
+    title:'Senior Pet Wellness Screening',
+    icon:'\u2B50',
+    colour:'#f3e8ff',
+    iconBg:'#e9d5ff',
+    category:'Senior Care',
+    target:'Dogs 7yr+, Cats 8yr+',
+    estValue:'£2,100–£3,800',
+    timing:'June',
+    copy:{
+      sms:'Hi [Name], [Pet] is now a senior and eligible for our Senior Wellness Screen. It includes a full exam + bloods — early detection is everything. Call 01707 123456 to book. £148 all-in.',
+      email:'Subject: Senior Wellness Screen for [Pet]\n\nDear [Name],\n\nNow that [Pet] has reached their senior years, we recommend an annual Senior Wellness Screen. Pets age faster than we do, and conditions like kidney disease, thyroid problems, and arthritis can develop silently.\n\nOur Senior Screen includes:\n✓ Full clinical examination\n✓ Blood pressure measurement\n✓ Comprehensive blood profile\n✓ Urine analysis\n✓ Vet discussion of results\n\nAll for £148, with results same day.\n\nCall 01707 123456 to book — early detection gives us the best chance of keeping [Pet] comfortable and well.\n\nWarm regards,\nThe Village Vet Team',
+      social:'⭐ Is your pet a senior?\n\nDogs aged 7+ and cats aged 8+ age significantly faster than we do — and many health conditions develop without obvious signs.\n\nOur Senior Wellness Screen catches problems early, when treatment is most effective. Full exam + bloods + blood pressure — just £148.\n\nCall us on 01707 123456 to book. 🐾\n\n#SeniorPets #VillageVet #PetHealth #Hatfield #DogHealth #CatHealth',
+      reception:'SENIOR WELLNESS PROMPT\nFor any senior pet checking in:\n→ "Since [Pet] is now [age], have you considered their Senior Wellness Screen? It\'s a comprehensive check — full bloods, blood pressure and a vet consultation, all for £148."\nTarget: dogs 7+, cats 8+. Not seen in 6+ months or no senior screen on record.\nUpsell: if on health plan Gold, bloods may be included — remind them.',
+    }
+  },
+  {
+    id:'parasite-spring',
+    title:'Spring Parasite Prevention Drive',
+    icon:'\uD83D\uDC1B',
+    colour:'#ecfdf5',
+    iconBg:'#d1fae5',
+    category:'Preventive',
+    target:'All dogs and cats (particularly outdoor/rural pets)',
+    estValue:'£1,800–£2,600',
+    timing:'May',
+    copy:{
+      sms:'Hi [Name], spring is peak tick and flea season! Is [Pet]\'s parasite prevention up to date? Pop in or call 01707 123456 to stock up. Ask about our standing order to never miss a dose.',
+      email:'Subject: Spring parasite season — is [Pet] protected?\n\nDear [Name],\n\nSpring brings warmer weather — and with it, the peak season for fleas, ticks, and worms. Ticks in particular carry Lyme disease, which can affect both your pet and your family.\n\nWe recommend year-round, vet-recommended prevention — not all pet shop products are as effective as prescription treatments.\n\nOptions:\n→ Call in to collect treatment for [Pet]\n→ Set up a standing order — we post it monthly\n→ Book a nurse health check and we\'ll dispense at the same time\n\nCall 01707 123456 or reply to arrange.\n\nThe Village Vet Team',
+      social:'🌿 Spring is here — and so are the ticks and fleas!\n\nNow is the time to make sure your pet\'s parasite prevention is up to date. Ticks carry Lyme disease; fleas cause misery for pets and households alike.\n\nAsk us about prescription-strength prevention — far more effective than supermarket products. Call 01707 123456 or pop in. 🐾\n\n#ParasitePrevention #Ticks #Fleas #VillageVet #SpringPets',
+      reception:'PARASITE PREVENTION PROMPT\nFor every consultation:\n→ "Is [Pet] on year-round parasite prevention? We have prescription-strength flea, tick, and worming treatments — much more effective than shop-bought products. Shall I add some to today\'s visit?"\nSuggested products: Simparica Trio (dogs), Bravecto (cats), Milbemax. Avoid generic brand names in scripts.',
+    }
+  },
+  {
+    id:'health-plan-launch',
+    title:'Health Plan Enrolment Campaign',
+    icon:'\uD83D\uDC9A',
+    colour:'var(--g5)',
+    iconBg:'#d1fae5',
+    category:'Health Plans',
+    target:'All non-plan clients (highest value: young pets and seniors)',
+    estValue:'£264–£540/year per signup',
+    timing:'Ongoing — push in April',
+    copy:{
+      sms:'Hi [Name], did you know our Village Vet Health Plan could save you money on [Pet]\'s routine care? Plans from £18/month for cats, £22/month for dogs. Ask us at your next visit or call 01707 123456.',
+      email:'Subject: Save on [Pet]\'s care with a Village Vet Health Plan\n\nDear [Name],\n\nHealthy pets still need regular care — and it adds up. Our Health Plans spread the cost of routine preventive care across easy monthly payments, so you\'re never hit with a large bill at once.\n\nWhat\'s included:\n✓ Annual vaccinations\n✓ Monthly flea, tick & worming\n✓ Regular nurse and vet check-ups\n✓ Discounts on consultations and medication\n✓ Dental checks (Silver & Gold plans)\n\nPlans from:\n🐕 Dogs — £22/month (Bronze) | £32/month (Silver) | £45/month (Gold)\n🐈 Cats — £18/month (Bronze) | £26/month (Silver) | £38/month (Gold)\n\nTalk to our team or ask at your next visit — no contract, cancel anytime.\n\nCall 01707 123456 for details.\n\nThe Village Vet Team',
+      social:'💚 Keep your pet healthy for less with a Village Vet Health Plan!\n\nOur plans cover annual vaccinations, monthly parasite prevention, health checks, dental checks, and discounts on consultations — all for a simple monthly fee.\n\n🐕 Dog plans from £22/month\n🐈 Cat plans from £18/month\n\nAsk us at your next visit or call 01707 123456. 🐾\n\n#VetHealthPlan #VillageVet #PetCare #DogHealth #CatHealth',
+      reception:'HEALTH PLAN PITCH\nFor any unplanned client at check-in or check-out:\n→ "Have you heard about our Village Vet Health Plan? It covers all [Pet]\'s routine preventive care for a fixed monthly amount — and you get [X]% off consultations too. It works out really good value. Can I leave you with a leaflet?"\nKey sell: works out cheaper than paying separately. No contract. Cancel anytime.\nTarget: young pets (highest LTV), seniors (high preventive need), any pet not on plan.',
+    }
+  },
+  {
+    id:'lapsed-reactivation',
+    title:'Lapsed Client Reactivation',
+    icon:'\uD83D\uDD04',
+    colour:'var(--ap)',
+    iconBg:'#fde68a',
+    category:'Reactivation',
+    target:'Clients not seen in 12+ months',
+    estValue:'£55–£350 per reactivated client',
+    timing:'Quarterly',
+    copy:{
+      sms:'Hi [Name], we\'ve missed you and [Pet]! It\'s been a while since their last visit. Regular check-ups help catch things early. Call 01707 123456 to book — we\'d love to see you both. 🐾',
+      email:'Subject: We\'d love to see [Pet] again\n\nDear [Name],\n\nWe hope you and [Pet] are both well. We noticed it\'s been a while since their last visit, and we just wanted to reach out with a friendly reminder.\n\nRegular annual health checks are an important part of keeping your pet healthy for longer. Even in pets that seem perfectly well, a check-up often picks up early signs of conditions that are much easier to manage when caught early.\n\nWe\'re also happy to catch up on any vaccinations, preventive care, or anything that may be due.\n\nJust call 01707 123456 or reply to this email — no pressure, and we\'ll make sure [Pet] is as comfortable as possible.\n\nWarm regards,\nThe Village Vet Team\n\nP.S. If your contact details have changed or you\'ve moved to a different practice, just let us know and we\'ll update our records.',
+      social:'We believe every pet deserves regular care — even when they seem perfectly healthy. 🐾\n\nIf it\'s been a while since your pet\'s last check-up, give us a call on 01707 123456. Annual health checks really do make a difference.\n\n#VillageVet #PetHealth #Hatfield #AnnualCheckup',
+      reception:'LAPSED CLIENT REACTIVATION\nWhen a lapsed client calls or visits after 12+ months:\n→ Warm welcome: "It\'s lovely to hear from you — how\'s [Pet] been getting on?"\n→ Book annual check as standard\n→ Note any overdue items (vaccines, dental, preventive care)\n→ Offer health plan at end of visit\n→ Do not overload with multiple add-ons in one visit — one key recommendation only.',
+    }
+  },
+  {
+    id:'estimate-followup',
+    title:'Estimate Follow-Up Campaign',
+    icon:'\uD83D\uDCCB',
+    colour:'var(--rp)',
+    iconBg:'#fecaca',
+    category:'Conversion',
+    target:'Clients with outstanding estimates (not converted in 30+ days)',
+    estValue:'60–80% of estimate value',
+    timing:'Monthly — 4 weeks after estimate issued',
+    copy:{
+      sms:'Hi [Name], just following up on the estimate we prepared for [Pet]. Happy to answer any questions or discuss payment options. Call 01707 123456 whenever you\'re ready — no pressure at all.',
+      email:'Subject: Your estimate for [Pet] — any questions?\n\nDear [Name],\n\nWe just wanted to follow up on the estimate we prepared for [Pet]. We completely understand these decisions take time, and we want to make sure you have everything you need to make the right choice.\n\nIf you have any questions about the procedure, the recovery, or the costs involved, please don\'t hesitate to call us on 01707 123456 or reply to this email. We\'re always happy to go through it in detail.\n\nImportantly, if cost is a consideration, please do ask us about payment plan options — we can often spread costs to make treatment more accessible.\n\nThe estimate is valid for 30 days from the date of issue. If you need a little more time, just let us know.\n\nKind regards,\nThe Village Vet Team',
+      social:null,
+      reception:'ESTIMATE FOLLOW-UP\nWhen client calls after receiving an estimate:\n→ "Thank you for calling — has the estimate raised any questions for you?"\n→ Listen first — don\'t jump to discounting\n→ If cost concern: mention payment plans, phased treatment, or what is most urgent\n→ If clinical concern: offer a free 5-minute call with the vet\n→ Set a follow-up reminder if not ready today',
+    }
+  },
+];
+
+var _campOpenId = null;
+var _campTab = {};
+
+function renderCampaigns() {
+  document.getElementById('campaigns-list').innerHTML = CAMPAIGNS.map(function(c) {
+    return '<div class="campaign-card" id="ccamp-'+c.id+'">'+
+      '<div class="ccamp-hd" onclick="toggleCamp(\''+c.id+'\')">'+
+        '<div class="ccamp-icon" style="background:'+c.iconBg+'">'+c.icon+'</div>'+
+        '<div class="ccamp-info">'+
+          '<h3>'+c.title+'</h3>'+
+          '<div class="sub">\uD83C\uDFAF '+c.target+' &nbsp;\u00b7\u00b7\u00b7&nbsp; \uD83D\uDDD3 '+c.timing+' &nbsp;\u00b7\u00b7\u00b7&nbsp; \uD83D\uDCB0 '+c.estValue+'</div>'+
+        '</div>'+
+        '<span style="font-size:12px;background:'+c.colour+';padding:2px 9px;border-radius:6px;font-weight:600;color:var(--g1)">'+ c.category+'</span>'+
+        '<span style="margin-left:8px;font-size:16px;color:var(--muted)" id="ccamp-arrow-'+c.id+'">\u25bc</span>'+
+      '</div>'+
+      '<div class="camp-body" id="camp-body-'+c.id+'" style="display:none">'+
+        '<div class="camp-tabs" id="camp-tabs-'+c.id+'">'+
+          ['sms','email','social','reception'].filter(function(t){ return c.copy[t] !== null; }).map(function(t){
+            var lbl = {sms:'SMS',email:'Email',social:'Social post',reception:'Reception script'}[t];
+            return '<button class="ctab" id="ctab-'+c.id+'-'+t+'" onclick="showCampTab(\''+c.id+'\',\''+t+'\')">'+lbl+'</button>';
+          }).join('')+
+          '<button class="btn btnS" style="margin-left:auto" onclick="copyCampScript(\''+c.id+'\')">\uD83D\uDCCE Copy</button>'+
+          '<button class="btn btnS btnP" id="ai-camp-'+c.id+'" onclick="aiGenerateCampaign(\''+c.id+'\')">\uD83E\uDD16 AI</button>'+
+        '</div>'+
+        '<div class="camp-copy" id="camp-copy-'+c.id+'"></div>'+
+        '<div id="ai-camp-out-'+c.id+'" style="display:none;margin-top:10px;background:var(--g5);border:1px solid var(--g4);border-radius:var(--r);padding:12px;font-size:12px;line-height:1.7;white-space:pre-wrap"></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function toggleCamp(id) {
+  var body  = document.getElementById('camp-body-'+id);
+  var arrow = document.getElementById('ccamp-arrow-'+id);
+  var isOpen = body.style.display !== 'none';
+  // close all first
+  CAMPAIGNS.forEach(function(c) {
+    var b = document.getElementById('camp-body-'+c.id);
+    var a = document.getElementById('ccamp-arrow-'+c.id);
+    if (b) b.style.display = 'none';
+    if (a) a.textContent = '\u25bc';
+  });
+  if (!isOpen) {
+    body.style.display = 'block';
+    arrow.textContent = '\u25b2';
+    var firstTab = Object.keys(CAMPAIGNS.find(function(c){return c.id===id;}).copy).find(function(k){ return CAMPAIGNS.find(function(c){return c.id===id;}).copy[k] !== null; });
+    showCampTab(id, firstTab || 'sms');
+  }
+}
+
+function showCampTab(campId, tab) {
+  _campTab[campId] = tab;
+  var camp = CAMPAIGNS.find(function(c){ return c.id===campId; });
+  if (!camp) return;
+  ['sms','email','social','reception'].forEach(function(t) {
+    var btn = document.getElementById('ctab-'+campId+'-'+t);
+    if (btn) btn.classList.toggle('on', t===tab);
+  });
+  var copy = camp.copy[tab];
+  var el = document.getElementById('camp-copy-'+campId);
+  if (el) el.textContent = copy || '(No template for this channel)';
+}
+
+function copyCampScript(campId) {
+  var tab = _campTab[campId] || 'sms';
+  var camp = CAMPAIGNS.find(function(c){ return c.id===campId; });
+  if (!camp) return;
+  var text = camp.copy[tab] || '';
+  navigator.clipboard.writeText(text).then(function(){ toast('Campaign copy copied','ok'); }).catch(function(){ toast('Copy failed','warn'); });
+}
+
+async function aiGenerateCampaign(campId) {
+  if (!S.apiKey) { toast('Add your Claude API key to generate AI campaign copy','err'); return; }
+  var camp = CAMPAIGNS.find(function(c){ return c.id===campId; });
+  var tab  = _campTab[campId] || 'email';
+  if (!camp) return;
+  var btn = document.getElementById('ai-camp-'+campId);
+  btn.textContent = 'Generating\u2026'; btn.disabled = true;
+  var prompt = 'You are a marketing copywriter for Village Vet, a friendly independent veterinary surgery in Hatfield, UK.\nWrite a '+tab+' for the following campaign:\n\nCampaign: '+camp.title+'\nTarget audience: '+camp.target+'\nChannel: '+tab+'\nEstimated value: '+camp.estValue+'\n\nRequirements:\n- Warm, caring, professional UK tone\n- Client-first, never pushy or salesy\n- Clinically accurate and appropriate\n- Clear single call to action\n- Phone: 01707 123456\n'+(tab==='sms'?'- SMS: under 160 characters ideally':'')+(tab==='social'?'- Include 4-5 relevant hashtags':'')+(tab==='email'?'- Include a subject line':'')+(tab==='reception'?'- Write as a brief script prompt for front desk staff':'')+'\n\nThe practice is independent and values long-term client relationships over short-term revenue. Plain text only, no markdown.';
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    var d = await resp.json();
+    if (d.content && d.content[0]) {
+      var out = document.getElementById('ai-camp-out-'+campId);
+      out.style.display='block'; out.textContent=d.content[0].text.trim();
+      toast('AI campaign copy ready','ok');
+    } else { toast('Could not generate','err'); }
+  } catch(e) { toast('Connection error','err'); }
+  btn.innerHTML='\uD83E\uDD16 AI'; btn.disabled=false;
+}
+
+// ═══ MODULE G: STAFF PROMPTS ═══
+
+function renderStaff() {
+  loadPatientsIfNeeded();
+  renderStaffTodayPrompts();
+  renderStaffBriefing();
+  document.getElementById('staff-search-results').innerHTML = '';
+}
+
+function staffSearch(query) {
+  loadPatientsIfNeeded();
+  query = (query||'').trim().toLowerCase();
+  var el = document.getElementById('staff-search-results');
+  if (!query || query.length < 2) { el.innerHTML = ''; return; }
+  var matches = _demoPatients.filter(function(p) {
+    return p.name.toLowerCase().includes(query) ||
+           p.owner.toLowerCase().includes(query) ||
+           p.breed.toLowerCase().includes(query);
+  });
+  if (!matches.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">No patients found for "'+esc(query)+'"</div>';
+    return;
+  }
+  el.innerHTML = matches.map(function(p) { return buildPromptCard(p); }).join('');
+}
+
+function buildPromptCard(p) {
+  var scored = scorePatient(p);
+  var icon   = p.species === 'Cat' ? '\uD83D\uDC31' : '\uD83D\uDC15';
+  var prompts = getPatientPrompts(p, scored);
+  if (!prompts.length) {
+    prompts.push({cls:'pi-neutral', icon:'\u2713', text:'All routine care appears up to date. Great work!'});
+  }
+  return '<div class="prompt-card">'+
+    '<div class="prompt-hd">'+
+      '<div class="prompt-ava">'+icon+'</div>'+
+      '<div class="prompt-info">'+
+        '<h3>'+esc(p.name)+' &mdash; '+esc(p.owner)+'</h3>'+
+        '<div class="sub">'+esc(p.breed)+' \u00b7 '+p.age+'yr '+p.sex+' \u00b7 '+p.weight+'kg'+
+          (p.onHealthPlan?' \u00b7 \uD83D\uDC9A '+p.planTier+' plan':' \u00b7 No health plan')+
+          ' \u00b7 Last seen: '+fmtVisitDate(p.lastVisit)+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;gap:6px;flex-wrap:wrap">'+
+        '<a href="tel:'+p.phone.replace(/\s/g,'')+'" class="btn btnS" style="font-size:11px">\uD83D\uDCDE '+p.phone+'</a>'+
+        '<button class="btn btnS btnP" style="font-size:11px" onclick="openOutreachModal('+p.id+')">\uD83D\uDCEC Outreach</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="prompt-list">'+prompts.map(function(pr){
+      return '<div class="prompt-item '+pr.cls+'"><span class="pi-icon">'+pr.icon+'</span><span>'+pr.text+'</span></div>';
+    }).join('')+'</div>'+
+    (p.notes?'<div style="font-size:11px;color:var(--muted);margin-top:8px;padding:6px 8px;background:var(--paper);border-radius:5px;border:1px solid var(--border)">\uD83D\uDCCB '+esc(p.notes)+'</div>':'')+
+  '</div>';
+}
+
+function getPatientPrompts(p, scored) {
+  var prompts = [];
+  scored.reasons.forEach(function(r) {
+    var cls, icon, text;
+    switch(r.type) {
+      case 'vaccines':
+        cls='pi-urgent'; icon='\uD83D\uDC89';
+        text='VACCINATION OVERDUE: '+r.label+'. Book booster today \u2014 \u00a3'+(p.species==='Cat'?62:68)+'.';
+        break;
+      case 'estimate':
+        cls='pi-amber'; icon='\uD83D\uDCCB';
+        text='ESTIMATE PENDING: \u00a3'+p.estimatePending+' estimate not yet converted. Ask if they have questions.';
+        break;
+      case 'postop':
+        cls='pi-urgent'; icon='\uD83C\uDFE5';
+        text='POST-OP REVIEW NEEDED: Follow-up appointment not booked. Book before they leave.';
+        break;
+      case 'chronic':
+        cls='pi-urgent'; icon='\u2764';
+        text='CHRONIC CARE OVERDUE: '+p.conditions.join(', ')+' recheck due. Must not leave without appointment.';
+        break;
+      case 'senior':
+        cls='pi-action'; icon='\u2B50';
+        text='SENIOR WELLNESS DUE: Offer Senior Screen (\u00a3148). Blood profile + BP + full exam.';
+        break;
+      case 'dental':
+        cls='pi-info'; icon='\uD83E\uDDB7';
+        text='DENTAL CHECK DUE: '+r.label+'. Offer free nurse dental check. Estimate if grade 2+.';
+        break;
+      case 'parasite':
+        cls='pi-action'; icon='\uD83D\uDC1B';
+        text='PARASITE PREVENTION: Dispense flea/tick/worm treatment today or set up standing order.';
+        break;
+      case 'neutering':
+        cls='pi-info'; icon='\uD83D\uDD2C';
+        text='NEUTERING NOT DONE: '+(p.sex==='F'?'Spay':'Castrate')+' not yet performed. Discuss at this visit.';
+        break;
+      case 'lapsed':
+        cls='pi-amber'; icon='\uD83D\uDD57';
+        text='LAPSED CLIENT: '+monthsSince(p.lastVisit)+' months since last visit. Warm welcome \u2014 book next annual check.';
+        break;
+      default:
+        cls='pi-neutral'; icon='\u2139'; text=r.label;
+    }
+    prompts.push({cls:cls, icon:icon, text:text});
+  });
+  if (!p.onHealthPlan) {
+    prompts.push({cls:'pi-info', icon:'\uD83D\uDC9A', text:'NO HEALTH PLAN: Eligible for '+( p.age<=1?'Puppy':p.age>=7?'Gold':'Silver')+' plan. Mention benefits at this visit.'});
+  }
+  return prompts;
+}
+
+function renderStaffTodayPrompts() {
+  loadPatientsIfNeeded();
+  var opps = computeGrowthOpps().filter(function(o){ return o.priority==='high'; }).slice(0,5);
+  var el = document.getElementById('staff-today-prompts');
+  if (!el) return;
+  if (!opps.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0">\u2705 No high-priority contacts today.</div>';
+    return;
+  }
+  el.innerHTML = opps.map(function(o) {
+    var p = o.patient;
+    var icon = p.species==='Cat'?'\uD83D\uDC31':'\uD83D\uDC15';
+    var topReason = o.reasons[0]||{};
+    var cls = topReason.type==='chronic'||topReason.type==='postop'||topReason.type==='estimate'?'pi-urgent':'pi-action';
+    return '<div class="prompt-item '+cls+'" style="margin-bottom:5px">'+
+      '<span class="pi-icon">'+icon+'</span>'+
+      '<div>'+
+        '<strong>'+esc(p.name)+' ('+esc(p.owner)+')</strong><br>'+
+        '<span style="font-size:11px">'+topReason.label+' \u00b7 Est. \u00a3'+o.estRev+'</span>'+
+        '<div style="margin-top:4px"><a href="tel:'+p.phone.replace(/\s/g,'')+'" style="font-size:11px;font-weight:600;color:inherit">\uD83D\uDCDE '+p.phone+'</a></div>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function renderStaffBriefing() {
+  loadPatientsIfNeeded();
+  var opps       = computeGrowthOpps();
+  var members    = _demoPatients.filter(function(p){ return p.onHealthPlan; });
+  var highPri    = opps.filter(function(o){ return o.priority==='high'; }).length;
+  var totalVal   = opps.reduce(function(s,o){return s+o.estRev;},0);
+  var mrr        = members.reduce(function(s,p){return s+planPrice(p.planTier,p.species);},0);
+  var el = document.getElementById('staff-briefing');
+  if (!el) return;
+  el.innerHTML =
+    '<div class="prompt-item pi-action" style="margin-bottom:5px"><span class="pi-icon">\uD83D\uDCCA</span><div><strong>'+opps.length+' active growth opportunities</strong><br><span style="font-size:11px">Estimated value: \u00a3'+totalVal.toLocaleString()+'</span></div></div>'+
+    '<div class="prompt-item pi-urgent" style="margin-bottom:5px"><span class="pi-icon">\uD83D\uDD34</span><div><strong>'+highPri+' high-priority patients</strong><br><span style="font-size:11px">Need contact this week</span></div></div>'+
+    '<div class="prompt-item pi-info" style="margin-bottom:5px"><span class="pi-icon">\uD83D\uDC9A</span><div><strong>'+members.length+' health plan members</strong><br><span style="font-size:11px">\u00a3'+mrr+'/month MRR</span></div></div>'+
+    '<div class="prompt-item pi-neutral" style="margin-bottom:5px"><span class="pi-icon">\uD83E\uDDB7</span><div><strong>Dental Awareness Month</strong><br><span style="font-size:11px">Offer free nurse dental check to every client today</span></div></div>'+
+    '<div class="prompt-item pi-amber"><span class="pi-icon">\uD83D\uDCC5</span><div><strong>Today\'s upsell focus</strong><br><span style="font-size:11px">Health plan pitch to unregistered clients</span></div></div>';
+}
+
+// ═══ MODULE H: KPI FORECASTING ═══
+
+var _forecastScenario = 'conservative';
+
+var SCENARIOS = {
+  conservative: {label:'Conservative', reactivationRate:0.25, newPlanSignups:5,  campMultiplier:1.0},
+  base:         {label:'Base case',    reactivationRate:0.40, newPlanSignups:12, campMultiplier:1.5},
+  optimistic:   {label:'Optimistic',  reactivationRate:0.60, newPlanSignups:20, campMultiplier:2.0},
+};
+
+function setScenario(sc) {
+  _forecastScenario = sc;
+  ['conservative','base','optimistic'].forEach(function(s) {
+    document.getElementById('sc-'+s).classList.toggle('active', s===sc);
+  });
+  document.getElementById('fc-scenario-label').textContent = SCENARIOS[sc].label + ' scenario';
+  renderForecastCharts();
+  renderForecastBreakdown();
+}
+
+function renderForecast() {
+  loadPatientsIfNeeded();
+  computeForecastValues();
+  renderForecastCharts();
+  renderForecastBreakdown();
+}
+
+function computeForecastValues() {
+  loadPatientsIfNeeded();
+  var opps = computeGrowthOpps();
+  var totalOpp = opps.reduce(function(s,o){return s+o.estRev;},0);
+  Object.keys(SCENARIOS).forEach(function(sk) {
+    var sc = SCENARIOS[sk];
+    var reactivationRev  = Math.round(totalOpp * sc.reactivationRate);
+    var planRev          = sc.newPlanSignups * 32 * 12; // avg plan price
+    var campRev          = Math.round(2800 * sc.campMultiplier); // base campaign estimate
+    var total            = reactivationRev + planRev + campRev;
+    SCENARIOS[sk]._total        = total;
+    SCENARIOS[sk]._reactivation = reactivationRev;
+    SCENARIOS[sk]._plans        = planRev;
+    SCENARIOS[sk]._campaigns    = campRev;
+    document.getElementById('sc-'+sk+'-val').textContent = '\u00a3'+total.toLocaleString();
+  });
+  var sc = SCENARIOS[_forecastScenario];
+  document.getElementById('fc-total-opp').textContent = '\u00a3'+sc._total.toLocaleString();
+}
+
+function renderForecastCharts() {
+  loadPatientsIfNeeded();
+  var sc = SCENARIOS[_forecastScenario];
+  computeForecastValues();
+  // 12-month revenue uplift bar chart
+  var months = ['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'];
+  var growth = [0.3,0.5,0.7,0.8,0.9,1.0,1.0,1.0,1.05,1.1,1.1,1.15];
+  var baseMonthly = Math.round(sc._total / 12);
+  mkChart('c-forecast',{type:'bar',data:{labels:months,datasets:[{label:'Revenue uplift',data:growth.map(function(g){return Math.round(baseMonthly*g);}),backgroundColor:PAL[0],borderRadius:5}]},options:bOpts(function(v){return '\u00a3'+Math.round(v/1000)+'k';})});
+  // Health plan MRR growth
+  var members = _demoPatients.filter(function(p){return p.onHealthPlan;});
+  var currentMRR = members.reduce(function(s,p){return s+planPrice(p.planTier,p.species);},0);
+  var monthlySubs = Math.round(sc.newPlanSignups * 32);
+  var mrrData = months.map(function(_,i){return currentMRR + Math.round(monthlySubs * (i+1) / 12 * 12);});
+  mkChart('c-plan-growth',{type:'line',data:{labels:months,datasets:[{label:'MRR',data:mrrData,borderColor:PAL[0],backgroundColor:'rgba(27,94,56,0.07)',fill:true,tension:0.4,pointRadius:3,pointBackgroundColor:PAL[0]}]},options:bOpts(function(v){return '\u00a3'+v+'/mo';})});
+}
+
+function renderForecastBreakdown() {
+  var sc = SCENARIOS[_forecastScenario];
+  computeForecastValues();
+  var items = [
+    {label:'Client reactivation',       val:sc._reactivation, note:'At '+Math.round(sc.reactivationRate*100)+'% conversion of current opportunities'},
+    {label:'New health plan sign-ups',   val:sc._plans,        note:sc.newPlanSignups+' new members × avg \u00a332/mo × 12 months'},
+    {label:'Campaign-driven visits',    val:sc._campaigns,    note:'Dental, senior, parasite and lapsed campaigns'},
+    {label:'Estimate conversions',      val:Math.round(sc._reactivation * 0.3), note:'30% of reactivation via outstanding estimates'},
+    {label:'Upsell at consultation',    val:Math.round(sc._campaigns * 0.4), note:'Avg +\u00a328 per visit from in-consult prompts'},
+  ];
+  var maxVal = Math.max.apply(null, items.map(function(i){return i.val;}));
+  document.getElementById('fc-breakdown').innerHTML = items.map(function(item){
+    var pct = maxVal > 0 ? Math.round(item.val/maxVal*100) : 0;
+    return '<div class="fc-row">'+
+      '<div class="fc-lbl">'+item.label+'<br><span style="font-size:10px;color:var(--muted2)">'+item.note+'</span></div>'+
+      '<div class="fc-bar-wrap"><div class="fc-bar" style="width:'+pct+'%"></div></div>'+
+      '<div class="fc-val">\u00a3'+item.val.toLocaleString()+'</div>'+
+    '</div>';
+  }).join('');
+  document.getElementById('fc-roi-table').innerHTML = [
+    {init:'Client outreach (staff time)',   roi:sc._reactivation, period:'12 months'},
+    {init:'Health plan campaign (\u00a3200)', roi:sc._plans,       period:'Recurring ARR'},
+    {init:'Dental campaign (\u00a3150)',      roi:Math.round(sc._campaigns*0.45), period:'One campaign'},
+    {init:'Senior wellness (\u00a3100)',      roi:Math.round(sc._campaigns*0.35), period:'One campaign'},
+  ].map(function(r){
+    return '<div class="fc-row">'+
+      '<div class="fc-lbl">'+r.init+'</div>'+
+      '<div style="font-size:10px;color:var(--muted);min-width:70px;text-align:center">'+r.period+'</div>'+
+      '<div class="fc-val" style="color:var(--g1)">\u00a3'+r.roi.toLocaleString()+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+// ═══ WIRING: goPage + loadDemo + renderAll updates ═══
+
+// Patch goPage to handle new pages
+var _origGoPage = goPage;
+goPage = function(p) {
+  _origGoPage(p);
+  if (p === 'growth')    renderGrowth();
+  if (p === 'plans')     renderPlans();
+  if (p === 'campaigns') renderCampaigns();
+  if (p === 'staff')     renderStaff();
+  if (p === 'forecast')  renderForecast();
+};
+
+// Patch loadDemo to also seed patient data
+var _origLoadDemo = loadDemo;
+loadDemo = function() {
+  _origLoadDemo();
+  _demoPatients = DEMO_PATIENTS.slice();
+  // Update growth badge after demo load
+  setTimeout(function() {
+    var opps = computeGrowthOpps();
+    var badge = document.getElementById('growth-badge');
+    if (badge) { badge.style.display = 'inline'; badge.textContent = opps.length; }
+    toast('Demo loaded — '+opps.length+' growth opportunities found', 'ok');
+  }, 400);
+};
+
+// Also seed patients immediately if on new pages
+var _origBoot = boot;
+boot = function() {
+  _origBoot();
+  _demoPatients = DEMO_PATIENTS.slice();
+  // Badge count
+  setTimeout(function() {
+    var opps = computeGrowthOpps();
+    var badge = document.getElementById('growth-badge');
+    if (badge && opps.length) { badge.style.display = 'inline'; badge.textContent = opps.length; }
+  }, 200);
+};
 
 
 (function init(){
