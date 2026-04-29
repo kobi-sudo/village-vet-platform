@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultation Recorder — Village Veterinary Surgery</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark: #085041;
+      --green-mid: #0F6E56;
+      --green-light: #E1F5EE;
+      --green-border: #9FE1CB;
+      --red: #E24B4A;
+      --red-dark: #A32D2D;
+      --amber-light: #FAEEDA;
+      --amber-border: #FAC775;
+      --amber-dark: #633806;
+      --success-light: #EAF3DE;
+      --success-border: #C0DD97;
+      --success-dark: #27500A;
+      --bg: #ffffff;
+      --bg-secondary: #f7f6f2;
+      --bg-tertiary: #f0efe9;
+      --text: #1a1a18;
+      --text-secondary: #5f5e5a;
+      --text-tertiary: #888780;
+      --border: rgba(0,0,0,0.12);
+      --border-mid: rgba(0,0,0,0.2);
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1c1c1a;
+        --bg-secondary: #252523;
+        --bg-tertiary: #2c2c2a;
+        --text: #f0efe9;
+        --text-secondary: #b4b2a9;
+        --text-tertiary: #888780;
+        --border: rgba(255,255,255,0.1);
+        --border-mid: rgba(255,255,255,0.18);
+        --green-light: #04342C;
+        --green-border: #0F6E56;
+        --amber-light: #412402;
+        --amber-border: #854F0B;
+        --amber-dark: #FAC775;
+        --success-light: #173404;
+        --success-border: #3B6D11;
+        --success-dark: #C0DD97;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-tertiary);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 0.5px solid var(--border);
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      background: var(--green-mid);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo svg { width: 24px; height: 24px; fill: white; }
+
+    .header-text h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: -0.01em;
+    }
+
+    .header-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .api-key-bar {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .api-key-bar label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-tertiary);
+      margin-bottom: 1rem;
+    }
+
+    .patient-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .patient-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .patient-grid { grid-template-columns: 1fr 1fr; }
+      .patient-grid-2 { grid-template-columns: 1fr; }
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+
+    .field label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-tertiary);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 0.5px solid var(--border-mid);
+      border-radius: var(--radius);
+      background: var(--bg-secondary);
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(15,110,86,0.12);
+    }
+
+    .rec-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .rec-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border-mid);
+      flex-shrink: 0;
+      transition: background 0.3s;
+    }
+
+    .rec-dot.recording {
+      background: var(--red);
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .rec-label { font-size: 14px; color: var(--text-secondary); }
+    .rec-timer {
+      font-size: 13px;
+      color: var(--text-tertiary);
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      margin-left: auto;
+    }
+
+    .transcript-box {
+      min-height: 130px;
+      max-height: 220px;
+      overflow-y: auto;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      padding: 12px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      border: 0.5px solid var(--border);
+    }
+
+    .placeholder { color: var(--text-tertiary); font-style: italic; }
+
+    .trigger-hint {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-bottom: 1rem;
+    }
+
+    .trigger-hint kbd {
+      font-family: 'SF Mono', monospace;
+      background: var(--bg-secondary);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 0.5px solid var(--border-mid);
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    button {
+      padding: 9px 18px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 0.5px solid var(--border-mid);
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      transition: background 0.1s, transform 0.08s;
+    }
+
+    button:hover { background: var(--bg-secondary); }
+    button:active { transform: scale(0.97); }
+    button:disabled { opacity: 0.38; cursor: not-allowed; transform: none; }
+
+    .btn-primary {
+      background: var(--green-mid);
+      color: white;
+      border-color: var(--green-mid);
+    }
+    .btn-primary:hover { background: var(--green-dark); }
+
+    .btn-danger {
+      background: var(--red);
+      color: white;
+      border-color: var(--red);
+    }
+    .btn-danger:hover { background: var(--red-dark); }
+
+    .btn-ghost { margin-left: auto; }
+
+    .note-section { margin-bottom: 1.25rem; }
+    .note-section:last-child { margin-bottom: 0; }
+
+    .note-heading {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--green-mid);
+      margin-bottom: 6px;
+    }
+
+    .note-body {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.75;
+      white-space: pre-wrap;
+      background: var(--bg-secondary);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      border: 0.5px solid var(--border);
+      min-height: 48px;
+      outline: none;
+    }
+
+    .note-body:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px rgba(15,110,86,0.1);
+    }
+
+    .note-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+    }
+
+    .note-header-row h2 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .note-meta {
+      font-size: 12px;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    .alert {
+      padding: 11px 14px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    .alert-warning {
+      background: var(--amber-light);
+      color: var(--amber-dark);
+      border: 0.5px solid var(--amber-border);
+    }
+
+    .alert-success {
+      background: var(--success-light);
+      color: var(--success-dark);
+      border: 0.5px solid var(--success-border);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-mid);
+      border-top-color: var(--green-mid);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0.5rem 0;
+    }
+
+    .loading-text { font-size: 14px; color: var(--text-secondary); }
+
+    .btn-sm { padding: 6px 14px; font-size: 13px; }
+
+    .divider {
+      height: 0.5px;
+      background: var(--border);
+      margin: 1rem 0;
+    }
+
+    .browser-warning {
+      background: var(--amber-light);
+      color: var(--amber-dark);
+      border: 0.5px solid var(--amber-border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.25rem;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="header">
+      <div class="logo">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+      </div>
+      <div class="header-text">
+        <h1>Consultation Recorder</h1>
+        <p>The Village Veterinary Surgery — gardenvillagevets.co.uk</p>
+      </div>
+    </header>
+
+    <div id="browserWarning" style="display:none;" class="browser-warning">
+      Speech recognition requires Google Chrome. Please open this page in Chrome for the recording feature to work.
+    </div>
+
+    <div class="card">
+      <div class="card-title">API key</div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <div class="field" style="flex:1;">
+          <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" />
+        </div>
+        <button class="btn-sm" onclick="saveKey()">Save</button>
+      </div>
+      <p style="font-size:12px; color:var(--text-tertiary); margin-top:8px;">Stored in your browser only. Never sent anywhere except the Anthropic API.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Patient details</div>
+      <div class="patient-grid">
+        <div class="field">
+          <label>Patient name</label>
+          <input type="text" id="patientName" placeholder="e.g. Buddy" />
+        </div>
+        <div class="field">
+          <label>Species / breed</label>
+          <input type="text" id="species" placeholder="e.g. Labrador" />
+        </div>
+        <div class="field">
+          <label>Weight (kg)</label>
+          <input type="number" id="weight" placeholder="e.g. 12.5" step="0.1" min="0" />
+        </div>
+      </div>
+      <div class="patient-grid-2">
+        <div class="field">
+          <label>Owner name</label>
+          <input type="text" id="ownerName" placeholder="e.g. Mr Smith" />
+        </div>
+        <div class="field">
+          <label>Consulting vet</label>
+          <input type="text" id="vetName" placeholder="e.g. Kobi" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Recording</div>
+      <div class="rec-status">
+        <div class="rec-dot" id="recDot"></div>
+        <div class="rec-label" id="recLabel">Ready to record</div>
+        <div class="rec-timer" id="recTimer" style="display:none;">00:00</div>
+      </div>
+      <div class="transcript-box" id="transcriptBox">
+        <span class="placeholder">Live transcription will appear here as you speak...</span>
+      </div>
+      <p class="trigger-hint">Say <kbd>analyze</kbd> at any point to automatically stop and generate the clinical note.</p>
+      <div class="btn-row">
+        <button class="btn-primary" id="startBtn" onclick="startRecording()">Start recording</button>
+        <button class="btn-danger" id="stopBtn" onclick="stopAndAnalyze()" disabled>Analyze now</button>
+        <button class="btn-ghost" onclick="clearAll()">Clear</button>
+      </div>
+    </div>
+
+    <div id="loadingDiv" style="display:none;" class="card">
+      <div class="loading-row">
+        <div class="spinner"></div>
+        <div class="loading-text">Generating Merlin clinical note...</div>
+      </div>
+    </div>
+
+    <div id="alertDiv" style="display:none;"></div>
+
+    <div id="noteDiv" style="display:none;">
+      <div class="card">
+        <div class="note-header-row">
+          <div>
+            <h2>Merlin PMS — Clinical Note</h2>
+            <div class="note-meta" id="noteMeta"></div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn-sm" onclick="copyNote()">Copy note</button>
+            <button class="btn-sm btn-primary" onclick="printNote()">Print</button>
+          </div>
+        </div>
+
+        <div class="note-section">
+          <div class="note-heading">History</div>
+          <div class="note-body" id="noteHistory" contenteditable="true"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-heading">Chief complaint</div>
+          <div class="note-body" id="noteChief" contenteditable="true"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-heading">Clinical examination</div>
+          <div class="note-body" id="noteExam" contenteditable="true"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-heading">Findings</div>
+          <div class="note-body" id="noteFindings" contenteditable="true"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-heading">Differential diagnoses</div>
+          <div class="note-body" id="noteDiff" contenteditable="true"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-heading">Plan / treatment</div>
+          <div class="note-body" id="notePlan" contenteditable="true"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-heading">Flea &amp; worming</div>
+          <div class="note-body" id="noteFW" contenteditable="true"></div>
+        </div>
+        <div class="note-section">
+          <div class="note-heading">Follow-up</div>
+          <div class="note-body" id="noteFollowup" contenteditable="true"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      document.getElementById('browserWarning').style.display = 'block';
+    }
+
+    let recognition = null;
+    let transcriptFull = '';
+    let timerInterval = null;
+    let seconds = 0;
+    let isRecording = false;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('vvs_api_key');
+      if (saved) document.getElementById('apiKey').value = saved;
+      const savedVet = localStorage.getItem('vvs_vet_name');
+      if (savedVet) document.getElementById('vetName').value = savedVet;
+    });
+
+    function saveKey() {
+      const key = document.getElementById('apiKey').value.trim();
+      if (key) {
+        localStorage.setItem('vvs_api_key', key);
+        showAlert('API key saved.', 'success');
+        setTimeout(() => document.getElementById('alertDiv').style.display = 'none', 2000);
+      }
+    }
+
+    function startTimer() {
+      seconds = 0;
+      const el = document.getElementById('recTimer');
+      el.style.display = 'block';
+      timerInterval = setInterval(() => {
+        seconds++;
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        el.textContent = m + ':' + s;
+      }, 1000);
+    }
+
+    function stopTimer() { clearInterval(timerInterval); }
+
+    function startRecording() {
+      const apiKey = document.getElementById('apiKey').value.trim();
+      if (!apiKey) {
+        showAlert('Please enter your Anthropic API key first.', 'warning');
+        return;
+      }
+      if (!SpeechRecognition) {
+        showAlert('Speech recognition requires Google Chrome.', 'warning');
+        return;
+      }
+
+      const vetName = document.getElementById('vetName').value.trim();
+      if (vetName) localStorage.setItem('vvs_vet_name', vetName);
+
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-GB';
+
+      let finalTranscript = '';
+
+      recognition.onresult = (event) => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const t = event.results[i][0].transcript;
+          if (event.results[i].isFinal) {
+            finalTranscript += t + ' ';
+            if (t.toLowerCase().replace(/[^a-z\s]/g,'').trim().split(/\s+/).includes('analyze') ||
+                t.toLowerCase().replace(/[^a-z\s]/g,'').trim().split(/\s+/).includes('analyse')) {
+              transcriptFull = finalTranscript;
+              stopAndAnalyze();
+              return;
+            }
+          } else {
+            interim += t;
+          }
+        }
+        transcriptFull = finalTranscript;
+        const box = document.getElementById('transcriptBox');
+        box.innerHTML = finalTranscript +
+          '<span style="color:var(--text-tertiary);">' + interim + '</span>';
+        box.scrollTop = box.scrollHeight;
+      };
+
+      recognition.onerror = (e) => {
+        if (e.error === 'not-allowed') {
+          showAlert('Microphone access denied. Please allow microphone access in your browser settings.', 'warning');
+          stopAll();
+        }
+      };
+
+      recognition.onend = () => {
+        if (isRecording) recognition.start();
+      };
+
+      recognition.start();
+      isRecording = true;
+
+      document.getElementById('recDot').classList.add('recording');
+      document.getElementById('recLabel').textContent = 'Recording — listening continuously...';
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('stopBtn').disabled = false;
+      startTimer();
+    }
+
+    function stopAll() {
+      isRecording = false;
+      if (recognition) { recognition.onend = null; recognition.stop(); }
+      stopTimer();
+      document.getElementById('recDot').classList.remove('recording');
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('stopBtn').disabled = true;
+    }
+
+    function stopAndAnalyze() {
+      if (!transcriptFull.trim() && !isRecording) return;
+      stopAll();
+      document.getElementById('recLabel').textContent = 'Processing...';
+      generateNote(transcriptFull.trim() || 'No transcript captured.');
+    }
+
+    async function generateNote(transcript) {
+      document.getElementById('loadingDiv').style.display = 'block';
+      document.getElementById('noteDiv').style.display = 'none';
+      document.getElementById('alertDiv').style.display = 'none';
+
+      const apiKey = document.getElementById('apiKey').value.trim();
+      const patientName = document.getElementById('patientName').value || 'Unknown';
+      const species = document.getElementById('species').value || 'Unknown';
+      const weight = document.getElementById('weight').value;
+      const ownerName = document.getElementById('ownerName').value || 'Unknown';
+      const vetName = document.getElementById('vetName').value || 'Unknown';
+      const now = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+
+      const fwLine = weight
+        ? `Based on patient weight of ${weight}kg, provide a specific flea and worming product recommendation with appropriate dose for this weight.`
+        : 'Include a general flea and worming recommendation noting weight is required for precise dosing.';
+
+      const prompt = `You are a veterinary clinical assistant for The Village Veterinary Surgery in Hatfield Garden Village. Generate a Merlin PMS formatted clinical note from the following consultation.
+
+Patient: ${patientName} (${species})
+Weight: ${weight ? weight + ' kg' : 'not recorded'}
+Owner: ${ownerName}
+Consulting vet: ${vetName}
+Date: ${now}
+
+Consultation transcript:
+${transcript}
+
+Return ONLY a JSON object with these exact keys — no preamble, no markdown:
+{
+  "history": "concise clinical history",
+  "chiefComplaint": "presenting complaint",
+  "clinicalExamination": "systematic examination findings",
+  "findings": "key clinical findings",
+  "differentialDiagnoses": "ranked differentials with brief rationale",
+  "plan": "treatment plan and medications prescribed",
+  "fleaWorming": "${fwLine}",
+  "followUp": "recheck/follow-up plan",
+  "redFlags": "urgent concerns, or 'None identified'"
+}`;
+
+      try {
+        const resp = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1500,
+            messages: [{ role: 'user', content: prompt }]
+          })
+        });
+
+        const data = await resp.json();
+        if (data.error) throw new Error(data.error.message);
+
+        const raw = data.content.map(b => b.text || '').join('');
+        const clean = raw.replace(/```json|```/g, '').trim();
+        const note = JSON.parse(clean);
+
+        document.getElementById('noteHistory').textContent = note.history || '';
+        document.getElementById('noteChief').textContent = note.chiefComplaint || '';
+        document.getElementById('noteExam').textContent = note.clinicalExamination || '';
+        document.getElementById('noteFindings').textContent = note.findings || '';
+        document.getElementById('noteDiff').textContent = note.differentialDiagnoses || '';
+        document.getElementById('notePlan').textContent = note.plan || '';
+        document.getElementById('noteFW').textContent = note.fleaWorming || '';
+        document.getElementById('noteFollowup').textContent = note.followUp || '';
+        document.getElementById('noteMeta').textContent = `${patientName} · ${ownerName} · ${now} · ${vetName}`;
+
+        document.getElementById('loadingDiv').style.display = 'none';
+        document.getElementById('noteDiv').style.display = 'block';
+        document.getElementById('recLabel').textContent = 'Ready to record';
+
+        if (note.redFlags && note.redFlags.toLowerCase() !== 'none identified' && note.redFlags.trim()) {
+          showAlert('Red flags: ' + note.redFlags, 'warning');
+        }
+
+      } catch (err) {
+        document.getElementById('loadingDiv').style.display = 'none';
+        document.getElementById('recLabel').textContent = 'Ready to record';
+        showAlert('Error generating note: ' + err.message, 'warning');
+      }
+    }
+
+    function copyNote() {
+      const sections = [
+        ['HISTORY', 'noteHistory'],
+        ['CHIEF COMPLAINT', 'noteChief'],
+        ['CLINICAL EXAMINATION', 'noteExam'],
+        ['FINDINGS', 'noteFindings'],
+        ['DIFFERENTIAL DIAGNOSES', 'noteDiff'],
+        ['PLAN / TREATMENT', 'notePlan'],
+        ['FLEA & WORMING', 'noteFW'],
+        ['FOLLOW-UP', 'noteFollowup']
+      ];
+      const meta = document.getElementById('noteMeta').textContent;
+      const header = 'VILLAGE VETERINARY SURGERY — CLINICAL NOTE\n' + meta + '\n\n';
+      const body = sections.map(([label, id]) =>
+        label + '\n' + document.getElementById(id).textContent
+      ).join('\n\n');
+      navigator.clipboard.writeText(header + body).then(() => {
+        showAlert('Note copied to clipboard — ready to paste into Merlin.', 'success');
+        setTimeout(() => document.getElementById('alertDiv').style.display = 'none', 3000);
+      });
+    }
+
+    function printNote() {
+      window.print();
+    }
+
+    function showAlert(msg, type) {
+      const el = document.getElementById('alertDiv');
+      el.className = 'alert alert-' + type;
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function clearAll() {
+      stopAll();
+      transcriptFull = '';
+      document.getElementById('transcriptBox').innerHTML = '<span class="placeholder">Live transcription will appear here as you speak...</span>';
+      document.getElementById('recLabel').textContent = 'Ready to record';
+      document.getElementById('recTimer').style.display = 'none';
+      document.getElementById('noteDiv').style.display = 'none';
+      document.getElementById('loadingDiv').style.display = 'none';
+      document.getElementById('alertDiv').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
